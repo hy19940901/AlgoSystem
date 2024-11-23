@@ -1,19 +1,23 @@
-CC = g++
-CFLAGS = -std=c++11 -O2 -I/opt/homebrew/Cellar/ffmpeg/7.1_3/include
-LDFLAGS = -L/opt/homebrew/Cellar/ffmpeg/7.1_3/lib -lavcodec -lavformat -lavutil -lswscale -lswresample
+# Variables
+CXX = g++
+CFLAGS = -std=c++11 -O2 -I./include
+LDFLAGS = -L/usr/lib64 -lavcodec -lavformat -lavutil
 
-SOURCES = ./src/main.cpp
+SOURCES = ./src/main.cpp ./src/mp3_info.cpp
 OBJECTS = $(SOURCES:.cpp=.o)
 EXECUTABLE = Ffmpeg_program
 
+# Default target
 all: $(EXECUTABLE)
 
+# Link the program
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(CFLAGS) $(OBJECTS) $(LDFLAGS) -o $(EXECUTABLE)
+	$(CXX) $(CFLAGS) $(OBJECTS) $(LDFLAGS) -o $(EXECUTABLE)
 
+# Compile source files to object files
 ./src/%.o: ./src/%.cpp
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CXX) $(CFLAGS) -c $< -o $@
 
+# Clean up
 clean:
-	rm -f $(OBJECTS) $(EXECUTABLE)
-	rm -f *.swo *.swp
+	rm -f $(OBJECTS) $(EXECUTABLE) subtitles.txt
