@@ -34,7 +34,7 @@ ThreadPool::~ThreadPool() {
 std::future<void> ThreadPool::enqueue(Task task, Callback callback) {
     auto packagedTask = std::make_shared<std::packaged_task<void()>>(task);
     std::future<void> result = packagedTask->get_future();
-    
+
     {
         std::unique_lock<std::mutex> lock(queueMutex);
         if (stop) {

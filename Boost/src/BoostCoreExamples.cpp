@@ -1,7 +1,7 @@
 #include "../include/BoostCoreExamples.hpp"
 #include <iostream>
 
-const int num_tasks = 10000; 
+const int num_tasks = 10000;
 
 // Constructor
 BoostCoreExamples::BoostCoreExamples() {}
@@ -70,7 +70,7 @@ void BoostCoreExamples::threadExample() {
 // 使用线程池的任务执行
 void BoostCoreExamples::threadPoolExample() {
     unsigned int thread_count = std::thread::hardware_concurrency() * 2;  // 根据CPU核心数设置线程数
-    
+
     std::cout << "Thread pool size: " << thread_count << " threads.\n";
 
     // 创建 Boost 线程池
@@ -101,11 +101,11 @@ void BoostCoreExamples::threadPoolExample() {
 
 // Asynchronous Calculation Example
 void BoostCoreExamples::asyncCalculationExample() {
-    
+
     // 获取系统支持的并发线程数
     unsigned int thread_count = std::thread::hardware_concurrency() * 2;
     std::cout << "Thread pool size: " << thread_count << " threads.\n";
-    
+
     // 创建 io_context 和线程池
     boost::asio::io_context io_context;
     boost::asio::thread_pool pool(thread_count);  // 根据系统硬件核心数创建线程池

@@ -37,7 +37,7 @@ private:
     vector<int> levelOrder(TreeNode* node) const;
 
     void dfsPaths(TreeNode* node, int targetSum, vector<int>& path, vector<vector<int>>& paths);
-    
+
     int depth(TreeNode* node);
 
     /**
@@ -69,7 +69,7 @@ private:
     /**
      * @brief Helper function to check if a tree is a full binary tree.
      * A full binary tree is a tree in which every node has either 0 or 2 children.
-     * 
+     *
      * @param node The root node of the binary tree.
      * @return True if the tree is a full binary tree, false otherwise.
      */
@@ -79,7 +79,7 @@ private:
      * @brief Recursive helper function to check if a tree is a complete binary tree.
      * A complete binary tree is a binary tree in which every level is completely filled
      * except for possibly the last level, which is filled from left to right.
-     * 
+     *
      * @param node The root node of the binary tree.
      * @param index The index of the current node in a level-order traversal.
      * @param nodeCount The total number of nodes in the binary tree.
@@ -111,7 +111,7 @@ public:
     void displayPathSum(int targetSum);
     //Given the root of a binary tree and an integer targetSum, return all root-to-leaf paths where the sum of the node values in the path equals targetSum.
     vector<vector<int>> pathSum(TreeNode* root, int targetSum);
-    
+
     int maxDepth();
     int minDepth();
     int countNodes();
@@ -122,20 +122,20 @@ public:
 
     /**
      * @brief Public function to check if the binary tree is a full binary tree.
-     * 
+     *
      * @return True if the tree is a full binary tree, false otherwise.
      */
     bool isFullBinaryTree();
 
     /**
      * @brief Public function to check if the binary tree is a complete binary tree.
-     * 
+     *
      * @return True if the tree is a complete binary tree, false otherwise.
      */
     bool isCompleteBinaryTree();
 
     void invertTree();
-    
+
     int findMinValue();
     int findMaxValue();
 

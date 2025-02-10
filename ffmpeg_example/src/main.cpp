@@ -1,9 +1,9 @@
 #include <iostream>
-#include "../include/mp3_info.h"
+extern "C" {
+    #include <libavcodec/avcodec.h>
+}
 
 int main() {
-    std::string inputFile = "Scott McKenzie - San Francisco (Be Sure To Wear Flowers In Your Hair).mp3";
-    extract_stream_info(inputFile);
-
+    std::cout << "FFmpeg Version: " << av_version_info() << std::endl;
     return 0;
 }

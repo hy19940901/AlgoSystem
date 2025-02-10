@@ -142,10 +142,10 @@ void benchmarkReverse(LinkedList &list, int numElements) {
 // Benchmarking the sort operation
 void benchmarkSort(LinkedList &list, int numElements) {
     cout << "\nStarting merge sort benchmark for list of " << numElements << " elements..." << endl;
-    
+
     // Create a copy of the list to sort using merge sort
     LinkedList mergeCopy = createCopy(list);
-    
+
     // Measure merge sort time
     auto startMerge = high_resolution_clock::now();
     mergeCopy.sort("merge");
@@ -169,13 +169,13 @@ void benchmarkSort(LinkedList &list, int numElements) {
 
     // Create another copy of the list to sort using quick sort
     LinkedList quickCopy = createCopy(list);
-    
+
     // If elements are 10, track quick sort steps
     if (numElements == 10) {
         cout << "Quick sort step-by-step (for 10 elements):" << endl;
         quickCopy.enableQuickSortDebug();  // Enable debug mode for quick sort
     }
-    
+
     // Measure quick sort time
     auto startQuick = high_resolution_clock::now();
     quickCopy.sort("quick");

@@ -23,3 +23,4 @@ $(TARGET): $(SRC)
 clean:
 	rm -f $(TARGET)
 	rm -f *.swo *.swp
+	rm -rf ./example_dir

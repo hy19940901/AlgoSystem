@@ -17,7 +17,7 @@ using Callback = std::function<void(int)>;
 /**
  * @class ThreadPool
  * @brief A simple thread pool implementation.
- * 
+ *
  * This class manages a pool of worker threads that can execute tasks asynchronously.
  */
 class ThreadPool {
@@ -45,7 +45,7 @@ private:
     /**
      * @brief Function for each worker thread to execute tasks from the queue.
      */
-    void workerThread(); 
+    void workerThread();
 
     std::vector<std::thread> workers;                  ///< Container for worker threads
     std::queue<std::pair<Task, Callback>> tasks;       ///< Queue for storing tasks and their callbacks

@@ -1,9 +1,19 @@
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -std=c++14 -I../include  # Use C++11 standard and include header path
+CXXFLAGS = -std=c++14 -I../include  # Use C++14 standard and include header path
+
+# Determine OS
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S), Darwin)  # macOS
+    LIB_EXT = dylib          # macOS uses .dylib
+    RPATH = @loader_path/    # macOS RPATH syntax
+else ifeq ($(UNAME_S), Linux)  # Linux
+    LIB_EXT = so             # Linux uses .so
+    RPATH = \$ORIGIN         # Linux RPATH syntax
+endif
 
 # Shared library name and path
-LIB_NAME = libstreamprovider.so
+LIB_NAME = libstreamprovider.$(LIB_EXT)
 LIB_PATH = .
 
 # Source files for the shared library
@@ -24,7 +34,7 @@ $(LIB_NAME): $(LIB_OBJS)
 
 # Compile the server executable, link the shared library, and set RPATH
 server: $(SERVER_SRCS) $(LIB_NAME)
-	$(CXX) $(CXXFLAGS) -o server $(SERVER_SRCS) -L$(LIB_PATH) -lstreamprovider -Wl,-rpath=$(LIB_PATH)
+	$(CXX) $(CXXFLAGS) -o server $(SERVER_SRCS) -L$(LIB_PATH) -lstreamprovider -Wl,-rpath,$(RPATH)
 
 # Compile object files for the shared library
 %.o: %.cpp

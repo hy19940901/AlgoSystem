@@ -1,0 +1,25 @@
+# Ignore object files
+*.o
+
+# Ignore shared libraries (.so files)
+*.so
+
+# Ignore executable files (Linux/Mac)
+Asynchronous_Programming
+Graph/Graph_program
+LinkedList/LinkedList_program
+Search/searching_program
+Tree/BinaryTree_program
+
+# Ignore build artifacts directories
+bin/
+build/
+out/
+
+# Ignore macOS specific files
+*.DS_Store
+
+# Ignore Visual Studio Code settings
+.vscode/
+
+# Ignore other temporary or generated files as needed
