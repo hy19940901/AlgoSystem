@@ -6,11 +6,11 @@
 
 /**
  * @brief Server callback function to receive stream data.
- * 
- * This function is called whenever new stream data is received. It processes the data 
- * by printing the size and content to the console. This simulates the server's handling 
+ *
+ * This function is called whenever new stream data is received. It processes the data
+ * by printing the size and content to the console. This simulates the server's handling
  * of incoming stream data.
- * 
+ *
  * @param streamData Pointer to the stream data.
  * @param size Size of the stream data in bytes.
  */

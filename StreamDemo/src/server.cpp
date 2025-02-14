@@ -3,7 +3,7 @@
 #include "../include/server.h"  // Include the header file
 
 void streamCallback(const char* streamData, int size) {
-    std::cout << "Server: Received stream data of size " << size 
+    std::cout << "Server: Received stream data of size " << size
               << ". Data: " << streamData << std::endl;
 }
 

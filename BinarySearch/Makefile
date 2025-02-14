@@ -3,7 +3,7 @@ CFLAGS = -std=c++20 -Wall -g
 
 SRCS = main.cpp
 OBJS = $(SRCS:.cpp=.o)
-EXEC = Greedy_program
+EXEC = BinarySearch_program
 
 all: $(EXEC)
 

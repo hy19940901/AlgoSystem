@@ -614,6 +614,446 @@ int shortestPathBinaryMatrix(vector<vector<int>>& grid) {
     return -1;
 }
 
+/**
+ * Problem 10: Strongly Connected Components (Tarjan's Algorithm) (LC 1192 - variant)
+ * Description:
+ * Given a directed graph, find all Strongly Connected Components (SCCs).
+ * Example:
+ * Input: n = 5, edges = [[0,1], [1,2], [2,0], [1,3], [3,4]]
+ * Output: [[0,1,2], [3], [4]]
+ */
+
+ void tarjanDFS(int node, int& time, vector<int>& disc, vector<int>& low, stack<int>& st, vector<bool>& inStack, vector<vector<int>>& graph, vector<vector<int>>& sccs) {
+    disc[node] = low[node] = time++;
+    st.push(node);
+    inStack[node] = true;
+
+    for (int neighbor : graph[node]) {
+        if (disc[neighbor] == -1) {  // If neighbor is not visited
+            tarjanDFS(neighbor, time, disc, low, st, inStack, graph, sccs);
+            low[node] = min(low[node], low[neighbor]);
+        } else if (inStack[neighbor]) {  // If neighbor is in stack, it's part of SCC
+            low[node] = min(low[node], disc[neighbor]);
+        }
+    }
+
+    if (disc[node] == low[node]) {  // If node is root of SCC
+        vector<int> scc;
+        while (true) {
+            int v = st.top(); st.pop();
+            inStack[v] = false;
+            scc.push_back(v);
+            if (v == node) break;
+        }
+        sccs.push_back(scc);
+    }
+}
+
+vector<vector<int>> findSCCs(int n, vector<vector<int>>& edges) {
+    vector<vector<int>> graph(n);
+    for (auto& edge : edges) {
+        graph[edge[0]].push_back(edge[1]);
+    }
+
+    vector<int> disc(n, -1), low(n, -1);
+    vector<vector<int>> sccs;
+    stack<int> st;
+    vector<bool> inStack(n, false);
+    int time = 0;
+
+    for (int i = 0; i < n; i++) {
+        if (disc[i] == -1) {
+            tarjanDFS(i, time, disc, low, st, inStack, graph, sccs);
+        }
+    }
+    return sccs;
+}
+
+/**
+ * Problem 11: Detect Bipartite Graph (LC 785)
+ * Description:
+ * Given an undirected graph, determine if it is bipartite.
+ * Example:
+ * Input: n = 4, edges = [[1,2], [2,3], [3,4], [4,1], [1,3]]
+ * Output: false
+ */
+
+bool isBipartite(vector<vector<int>>& graph) {
+    int n = graph.size();
+    vector<int> colors(n, -1);
+
+    for (int start = 0; start < n; start++) {
+        if (colors[start] != -1) continue;
+        queue<int> q;
+        q.push(start);
+        colors[start] = 0;
+
+        while (!q.empty()) {
+            int node = q.front(); q.pop();
+            for (int neighbor : graph[node]) {
+                if (colors[neighbor] == -1) {
+                    colors[neighbor] = colors[node] ^ 1;
+                    q.push(neighbor);
+                } else if (colors[neighbor] == colors[node]) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+/**
+ * Problem 12: Eulerian Path in Directed Graph (LC 332 - variant)
+ * Description:
+ * Find an Eulerian Path in a directed graph, if it exists.
+ * Example:
+ * Input: edges = [["JFK", "SFO"], ["JFK", "ATL"], ["SFO", "ATL"], ["ATL", "JFK"], ["ATL", "SFO"]]
+ * Output: ["JFK", "ATL", "JFK", "SFO", "ATL", "SFO"]
+ */
+
+unordered_map<string, priority_queue<string, vector<string>, greater<>>> graphEuler;
+vector<string> eulerPath;
+
+void dfsEuler(string node) {
+    while (!graphEuler[node].empty()) {
+        string next = graphEuler[node].top();
+        graphEuler[node].pop();
+        dfsEuler(next);
+    }
+    eulerPath.push_back(node);
+}
+
+vector<string> findEulerianPath(vector<vector<string>>& tickets) {
+    for (auto& ticket : tickets) {
+        graphEuler[ticket[0]].push(ticket[1]);
+    }
+
+    dfsEuler("JFK");
+    reverse(eulerPath.begin(), eulerPath.end());
+    return eulerPath;
+}
+
+/**
+ * Problem 13: Hamiltonian Path (Backtracking)
+ * Description:
+ * Determine if there exists a Hamiltonian Path in a given graph.
+ * Example:
+ * Input: n = 4, edges = [[0,1], [1,2], [2,3], [3,0]]
+ * Output: true
+ */
+
+bool hamiltonianDFS(int node, vector<vector<int>>& graph, vector<bool>& visited, int count) {
+    if (count == graph.size()) return true;
+    visited[node] = true;
+    for (int neighbor : graph[node]) {
+        if (!visited[neighbor] && hamiltonianDFS(neighbor, graph, visited, count + 1)) {
+            return true;
+        }
+    }
+    visited[node] = false;
+    return false;
+}
+
+bool hasHamiltonianPath(int n, vector<vector<int>>& edges) {
+    vector<vector<int>> graph(n);
+    for (auto& edge : edges) {
+        graph[edge[0]].push_back(edge[1]);
+        graph[edge[1]].push_back(edge[0]);
+    }
+
+    vector<bool> visited(n, false);
+    for (int i = 0; i < n; i++) {
+        if (hamiltonianDFS(i, graph, visited, 1)) return true;
+    }
+    return false;
+}
+
+/**
+ * Problem 14: Topological Sort (DFS) (LC 210 - variant)
+ * Description:
+ * Given a Directed Acyclic Graph (DAG), return its topological ordering.
+ * Example:
+ * Input: numCourses = 4, prerequisites = [[1, 0], [2, 0], [3, 1], [3, 2]]
+ * Output: [0, 1, 2, 3] or [0, 2, 1, 3]
+ */
+
+ void topologicalSortDFS(int node, vector<vector<int>>& graph, vector<bool>& visited, stack<int>& st) {
+    visited[node] = true;
+    for (int neighbor : graph[node]) {
+        if (!visited[neighbor]) {
+            topologicalSortDFS(neighbor, graph, visited, st);
+        }
+    }
+    st.push(node);
+}
+
+vector<int> topologicalSortDFSWrapper(int numVertices, vector<vector<int>>& edges) {
+    vector<vector<int>> graph(numVertices);
+    for (auto& edge : edges) {
+        graph[edge[1]].push_back(edge[0]);
+    }
+
+    vector<bool> visited(numVertices, false);
+    stack<int> st;
+    for (int i = 0; i < numVertices; i++) {
+        if (!visited[i]) {
+            topologicalSortDFS(i, graph, visited, st);
+        }
+    }
+
+    vector<int> result;
+    while (!st.empty()) {
+        result.push_back(st.top());
+        st.pop();
+    }
+    return result;
+}
+
+/**
+ * Problem 15: Articulation Points (LC 1192 - variant)
+ * Description:
+ * Find all articulation points (critical nodes) in a graph.
+ * Example:
+ * Input: n = 5, edges = [[0,1], [1,2], [2,0], [1,3], [3,4]]
+ * Output: [1, 3]
+ */
+
+void findArticulationDFS(int node, int parent, int& time, vector<int>& disc, vector<int>& low, vector<bool>& visited, vector<vector<int>>& graph, unordered_set<int>& articulationPoints) {
+    disc[node] = low[node] = time++;
+    visited[node] = true;
+    int children = 0;
+
+    for (int neighbor : graph[node]) {
+        if (!visited[neighbor]) {
+            children++;
+            findArticulationDFS(neighbor, node, time, disc, low, visited, graph, articulationPoints);
+            low[node] = min(low[node], low[neighbor]);
+
+            if (parent != -1 && low[neighbor] >= disc[node]) {
+                articulationPoints.insert(node);
+            }
+        } else if (neighbor != parent) {
+            low[node] = min(low[node], disc[neighbor]);
+        }
+    }
+
+    if (parent == -1 && children > 1) {
+        articulationPoints.insert(node);
+    }
+}
+
+vector<int> findArticulationPoints(int n, vector<vector<int>>& edges) {
+    vector<vector<int>> graph(n);
+    for (auto& edge : edges) {
+        graph[edge[0]].push_back(edge[1]);
+        graph[edge[1]].push_back(edge[0]);
+    }
+
+    vector<int> disc(n, -1), low(n, -1);
+    vector<bool> visited(n, false);
+    unordered_set<int> articulationPoints;
+    int time = 0;
+
+    for (int i = 0; i < n; i++) {
+        if (!visited[i]) {
+            findArticulationDFS(i, -1, time, disc, low, visited, graph, articulationPoints);
+        }
+    }
+
+    return vector<int>(articulationPoints.begin(), articulationPoints.end());
+}
+
+/**
+ * Problem 16: Bridges in a Graph (LC 1192 - variant)
+ * Description:
+ * Find all bridges (critical edges) in a graph.
+ * Example:
+ * Input: n = 5, edges = [[0,1], [1,2], [2,0], [1,3], [3,4]]
+ * Output: [[1,3], [3,4]]
+ */
+
+void findBridgesDFS(int node, int parent, int& time, vector<int>& disc, vector<int>& low, vector<bool>& visited, vector<vector<int>>& graph, vector<vector<int>>& bridges) {
+    disc[node] = low[node] = time++;
+    visited[node] = true;
+
+    for (int neighbor : graph[node]) {
+        if (!visited[neighbor]) {
+            findBridgesDFS(neighbor, node, time, disc, low, visited, graph, bridges);
+            low[node] = min(low[node], low[neighbor]);
+
+            if (low[neighbor] > disc[node]) {
+                bridges.push_back({node, neighbor});
+            }
+        } else if (neighbor != parent) {
+            low[node] = min(low[node], disc[neighbor]);
+        }
+    }
+}
+
+vector<vector<int>> findBridges(int n, vector<vector<int>>& edges) {
+    vector<vector<int>> graph(n);
+    for (auto& edge : edges) {
+        graph[edge[0]].push_back(edge[1]);
+        graph[edge[1]].push_back(edge[0]);
+    }
+
+    vector<int> disc(n, -1), low(n, -1);
+    vector<bool> visited(n, false);
+    vector<vector<int>> bridges;
+    int time = 0;
+
+    for (int i = 0; i < n; i++) {
+        if (!visited[i]) {
+            findBridgesDFS(i, -1, time, disc, low, visited, graph, bridges);
+        }
+    }
+
+    return bridges;
+}
+
+/**
+ * Problem 17: Find the Town Judge (LC 997)
+ * Description:
+ * In a town, there are `n` people labeled from `1` to `n`. One person is the town judge.
+ * The town judge trusts nobody, and everybody (except for the judge) trusts the judge.
+ * Example:
+ * Input: n = 3, trust = [[1,3], [2,3]]
+ * Output: 3
+ */
+
+ int findJudge(int n, vector<vector<int>>& trust) {
+    vector<int> trustCount(n + 1, 0);
+
+    for (auto& t : trust) {
+        trustCount[t[0]]--; // Person trusts someone, cannot be judge
+        trustCount[t[1]]++; // Person is trusted
+    }
+
+    for (int i = 1; i <= n; i++) {
+        if (trustCount[i] == n - 1) return i;
+    }
+
+    return -1;
+}
+
+/**
+ * Problem 18: Cheapest Flights Within K Stops (LC 787)
+ * Description:
+ * Given `n` cities and flights represented as `[from, to, price]`, find the cheapest price
+ * from `src` to `dst` with at most `k` stops.
+ * Example:
+ * Input: n = 3, flights = [[0,1,100], [1,2,100], [0,2,500]], src = 0, dst = 2, k = 1
+ * Output: 200
+ */
+
+int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst, int k) {
+    vector<vector<pair<int, int>>> graph(n);
+    for (auto& flight : flights) {
+        graph[flight[0]].emplace_back(flight[1], flight[2]);
+    }
+
+    vector<int> dist(n, INT_MAX);
+    queue<pair<int, pair<int, int>>> q; // {stops, {node, cost}}
+    q.push({0, {src, 0}});
+    dist[src] = 0;
+
+    while (!q.empty()) {
+        auto [stops, info] = q.front(); q.pop();
+        int node = info.first, cost = info.second;
+        if (stops > k) continue;
+
+        for (auto [neighbor, price] : graph[node]) {
+            if (cost + price < dist[neighbor]) {
+                dist[neighbor] = cost + price;
+                q.push({stops + 1, {neighbor, dist[neighbor]}});
+            }
+        }
+    }
+
+    return dist[dst] == INT_MAX ? -1 : dist[dst];
+}
+
+/**
+ * Problem 19: Reconstruct Itinerary (LC 332)
+ * Description:
+ * Given a list of airline tickets represented as `[from, to]`, reconstruct the itinerary
+ * in lexical order starting from `"JFK"`.
+ * Example:
+ * Input: [["MUC", "LHR"], ["JFK", "MUC"], ["SFO", "SJC"], ["LHR", "SFO"]]
+ * Output: ["JFK", "MUC", "LHR", "SFO", "SJC"]
+ */
+
+unordered_map<string, priority_queue<string, vector<string>, greater<>>> graph;
+vector<string> itinerary;
+
+void dfsItinerary(string node) {
+    while (!graph[node].empty()) {
+        string next = graph[node].top();
+        graph[node].pop();
+        dfsItinerary(next);
+    }
+    itinerary.push_back(node);
+}
+
+vector<string> findItinerary(vector<vector<string>>& tickets) {
+    for (auto& ticket : tickets) {
+        graph[ticket[0]].push(ticket[1]);
+    }
+
+    dfsItinerary("JFK");
+    reverse(itinerary.begin(), itinerary.end());
+    return itinerary;
+}
+
+/**
+ * Problem 20: Minimum Height Trees (LC 310)
+ * Description:
+ * A tree with `n` nodes (undirected) is given as an edge list.
+ * Find all roots that result in a tree with the minimum height.
+ * Example:
+ * Input: n = 4, edges = [[1,0], [1,2], [1,3]]
+ * Output: [1]
+ */
+
+vector<int> findMinHeightTrees(int n, vector<vector<int>>& edges) {
+    if (n == 1) return {0};
+
+    vector<vector<int>> graph(n);
+    vector<int> degree(n, 0);
+
+    for (auto& edge : edges) {
+        graph[edge[0]].push_back(edge[1]);
+        graph[edge[1]].push_back(edge[0]);
+        degree[edge[0]]++;
+        degree[edge[1]]++;
+    }
+
+    queue<int> q;
+    for (int i = 0; i < n; i++) {
+        if (degree[i] == 1) q.push(i);
+    }
+
+    while (n > 2) {
+        int size = q.size();
+        n -= size;
+        for (int i = 0; i < size; i++) {
+            int node = q.front(); q.pop();
+            for (int neighbor : graph[node]) {
+                if (--degree[neighbor] == 1) q.push(neighbor);
+            }
+        }
+    }
+
+    vector<int> result;
+    while (!q.empty()) {
+        result.push_back(q.front());
+        q.pop();
+    }
+
+    return result;
+}
+
 int main() {
     // Test DFS
     vector<vector<int>> testGraph = {{1, 2}, {3}, {3}, {}};
@@ -717,6 +1157,77 @@ int main() {
     // Problem 9: Shortest Path in Binary Matrix
     vector<vector<int>> grid9 = {{0, 1}, {1, 0}};
     cout << "Shortest Path in Binary Matrix: " << shortestPathBinaryMatrix(grid9) << endl;
+
+    // Test Problem 10: Strongly Connected Components (Tarjan's Algorithm)
+    vector<vector<int>> edges10 = {{0,1}, {1,2}, {2,0}, {1,3}, {3,4}};
+    vector<vector<int>> sccs = findSCCs(5, edges10);
+    cout << "SCCs: ";
+    for (auto& scc : sccs) {
+        cout << "[ ";
+        for (int node : scc) cout << node << " ";
+        cout << "] ";
+    }
+    cout << endl;
+
+    // Test Problem 11: Detect Bipartite Graph
+    vector<vector<int>> edges11 = {{1,2}, {2,3}, {3,4}, {4,1}, {1,3}};
+    cout << "Is Bipartite: " << (isBipartite(edges11) ? "Yes" : "No") << endl;
+
+    // Test Problem 12: Eulerian Path
+    vector<vector<string>> edges12 = {{"JFK", "SFO"}, {"JFK", "ATL"}, {"SFO", "ATL"}, {"ATL", "JFK"}, {"ATL", "SFO"}};
+    vector<string> eulerPathResult = findEulerianPath(edges12);
+    cout << "Eulerian Path: ";
+    for (const string& airport : eulerPathResult) cout << airport << " ";
+    cout << endl;
+
+    // Test Problem 13: Hamiltonian Path
+    vector<vector<int>> edges13 = {{0,1}, {1,2}, {2,3}, {3,0}};
+    cout << "Has Hamiltonian Path: " << (hasHamiltonianPath(4, edges13) ? "Yes" : "No") << endl;
+
+    // Test Problem 14: Topological Sort (DFS)
+    vector<vector<int>> edges14 = {{1, 0}, {2, 0}, {3, 1}, {3, 2}};
+    vector<int> topoSortResult = topologicalSortDFSWrapper(4, edges14);
+    cout << "Topological Sort (DFS): ";
+    for (int node : topoSortResult) cout << node << " ";
+    cout << endl;
+
+    // Test Problem 15: Articulation Points
+    vector<vector<int>> edges15 = {{0,1}, {1,2}, {2,0}, {1,3}, {3,4}};
+    vector<int> articulationPoints = findArticulationPoints(5, edges15);
+    cout << "Articulation Points: ";
+    for (int node : articulationPoints) cout << node << " ";
+    cout << endl;
+
+    // Test Problem 16: Bridges in a Graph
+    vector<vector<int>> edges16 = {{0,1}, {1,2}, {2,0}, {1,3}, {3,4}};
+    vector<vector<int>> bridges = findBridges(5, edges16);
+    cout << "Bridges: ";
+    for (const auto& edge : bridges) {
+        cout << "[" << edge[0] << ", " << edge[1] << "] ";
+    }
+    cout << endl;
+
+    // Test Problem 17: Find the Town Judge
+    vector<vector<int>> trust17 = {{1, 3}, {2, 3}};
+    cout << "Town Judge: " << findJudge(3, trust17) << endl;
+
+    // Test Problem 18: Cheapest Flights Within K Stops
+    vector<vector<int>> flights18 = {{0,1,100}, {1,2,100}, {0,2,500}};
+    cout << "Cheapest Flight Price: " << findCheapestPrice(3, flights18, 0, 2, 1) << endl;
+
+    // Test Problem 19: Reconstruct Itinerary
+    vector<vector<string>> tickets19 = {{"MUC", "LHR"}, {"JFK", "MUC"}, {"SFO", "SJC"}, {"LHR", "SFO"}};
+    vector<string> itinerary19 = findItinerary(tickets19);
+    cout << "Reconstructed Itinerary: ";
+    for (const string& airport : itinerary19) cout << airport << " ";
+    cout << endl;
+
+    // Test Problem 20: Minimum Height Trees
+    vector<vector<int>> edges20 = {{1,0}, {1,2}, {1,3}};
+    vector<int> minHeightRoots = findMinHeightTrees(4, edges20);
+    cout << "Minimum Height Trees: ";
+    for (int root : minHeightRoots) cout << root << " ";
+    cout << endl;
 
     return 0;
 }

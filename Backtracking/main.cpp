@@ -3,6 +3,7 @@
 #include <string>
 #include <algorithm>
 #include <numeric>
+#include <unordered_set>
 using namespace std;
 
 /**
@@ -479,6 +480,151 @@ bool hamiltonianPath(vector<vector<int>>& graph) {
     return false;
 }
 
+/**
+ * Problem 13: Letter Combinations of a Phone Number (LC 17)
+ * Description:
+ * Given a string containing digits from 2-9, return all possible letter combinations
+ * that the number could represent. (Phone keypad mapping).
+ * Approach:
+ * Use backtracking to explore all letter combinations for each digit.
+ * Example:
+ * Input: digits = "23"
+ * Output: ["ad","ae","af","bd","be","bf","cd","ce","cf"]
+ */
+vector<string> letterCombinationsHelper(const string& digits, int index, const vector<string>& mapping, string& current, vector<string>& result) {
+    if (index == digits.size()) {
+        result.push_back(current);
+        return result;
+    }
+    for (char c : mapping[digits[index] - '2']) {
+        current.push_back(c);
+        letterCombinationsHelper(digits, index + 1, mapping, current, result);
+        current.pop_back();  // Backtrack
+    }
+    return result;
+}
+
+vector<string> letterCombinations(string digits) {
+    if (digits.empty()) return {};
+    vector<string> mapping = {"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+    vector<string> result;
+    string current;
+    return letterCombinationsHelper(digits, 0, mapping, current, result);
+}
+
+/**
+ * Problem 14: Sudoku Solver (LC 37)
+ * Description:
+ * Solve a given Sudoku puzzle by filling the empty cells.
+ * Approach:
+ * Use backtracking to place numbers 1-9 and validate constraints.
+ * Example:
+ * Input:
+ * board = [
+ *  ["5","3",".",".","7",".",".",".","."],
+ *  ["6",".",".","1","9","5",".",".","."],
+ *  [".","9","8",".",".",".",".","6","."],
+ *  ["8",".",".",".","6",".",".",".","3"],
+ *  ["4",".",".","8",".","3",".",".","1"],
+ *  ["7",".",".",".","2",".",".",".","6"],
+ *  [".","6",".",".",".",".","2","8","."],
+ *  [".",".",".","4","1","9",".",".","5"],
+ *  [".",".",".",".","8",".",".","7","9"]
+ * ]
+ * Output: Solution board filled.
+ */
+bool isValid(vector<vector<char>>& board, int row, int col, char num) {
+    for (int i = 0; i < 9; i++) {
+        if (board[row][i] == num || board[i][col] == num || 
+            board[3 * (row / 3) + i / 3][3 * (col / 3) + i % 3] == num) return false;
+    }
+    return true;
+}
+
+bool solveSudokuHelper(vector<vector<char>>& board) {
+    for (int row = 0; row < 9; row++) {
+        for (int col = 0; col < 9; col++) {
+            if (board[row][col] == '.') {
+                for (char num = '1'; num <= '9'; num++) {
+                    if (isValid(board, row, col, num)) {
+                        board[row][col] = num;
+                        if (solveSudokuHelper(board)) return true;
+                        board[row][col] = '.';  // Backtrack
+                    }
+                }
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+void solveSudoku(vector<vector<char>>& board) {
+    solveSudokuHelper(board);
+}
+
+/**
+ * Problem 15: Word Break II (LC 140)
+ * Description:
+ * Given a string s and a dictionary of words, return all possible sentences that can be formed.
+ * Approach:
+ * Use backtracking with memoization to efficiently generate valid sentences.
+ * Example:
+ * Input: s = "catsanddog", wordDict = ["cat","cats","and","sand","dog"]
+ * Output: ["cats and dog","cat sand dog"]
+ */
+unordered_map<string, vector<string>> memo;
+
+vector<string> wordBreakHelper(const string& s, unordered_set<string>& wordDict) {
+    if (memo.count(s)) return memo[s];
+    vector<string> result;
+    if (wordDict.count(s)) result.push_back(s);
+    for (int i = 1; i < s.size(); i++) {
+        string prefix = s.substr(0, i), suffix = s.substr(i);
+        if (wordDict.count(prefix)) {
+            vector<string> suffixResults = wordBreakHelper(suffix, wordDict);
+            for (const string& sr : suffixResults) result.push_back(prefix + " " + sr);
+        }
+    }
+    return memo[s] = result;
+}
+
+vector<string> wordBreak(string s, vector<string>& wordDict) {
+    unordered_set<string> wordSet(wordDict.begin(), wordDict.end());
+    return wordBreakHelper(s, wordSet);
+}
+
+/**
+ * Problem 16: Restore IP Addresses (LC 93)
+ * Description:
+ * Given a string containing digits, return all possible valid IP addresses that can be formed.
+ * Approach:
+ * Use backtracking to explore all valid IP segments.
+ * Example:
+ * Input: s = "25525511135"
+ * Output: ["255.255.11.135","255.255.111.35"]
+ */
+void restoreIPHelper(string& s, int start, int part, string current, vector<string>& result) {
+    if (part == 4 && start == s.size()) {
+        result.push_back(current.substr(0, current.size() - 1)); // Remove last dot
+        return;
+    }
+    if (part == 4 || start == s.size()) return;
+
+    for (int len = 1; len <= 3; len++) {
+        if (start + len > s.size()) return;
+        string segment = s.substr(start, len);
+        if ((segment.size() > 1 && segment[0] == '0') || stoi(segment) > 255) return;
+        restoreIPHelper(s, start + len, part + 1, current + segment + ".", result);
+    }
+}
+
+vector<string> restoreIpAddresses(string s) {
+    vector<string> result;
+    restoreIPHelper(s, 0, 0, "", result);
+    return result;
+}
+
 int main() {
     // Test Problem 1: Generate Parentheses
     cout << "Test Problem 1: Generate Parentheses (LC 22) \n";
@@ -632,6 +778,42 @@ int main() {
 
     bool result_12 = hamiltonianPath(graph_12);
     cout << "Has Hamiltonian Path: " << (result_12 ? "true" : "false") << " (Expected: true)\n" << endl;
+
+    // Test Problem 13: Letter Combinations of a Phone Number
+    cout << "Test Problem 13: Letter Combinations (LC 17)\n";
+    vector<string> letters = letterCombinations("23");
+    for (const string& str : letters) cout << str << " ";
+    cout << endl;
+
+    // Test Problem 14: Sudoku Solver
+    cout << "Test Problem 14: Sudoku Solver (LC 37)\n";
+    vector<vector<char>> board_14 = {
+        {'5', '3', '.', '.', '7', '.', '.', '.', '.'},
+        {'6', '.', '.', '1', '9', '5', '.', '.', '.'},
+        {'.', '9', '8', '.', '.', '.', '.', '6', '.'},
+        {'8', '.', '.', '.', '6', '.', '.', '.', '3'},
+        {'4', '.', '.', '8', '.', '3', '.', '.', '1'},
+        {'7', '.', '.', '.', '2', '.', '.', '.', '6'},
+        {'.', '6', '.', '.', '.', '.', '2', '8', '.'},
+        {'.', '.', '.', '4', '1', '9', '.', '.', '5'},
+        {'.', '.', '.', '.', '8', '.', '.', '7', '9'}
+    };
+    solveSudoku(board_14);
+    for (const auto& row : board_14) {
+        for (char num : row) cout << num << " ";
+        cout << endl;
+    }
+
+    // Test Problem 15: Word Break II
+    cout << "Test Problem 15: Word Break II (LC 140)\n";
+    vector<string> wordDict = {"cat", "cats", "and", "sand", "dog"};
+    vector<string> sentences = wordBreak("catsanddog", wordDict);
+    for (const string& sentence : sentences) cout << sentence << endl;
+
+    // Test Problem 16: Restore IP Addresses
+    cout << "Test Problem 16: Restore IP Addresses (LC 93)\n";
+    vector<string> ips = restoreIpAddresses("25525511135");
+    for (const string& ip : ips) cout << ip << endl;
 
     return 0;
 }

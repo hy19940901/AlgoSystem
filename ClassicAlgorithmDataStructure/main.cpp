@@ -6,8 +6,24 @@
 #include <memory>
 using namespace std;
 
-/**
- * Problem 1: LRU Cache (lc146)
+ /**
+ * Problem 1: LRU Cache (LeetCode 146)
+ *
+ * Design a Least Recently Used (LRU) cache that supports:
+ * - `get(int key)`: Return the value of the key if it exists, otherwise return -1.
+ * - `put(int key, int value)`: Insert or update the value of the key.
+ *   If the cache reaches capacity, remove the least recently used key.
+ *
+ * Example:
+ * LRUCache lru(5);
+ * lru.put(1, 10);
+ * lru.put(2, 20);
+ * lru.put(3, 30);
+ * lru.put(4, 40);
+ * lru.put(5, 50);
+ * cout << lru.get(1) << endl; // Output: 10
+ * lru.put(6, 60); // Removes key 2
+ * cout << lru.get(2) << endl; // Output: -1 (not found)
  */
 class LRUCache {
 public:
@@ -88,7 +104,18 @@ public:
 };
 
 /**
- * Problem 2: Implement Trie (lc208)
+ * Problem 2: Implement Trie (LeetCode 208)
+ *
+ * Design a Trie (prefix tree) that supports:
+ * - `insert(string word)`: Inserts `word` into the trie.
+ * - `search(string word)`: Returns `true` if `word` is in the trie.
+ * - `startsWith(string prefix)`: Returns `true` if any word in the trie starts with `prefix`.
+ *
+ * Example:
+ * Trie trie;
+ * trie.insert("hello");
+ * cout << trie.search("hello") << endl; // Output: true
+ * cout << trie.startsWith("he") << endl; // Output: true
  */
 class TrieNode {
 public:
@@ -144,6 +171,20 @@ public:
 
 /**
  * Problem 3: LFU Cache (Custom Implementation)
+ *
+ * Design a Least Frequently Used (LFU) cache that supports:
+ * - `get(int key)`: Return the value of the key if it exists, otherwise return -1.
+ * - `put(int key, int value)`: Insert or update the value of the key.
+ *   If the cache reaches capacity, remove the least frequently used key.
+ *
+ * Example:
+ * LFUCache lfu(3);
+ * lfu.put(1, 10);
+ * lfu.put(2, 20);
+ * lfu.put(3, 30);
+ * cout << lfu.get(1) << endl; // Output: 10
+ * lfu.put(4, 40); // Removes key 2 (least frequently used)
+ * cout << lfu.get(2) << endl; // Output: -1 (not found)
  */
 class LFUCache {
 private:
@@ -190,6 +231,17 @@ public:
 
 /**
  * Problem 4: Disjoint Set Union (Union-Find)
+ *
+ * Implement Disjoint Set Union (Union-Find) with:
+ * - `find(int x)`: Returns the representative of `x`'s set.
+ * - `unite(int x, int y)`: Merges sets containing `x` and `y`.
+ *
+ * Example:
+ * DisjointSetUnion dsu(5);
+ * dsu.unite(0, 1);
+ * dsu.unite(2, 3);
+ * cout << dsu.find(1) << endl; // Output: Representative of set containing 1
+ * cout << dsu.find(3) << endl; // Output: Representative of set containing 3
  */
 class DisjointSetUnion {
 private:
@@ -230,36 +282,53 @@ public:
  */
 int main() {
     // Test LRU Cache
-    LRUCache lru(2);
-    lru.put(1, 1);
-    lru.put(2, 2);
-    cout << "LRU Get(1): " << lru.get(1) << endl;
-    lru.put(3, 3);
-    cout << "LRU Get(2): " << lru.get(2) << endl;
+    LRUCache lru(5);
+    lru.put(1, 10);
+    lru.put(2, 20);
+    lru.put(3, 30);
+    lru.put(4, 40);
+    lru.put(5, 50);
+    cout << "LRU Get(1): " << lru.get(1) << endl; // 10
+    lru.put(6, 60); // Removes key 2 (LRU policy)
+    cout << "LRU Get(2): " << lru.get(2) << endl; // -1 (not found)
+    cout << "LRU Get(3): " << lru.get(3) << endl; // 30
+    lru.put(7, 70); // Removes key 3
+    cout << "LRU Get(3): " << lru.get(3) << endl; // -1 (not found)
 
     // Test Trie
     Trie trie;
-    trie.insert("apple");
-    cout << "Trie Search(apple): " << trie.search("apple") << endl;
-    cout << "Trie StartsWith(app): " << trie.startsWith("app") << endl;
+    trie.insert("hello");
+    trie.insert("world");
+    trie.insert("hi");
+    cout << "Trie Search(hello): " << trie.search("hello") << endl; // true
+    cout << "Trie Search(world): " << trie.search("world") << endl; // true
+    cout << "Trie Search(hell): " << trie.search("hell") << endl; // false
+    cout << "Trie StartsWith(he): " << trie.startsWith("he") << endl; // true
+    cout << "Trie StartsWith(wo): " << trie.startsWith("wo") << endl; // true
 
     // Test LFU Cache
-    LFUCache lfu(2);
-    lfu.put(1, 1);
-    lfu.put(2, 2);
-    cout << "LFU Get(1): " << lfu.get(1) << endl;
-    lfu.put(3, 3);
-    cout << "LFU Get(2): " << lfu.get(2) << endl;
+    LFUCache lfu(3);
+    lfu.put(1, 10);
+    lfu.put(2, 20);
+    lfu.put(3, 30);
+    cout << "LFU Get(1): " << lfu.get(1) << endl; // 10
+    lfu.put(4, 40); // Removes key 2 (least frequently used)
+    cout << "LFU Get(2): " << lfu.get(2) << endl; // -1 (not found)
+    cout << "LFU Get(3): " << lfu.get(3) << endl; // 30
+    lfu.get(1); // Increase frequency of key 1
+    lfu.put(5, 50); // Removes key 3 (least frequently used now)
+    cout << "LFU Get(3): " << lfu.get(3) << endl; // -1 (not found)
+    cout << "LFU Get(1): " << lfu.get(1) << endl; // 10
 
     // Test Disjoint Set Union
     DisjointSetUnion dsu(5);
     dsu.unite(0, 1);
-    dsu.unite(1, 2);
-    cout << "DSU Find(0): " << dsu.find(0) << endl;
-    cout << "DSU Find(2): " << dsu.find(2) << endl;
-    dsu.unite(3, 4);
+    dsu.unite(2, 3);
+    cout << "DSU Find(1): " << dsu.find(1) << endl;
     cout << "DSU Find(3): " << dsu.find(3) << endl;
-    cout << "DSU Find(4): " << dsu.find(4) << endl;
+    dsu.unite(1, 2);
+    cout << "DSU Find(0): " << dsu.find(0) << endl; // Now 0, 1, 2, and 3 are in the same set
+    return 0;
 
     return 0;
 }

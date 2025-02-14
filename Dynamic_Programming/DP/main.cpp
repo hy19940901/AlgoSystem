@@ -565,25 +565,30 @@ int longestCommonSubsequenceOptimized(string text1, string text2) {
  * 2. s consist of only digits and English letters.
  */
 string longestPalindrome(string s) {
-    int n = s.size();
-    vector<vector<bool>> dp(n, vector<bool>(n, false));
-    int start = 0, maxLength = 1;
+    if (s.length() <= 1) {
+        return s;
+    }
 
-    for (int i = 0; i < n; ++i) dp[i][i] = true; // Single characters are palindromes
+    int max_len = 1;
+    int start = 0;
+    int end = 0;
+    std::vector<std::vector<bool>> dp(s.length(), std::vector<bool>(s.length(), false));
 
-    for (int len = 2; len <= n; ++len) {
-        for (int i = 0; i <= n - len; ++i) {
-            int j = i + len - 1;
-            if (s[i] == s[j]) {
-                dp[i][j] = (len == 2 || dp[i + 1][j - 1]);
-                if (dp[i][j] && len > maxLength) {
-                    start = i;
-                    maxLength = len;
+    for (int i = 0; i < s.length(); ++i) {
+        dp[i][i] = true;
+        for (int j = 0; j < i; ++j) {
+            if (s[j] == s[i] && (i - j <= 2 || dp[j + 1][i - 1])) {
+                dp[j][i] = true;
+                if (i - j + 1 > max_len) {
+                    max_len = i - j + 1;
+                    start = j;
+                    end = i;
                 }
             }
         }
     }
-    return s.substr(start, maxLength);
+
+    return s.substr(start, end - start + 1);
 }
 
 /**
@@ -705,6 +710,218 @@ int maxProduct(vector<int>& nums) {
     return result;
 }
 
+/**
+ * Problem 22: Best Time to Buy and Sell Stock (LC 121)
+ * Description:
+ * Given an array `prices` where prices[i] is the price of a stock on day `i`,
+ * return the maximum profit you can achieve from a single transaction.
+ *
+ * Example:
+ * Input: prices = [7,1,5,3,6,4]
+ * Output: 5
+ * Explanation: Buy on day 2 (price = 1) and sell on day 5 (price = 6), profit = 6 - 1 = 5.
+ */
+int maxProfit(vector<int>& prices) {
+    int minPrice = INT_MAX, maxProfit = 0;
+    for (int price : prices) {
+        minPrice = min(minPrice, price);
+        maxProfit = max(maxProfit, price - minPrice);
+    }
+    return maxProfit;
+}
+
+/**
+ * Problem 23: Best Time to Buy and Sell Stock II (LC 122)
+ * Description:
+ * You may complete as many transactions as you like (buy one and sell one share of the stock multiple times).
+ *
+ * Example:
+ * Input: prices = [7,1,5,3,6,4]
+ * Output: 7
+ * Explanation: Buy on day 2 (1), sell on day 3 (5), buy on day 4 (3), sell on day 5 (6).
+ */
+int maxProfitMultiple(vector<int>& prices) {
+    int profit = 0;
+    for (int i = 1; i < prices.size(); ++i) {
+        if (prices[i] > prices[i - 1]) {
+            profit += prices[i] - prices[i - 1];
+        }
+    }
+    return profit;
+}
+
+/**
+ * Problem 24: House Robber II (LC 213)
+ * Description:
+ * You are a professional robber planning to rob houses along a **circular street**. Each house has a certain amount of money stashed.
+ *
+ * Example:
+ * Input: nums = [2,3,2]
+ * Output: 3
+ * Explanation: You cannot rob both house 1 and house 3 because they are adjacent.
+ */
+int robHelper(vector<int>& nums, int left, int right) {
+    int prev1 = 0, prev2 = 0;
+    for (int i = left; i <= right; ++i) {
+        int temp = prev1;
+        prev1 = max(prev1, prev2 + nums[i]);
+        prev2 = temp;
+    }
+    return prev1;
+}
+int robCircular(vector<int>& nums) {
+    if (nums.size() == 1) return nums[0];
+    return max(robHelper(nums, 0, nums.size() - 2), robHelper(nums, 1, nums.size() - 1));
+}
+
+/**
+ * Problem 25: Wildcard Matching (LC 44)
+ * Description:
+ * Implement wildcard pattern matching with `?` (matches any single character) and `*` (matches any sequence).
+ *
+ * Example:
+ * Input: s = "adceb", p = "*a*b"
+ * Output: true
+ */
+bool isMatch(string s, string p) {
+    int m = s.size(), n = p.size();
+    vector<vector<bool>> dp(m + 1, vector<bool>(n + 1, false));
+    dp[0][0] = true;
+
+    for (int j = 1; j <= n; ++j) {
+        if (p[j - 1] == '*') dp[0][j] = dp[0][j - 1];
+    }
+
+    for (int i = 1; i <= m; ++i) {
+        for (int j = 1; j <= n; ++j) {
+            if (p[j - 1] == '*') {
+                dp[i][j] = dp[i][j - 1] || dp[i - 1][j];
+            } else if (p[j - 1] == '?' || s[i - 1] == p[j - 1]) {
+                dp[i][j] = dp[i - 1][j - 1];
+            }
+        }
+    }
+    return dp[m][n];
+}
+
+/**
+ * Problem 26: Interleaving String (LC 97)
+ * Description:
+ * Given three strings `s1`, `s2`, and `s3`, return true if `s3` is formed by interleaving `s1` and `s2`.
+ *
+ * Example:
+ * Input: s1 = "aab", s2 = "axy", s3 = "aaxaby"
+ * Output: true
+ */
+bool isInterleave(string s1, string s2, string s3) {
+    int m = s1.size(), n = s2.size();
+    if (m + n != s3.size()) return false;
+    vector<vector<bool>> dp(m + 1, vector<bool>(n + 1, false));
+    dp[0][0] = true;
+
+    for (int i = 1; i <= m; ++i) dp[i][0] = dp[i - 1][0] && s1[i - 1] == s3[i - 1];
+    for (int j = 1; j <= n; ++j) dp[0][j] = dp[0][j - 1] && s2[j - 1] == s3[j - 1];
+
+    for (int i = 1; i <= m; ++i) {
+        for (int j = 1; j <= n; ++j) {
+            dp[i][j] = (dp[i - 1][j] && s1[i - 1] == s3[i + j - 1]) ||
+                       (dp[i][j - 1] && s2[j - 1] == s3[i + j - 1]);
+        }
+    }
+    return dp[m][n];
+}
+
+/**
+ * Problem 27: Best Time to Buy and Sell Stock with Cooldown (LC 309)
+ * Description:
+ * You are given an array `stockPrices3` where `stockPrices3[i]` is the price of a stock on day `i`.
+ * You may complete as many transactions as you like, but you must wait **one day cooldown** after selling.
+ * 
+ * Example:
+ * Input: stockPrices3 = [1,2,3,0,2]
+ * Output: 3
+ * Explanation: Buy on day 1 (price = 1), sell on day 3 (price = 3), cooldown on day 4, buy on day 5 (price = 0), sell on day 6 (price = 2).
+ */
+int maxProfitCooldown(vector<int>& stockPrices3) {
+    if (stockPrices3.empty()) return 0;
+    int n = stockPrices3.size();
+    vector<int> buy(n, 0), sell(n, 0), cooldown(n, 0);
+    
+    buy[0] = -stockPrices3[0];  // First day buy
+    for (int i = 1; i < n; ++i) {
+        buy[i] = max(buy[i - 1], cooldown[i - 1] - stockPrices3[i]); // Buy or do nothing
+        sell[i] = max(sell[i - 1], buy[i - 1] + stockPrices3[i]); // Sell or do nothing
+        cooldown[i] = max(cooldown[i - 1], sell[i - 1]); // Cooldown or do nothing
+    }
+    return sell[n - 1];
+}
+
+/**
+ * Problem 28: Paint House (LC 256)
+ * Description:
+ * There are `houses` in a row, and each house can be painted with one of `three colors`: red, blue, or green.
+ * The cost of painting each house with a certain color is different.
+ * You have to **paint all houses** such that **no two adjacent houses have the same color**.
+ * 
+ * Example:
+ * Input: costMatrix = [[17,2,17],[16,16,5],[14,3,19]]
+ * Output: 10
+ * Explanation: Paint house 0 as blue, house 1 as green, house 2 as blue.
+ */
+int minCost(vector<vector<int>>& costMatrix) {
+    int n = costMatrix.size();
+    vector<vector<int>> dp(n, vector<int>(3, 0));
+    dp[0] = costMatrix[0]; // First house same as input
+
+    for (int i = 1; i < n; ++i) {
+        dp[i][0] = costMatrix[i][0] + min(dp[i - 1][1], dp[i - 1][2]); // Paint Red
+        dp[i][1] = costMatrix[i][1] + min(dp[i - 1][0], dp[i - 1][2]); // Paint Blue
+        dp[i][2] = costMatrix[i][2] + min(dp[i - 1][0], dp[i - 1][1]); // Paint Green
+    }
+    return min({dp[n - 1][0], dp[n - 1][1], dp[n - 1][2]});
+}
+
+/**
+ * Problem 29: Jump Game (LC 55)
+ * Description:
+ * Given an array `jumpNums` where `jumpNums[i]` represents the **maximum** jump length at that position,
+ * return **true** if you can reach the last index.
+ * 
+ * Example:
+ * Input: jumpNums = [2,3,1,1,4]
+ * Output: true
+ */
+bool canJump(vector<int>& jumpNums) {
+    int farthest = 0;
+    for (int i = 0; i < jumpNums.size(); ++i) {
+        if (i > farthest) return false; // Cannot reach this position
+        farthest = max(farthest, i + jumpNums[i]);
+    }
+    return true;
+}
+
+/**
+ * Problem 30: Jump Game II (LC 45)
+ * Description:
+ * Given an array `jumpNums2`, return the **minimum number of jumps** required to reach the last index.
+ * 
+ * Example:
+ * Input: jumpNums2 = [2,3,1,1,4]
+ * Output: 2
+ * Explanation: Jump from index 0 to 1, then from 1 to 4.
+ */
+int jumpMinSteps(vector<int>& jumpNums2) {
+    int jumps = 0, end = 0, farthest = 0;
+    for (int i = 0; i < jumpNums2.size() - 1; ++i) {
+        farthest = max(farthest, i + jumpNums2[i]);
+        if (i == end) {
+            jumps++;
+            end = farthest;
+        }
+    }
+    return jumps;
+}
+
 int main() {
     // Test Problem 1: Climbing Stairs (LC 70)
     int n = 5;
@@ -797,6 +1014,42 @@ int main() {
     // Test Problem 21: Maximum Product Subarray (LC 152)
     vector<int> lc152_nums = {2, 3, -2, 4};
     cout << "Maximum Product Subarray (LC 152): " << maxProduct(lc152_nums) << endl; // Output: 6
+
+    // Test Problem 22: Best Time to Buy and Sell Stock
+    vector<int> stockPrices1 = {7,1,5,3,6,4};
+    cout << "Max Profit (Single Transaction): " << maxProfit(stockPrices1) << endl;
+
+    // Test Problem 23: Best Time to Buy and Sell Stock II
+    vector<int> stockPrices2 = {7,1,5,3,6,4};
+    cout << "Max Profit (Multiple Transactions): " << maxProfitMultiple(stockPrices2) << endl;
+
+    // Test Problem 24: House Robber II
+    vector<int> houses = {2,3,2};
+    cout << "Max Robbery Amount (Circular Street): " << robCircular(houses) << endl;
+
+    // Test Problem 25: Wildcard Matching
+    string wildcardStr = "adceb", wildcardPattern = "*a*b";
+    cout << "Wildcard Matching: " << (isMatch(wildcardStr, wildcardPattern) ? "true" : "false") << endl;
+
+    // Test Problem 26: Interleaving String
+    string str1 = "aab", str2 = "axy", interleavedStr = "aaxaby";
+    cout << "Is Interleaving: " << (isInterleave(str1, str2, interleavedStr) ? "true" : "false") << endl;
+
+    // Test Problem 27: Best Time to Buy and Sell Stock with Cooldown
+    vector<int> stockPrices3 = {1,2,3,0,2};
+    cout << "Max Profit with Cooldown: " << maxProfitCooldown(stockPrices3) << endl;
+
+    // Test Problem 28: Paint House
+    vector<vector<int>> costMatrix = {{17,2,17},{16,16,5},{14,3,19}};
+    cout << "Minimum Cost to Paint Houses: " << minCost(costMatrix) << endl;
+
+    // Test Problem 29: Jump Game
+    vector<int> jumpNums = {2,3,1,1,4};
+    cout << "Can Jump to Last Index: " << (canJump(jumpNums) ? "true" : "false") << endl;
+
+    // Test Problem 30: Jump Game II
+    vector<int> jumpNums2 = {2,3,1,1,4};
+    cout << "Minimum Jumps to Reach End: " << jumpMinSteps(jumpNums2) << endl;
 
     return 0;
 }

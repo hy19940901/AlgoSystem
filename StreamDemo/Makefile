@@ -43,3 +43,4 @@ server: $(SERVER_SRCS) $(LIB_NAME)
 # Clean up generated files
 clean:
 	rm -f server $(LIB_NAME) $(LIB_OBJS)
+	rm -f *.swo *.swp

@@ -82,44 +82,6 @@ ListNode* mergeKLists(vector<ListNode*>& lists) {
     return head->next;
 }
 
-ListNode* Partition(vector<ListNode*>& lists, int l, int r) {
-        if (l == r) return lists[l];
-        if (l < r) {
-            int mid = l + (r - l) / 2;
-            ListNode* l1 = Partition(lists, l, mid);
-            ListNode* l2 = Partition(lists, mid + 1, r);
-            return Merge(l1, l2);
-        }
-        return nullptr;
-    }
-
-    ListNode* Merge(ListNode* l1, ListNode* l2) {
-        if (!l1) return l2;
-        if (!l2) return l1;
-        ListNode* dummy = new ListNode(0);
-        dummy->next = nullptr;
-        ListNode* cur = dummy, *cur1 = l1, *cur2 = l2;
-        while (cur1 && cur2) {
-            if (cur1->val <= cur2->val) {
-                cur->next = cur1;
-                cur1 = cur1->next;
-            }
-            else {
-                cur->next = cur2;
-                cur2 = cur2->next;
-            }
-            cur = cur->next;
-        }
-        if (!cur1) cur->next = cur2;
-        if (!cur2) cur->next = cur1;
-        return dummy->next;
-    }
-
-    ListNode* mergeKLists(vector<ListNode*>& lists) {
-        if (!lists.size()) return nullptr;
-        return Partition(lists, 0, lists.size() - 1);
-    }
-
 /**
  * Problem 3: Top K Frequent Elements (LC 347)
  * Description:

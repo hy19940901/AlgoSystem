@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <numeric>
 
 using namespace std;
 
@@ -174,6 +175,147 @@ int completeKnapsackBruteForce(int idx, int remainingCapacity, const vector<Item
     return maxVal;
 }
 
+/*
+ * Problem 1: Partition Equal Subset Sum (LC 416)
+ * Description:
+ * Given an integer array nums, return true if you can partition the array into two subsets
+ * such that the sum of the elements in both subsets is equal.
+ *
+ * Example:
+ * Input: nums = [1,5,11,5]
+ * Output: true
+ */
+bool canPartition(vector<int>& numsPartition) {
+    int sum = accumulate(numsPartition.begin(), numsPartition.end(), 0);
+    if (sum % 2 != 0) return false;
+    int target = sum / 2;
+
+    vector<bool> dp(target + 1, false);
+    dp[0] = true;
+
+    for (int num : numsPartition) {
+        for (int j = target; j >= num; --j) {
+            dp[j] = dp[j] || dp[j - num];
+        }
+    }
+    return dp[target];
+}
+
+/*
+ * Problem 2: Target Sum (LC 494)
+ * Description:
+ * You are given an integer array nums and an integer target. You want to build an expression
+ * by inserting '+' or '-' before each number. Return the number of ways you can build the expression.
+ *
+ * Example:
+ * Input: nums = [1,1,1,1,1], target = 3
+ * Output: 5
+ */
+int findTargetSumWays(vector<int>& numsTarget, int target) {
+    int sum = accumulate(numsTarget.begin(), numsTarget.end(), 0);
+    if ((sum + target) % 2 != 0 || sum < abs(target)) return 0;
+
+    int newTarget = (sum + target) / 2;
+    vector<int> dp(newTarget + 1, 0);
+    dp[0] = 1;
+
+    for (int num : numsTarget) {
+        for (int j = newTarget; j >= num; --j) {
+            dp[j] += dp[j - num];
+        }
+    }
+    return dp[newTarget];
+}
+
+/*
+ * Problem 3: Coin Change II (LC 518)
+ * Description:
+ * Given an integer array coins and an integer amount, return the number of ways to make up that amount.
+ *
+ * Example:
+ * Input: coins = [1,2,5], amount = 5
+ * Output: 4
+ */
+int change(int amount, vector<int>& coins) {
+    vector<int> dp(amount + 1, 0);
+    dp[0] = 1;
+
+    for (int coin : coins) {
+        for (int j = coin; j <= amount; ++j) {
+            dp[j] += dp[j - coin];
+        }
+    }
+    return dp[amount];
+}
+
+/*
+ * Problem 4: Last Stone Weight II (LC 1049)
+ * Description:
+ * You are given an array stones where stones[i] is the weight of the ith stone. We combine two stones
+ * repeatedly until one stone remains. The goal is to minimize the remaining stone's weight.
+ *
+ * Example:
+ * Input: stones = [2,7,4,1,8,1]
+ * Output: 1
+ */
+int lastStoneWeightII(vector<int>& stones) {
+    int sum = accumulate(stones.begin(), stones.end(), 0);
+    int target = sum / 2;
+
+    vector<int> dp(target + 1, 0);
+    for (int stone : stones) {
+        for (int j = target; j >= stone; --j) {
+            dp[j] = max(dp[j], dp[j - stone] + stone);
+        }
+    }
+    return sum - 2 * dp[target];
+}
+
+/*
+ * Problem 5: Coin Change (LC 322)
+ * Description:
+ * Given an integer array coins representing different coin denominations and an integer amount,
+ * return the minimum number of coins needed to make up the amount.
+ *
+ * Example:
+ * Input: coins = [1,2,5], amount = 11
+ * Output: 3
+ */
+int coinChange(vector<int>& coins, int amount) {
+    vector<int> dp(amount + 1, INT_MAX);
+    dp[0] = 0;
+
+    for (int coin : coins) {
+        for (int j = coin; j <= amount; ++j) {
+            if (dp[j - coin] != INT_MAX) {
+                dp[j] = min(dp[j], dp[j - coin] + 1);
+            }
+        }
+    }
+    return dp[amount] == INT_MAX ? -1 : dp[amount];
+}
+
+/*
+ * Problem 6: Perfect Squares (LC 279)
+ * Description:
+ * Given an integer `n`, return the least number of perfect squares that sum to `n`.
+ *
+ * Example:
+ * Input: n = 12
+ * Output: 3
+ */
+int numSquares(int n) {
+    vector<int> dp(n + 1, INT_MAX);
+    dp[0] = 0;
+
+    for (int i = 1; i * i <= n; ++i) {
+        for (int j = i * i; j <= n; ++j) {
+            dp[j] = min(dp[j], dp[j - i * i] + 1);
+        }
+    }
+    return dp[n];
+}
+
 // =====================
 // Main Function: Testing all versions
 // =====================
@@ -239,6 +381,33 @@ int main() {
         }
     }
     cout << endl;
+
+    // Problem 1: Partition Equal Subset Sum
+    vector<int> numsPartition = {1, 5, 11, 5};
+    cout << "Problem 1: Can Partition Equal Subset Sum: " << (canPartition(numsPartition) ? "true" : "false") << endl;
+
+    // Problem 2: Target Sum
+    vector<int> numsTarget = {1, 1, 1, 1, 1};
+    int target = 3;
+    cout << "Problem 2: Target Sum Ways: " << findTargetSumWays(numsTarget, target) << endl;
+
+    // Problem 3: Coin Change II
+    vector<int> coins1 = {1, 2, 5};
+    int amount1 = 5;
+    cout << "Problem 3: Ways to Make Change: " << change(amount1, coins1) << endl;
+
+    // Problem 4: Last Stone Weight II
+    vector<int> stones = {2, 7, 4, 1, 8, 1};
+    cout << "Problem 4: Last Stone Weight II: " << lastStoneWeightII(stones) << endl;
+
+    // Problem 5: Coin Change
+    vector<int> coins2 = {1, 2, 5};
+    int amount2 = 11;
+    cout << "Problem 5: Fewest Coins Needed: " << coinChange(coins2, amount2) << endl;
+
+    // Problem 6: Perfect Squares
+    int n = 12;
+    cout << "Problem 6: Minimum Perfect Squares Needed: " << numSquares(n) << endl;
 
     return 0;
 }
