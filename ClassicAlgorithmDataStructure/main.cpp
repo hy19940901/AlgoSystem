@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <mutex>
 using namespace std;
 
  /**
@@ -25,81 +26,195 @@ using namespace std;
  * lru.put(6, 60); // Removes key 2
  * cout << lru.get(2) << endl; // Output: -1 (not found)
  */
-class LRUCache {
-public:
-    class Node {
-    public:
+
+/**
+ * LRU Cache implementation using manually implemented doubly linked list.
+ */
+class LRUCacheManual {
+private:
+    struct Node {
         int key, value;
-        Node* next, *prev;
-        Node(int key, int value) {
-            this->key = key;
-            this->value = value;
-            next = nullptr;
-            prev = nullptr;
-        }
+        Node* prev;
+        Node* next;
+        Node(int k, int v): key(k), value(v), prev(nullptr), next(nullptr) {}
     };
 
     int capacity;
-    unordered_map<int, Node*> mp;
-    Node* dummyHead = new Node(-1, -1);
-    Node* dummyTail = new Node(-1, -1);
+    unordered_map<int, Node*> cache;
+    Node* head;
+    Node* tail;
+    mutex mtx; // Mutex for thread safety, follow up
 
-    LRUCache(int capacity) {
-        this->capacity = capacity;
-        dummyHead->next = dummyTail;
-        dummyTail->prev = dummyHead;
+    void addToHead(Node* node) {
+        node->next = head->next;
+        node->prev = head;
+        head->next->prev = node;
+        head->next = node;
     }
 
-    ~LRUCache() {
-        Node* curr = dummyHead;
-        while (curr != nullptr) {
+    void removeNode(Node* node) {
+        node->prev->next = node->next;
+        node->next->prev = node->prev;
+    }
+
+    void moveToHead(Node* node) {
+        removeNode(node);
+        addToHead(node);
+    }
+
+    Node* removeTail() {
+        Node* node = tail->prev;
+        removeNode(node);
+        return node;
+    }
+
+public:
+    LRUCacheManual(int cap) : capacity(cap) {
+        head = new Node(-1, -1);
+        tail = new Node(-1, -1);
+        head->next = tail;
+        tail->prev = head;
+    }
+
+    ~LRUCacheManual() {
+        Node* curr = head;
+        while (curr) {
             Node* nextNode = curr->next;
             delete curr;
             curr = nextNode;
         }
     }
 
-    void deleteNode(Node* node) {
-        node->prev->next = node->next;
-        node->next->prev = node->prev;
-    }
-
-    void insertAtHead(Node* node) {
-        Node* temp = dummyHead->next;
-        dummyHead->next = node;
-        node->prev = dummyHead;
-
-        node->next = temp;
-        temp->prev = node;
-    }
-
     int get(int key) {
-        if (mp.find(key) == mp.end()) return -1;
-        else {
-            Node* curNode = mp[key];
-            deleteNode(curNode);
-            insertAtHead(curNode);
-            return curNode->value;
-        }
+        lock_guard<mutex> lock(mtx); // Follow up, for thread safety
+        if (!cache.count(key)) return -1;
+        Node* node = cache[key];
+        moveToHead(node);
+        return node->value;
     }
 
     void put(int key, int value) {
-        if (mp.find(key) != mp.end()) {
-            Node* currNode = mp[key];
-            currNode->value = value;
-            deleteNode(currNode);
-            insertAtHead(currNode);
+        lock_guard<mutex> lock(mtx); // Follow up, for thread safety
+        if (cache.count(key)) {
+            Node* node = cache[key];
+            node->value = value;
+            moveToHead(node);
         } else {
             Node* newNode = new Node(key, value);
-            if (mp.size() == capacity) {
-                Node* todel = dummyTail->prev;
-                mp.erase(todel->key);
-                deleteNode(todel);
-                delete todel;
+            cache[key] = newNode;
+            addToHead(newNode);
+
+            if (cache.size() > capacity) {
+                Node* tailNode = removeTail();
+                cache.erase(tailNode->key);
+                delete tailNode;
             }
-            insertAtHead(newNode);
-            mp[key] = newNode;
         }
+    }
+};
+
+/**
+ * LRU Cache implementation using manually implemented singly linked list.
+ * Note: This is inefficient (O(n) removal complexity).
+ */
+class LRUCacheSingleLinkedList {
+private:
+    struct Node {
+        int key, value;
+        Node* next;
+        Node(int k, int v): key(k), value(v), next(nullptr) {}
+    };
+
+    int capacity;
+    unordered_map<int, Node*> cache;
+    Node* head;
+
+    void addToHead(Node* node) {
+        node->next = head->next;
+        head->next = node;
+    }
+
+    void removeTail() {
+        Node* prev = head;
+        while (prev->next && prev->next->next) {
+            prev = prev->next;
+        }
+        Node* tailNode = prev->next;
+        if (tailNode) {
+            cache.erase(tailNode->key);
+            delete tailNode;
+            prev->next = nullptr;
+        }
+    }
+
+public:
+    LRUCacheSingleLinkedList(int cap) : capacity(cap) {
+        head = new Node(-1, -1);
+    }
+
+    ~LRUCacheSingleLinkedList() {
+        Node* curr = head;
+        while (curr) {
+            Node* nextNode = curr->next;
+            delete curr;
+            curr = nextNode;
+        }
+    }
+
+    int get(int key) {
+        if (!cache.count(key)) return -1;
+        return cache[key]->value;
+    }
+
+    void put(int key, int value) {
+        if (cache.count(key)) {
+            cache[key]->value = value;
+            return;
+        }
+        Node* newNode = new Node(key, value);
+        cache[key] = newNode;
+        addToHead(newNode);
+
+        if (cache.size() > capacity) {
+            removeTail();
+        }
+    }
+};
+
+
+/**
+ * LRU Cache implementation using std::list.
+ */
+class LRUCacheList {
+private:
+    int capacity;
+    list<pair<int, int>> cacheList;
+    unordered_map<int, list<pair<int, int>>::iterator> cacheMap;
+    mutex mtx; // Mutex for thread safety, follow up
+
+public:
+    LRUCacheList(int cap) : capacity(cap) {}
+
+    int get(int key) {
+        lock_guard<mutex> lock(mtx); // Follow up, for thread safety
+        if (!cacheMap.count(key)) return -1;
+        auto it = cacheMap[key];
+        cacheList.splice(cacheList.begin(), cacheList, it);
+        return it->second;
+    }
+
+    void put(int key, int value) {
+        lock_guard<mutex> lock(mtx); // Follow up, for thread safety
+        if (cacheMap.count(key)) {
+            cacheList.erase(cacheMap[key]);
+        } else if (cacheList.size() >= capacity) {
+            auto old = cacheList.back();
+            cacheList.pop_back();
+            cacheMap.erase(old.first);
+        }
+
+        cacheList.emplace_front(key, value);
+        cacheMap[key] = cacheList.begin();
     }
 };
 
@@ -281,19 +396,38 @@ public:
  * Main Function to Test Data Structures
  */
 int main() {
-    // Test LRU Cache
-    LRUCache lru(5);
-    lru.put(1, 10);
-    lru.put(2, 20);
-    lru.put(3, 30);
-    lru.put(4, 40);
-    lru.put(5, 50);
-    cout << "LRU Get(1): " << lru.get(1) << endl; // 10
-    lru.put(6, 60); // Removes key 2 (LRU policy)
-    cout << "LRU Get(2): " << lru.get(2) << endl; // -1 (not found)
-    cout << "LRU Get(3): " << lru.get(3) << endl; // 30
-    lru.put(7, 70); // Removes key 3
-    cout << "LRU Get(3): " << lru.get(3) << endl; // -1 (not found)
+    // Testing manual doubly linked list implementation
+    LRUCacheManual lruManual(5);
+    lruManual.put(1, 10);
+    lruManual.put(2, 20);
+    lruManual.put(3, 30);
+    lruManual.put(4, 30);
+    lruManual.put(5, 30);
+    cout << "Manual LRU get(2): " << lruManual.get(2) << endl;
+    lruManual.put(6, 60); // Removes key 1
+    cout << "Manual LRU get(1): " << lruManual.get(1) << endl; // Output: -1
+
+    // Testing manual single linked list implementation
+    LRUCacheSingleLinkedList lruSingleList(5);
+    lruSingleList.put(1, 10);
+    lruSingleList.put(2, 20);
+    lruSingleList.put(3, 30);
+    lruSingleList.put(4, 40);
+    lruSingleList.put(5, 50);
+    cout << "Single List LRU get(2): " << lruSingleList.get(2) << endl; // Output: 600
+    lruSingleList.put(6, 60); // Removes key 2
+    cout << "Single List LRU get(1): " << lruSingleList.get(1) << endl; // Output: -1
+
+    // Testing std::list implementation
+    LRUCacheList lruList(5);
+    lruList.put(1, 10);
+    lruList.put(2, 20);
+    lruList.put(3, 30);
+    lruList.put(4, 40);
+    lruList.put(5, 50);
+    cout << "List LRU get(2): " << lruList.get(2) << endl; // Output: 600
+    lruList.put(6, 60); // Removes key 2
+    cout << "List LRU get(1): " << lruList.get(1) << endl; // Output: -1
 
     // Test Trie
     Trie trie;

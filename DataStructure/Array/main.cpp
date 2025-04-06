@@ -29,7 +29,7 @@ int removeDuplicates(vector<int>& nums) {
 /**
  * Problem 2: Move Zeroes (LC 283)
  * Description:
- * Given an integer array nums, move all 0's to the end while maintaining the relative order 
+ * Given an integer array nums, move all 0's to the end while maintaining the relative order
  * of the non-zero elements.
  * Example:
  * Input: nums = [0, 1, 0, 3, 12]
@@ -46,7 +46,7 @@ void moveZeroes(vector<int>& nums) {
 /**
  * Problem 3: Two Sum (LC 1)
  * Description:
- * Given an array of integers nums and an integer target, return indices of the two numbers 
+ * Given an array of integers nums and an integer target, return indices of the two numbers
  * such that they add up to target.
  * Example:
  * Input: nums = [2, 7, 11, 15], target = 9

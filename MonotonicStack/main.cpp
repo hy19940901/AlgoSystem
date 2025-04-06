@@ -179,7 +179,7 @@ int sumSubarrayMins(vector<int>& arr) {
     stack<int> st;
     int n = arr.size();
     vector<int> left(n), right(n);
-    
+
     // Calculate left boundaries
     for (int i = 0; i < n; i++) {
         while (!st.empty() && arr[st.top()] > arr[i]) {
@@ -188,9 +188,9 @@ int sumSubarrayMins(vector<int>& arr) {
         left[i] = st.empty() ? i + 1 : i - st.top();
         st.push(i);
     }
-    
+
     while (!st.empty()) st.pop(); // Clear stack
-    
+
     // Calculate right boundaries
     for (int i = n - 1; i >= 0; i--) {
         while (!st.empty() && arr[st.top()] >= arr[i]) {
@@ -199,7 +199,7 @@ int sumSubarrayMins(vector<int>& arr) {
         right[i] = st.empty() ? n - i : st.top() - i;
         st.push(i);
     }
-    
+
     // Compute result
     long result = 0;
     for (int i = 0; i < n; i++) {

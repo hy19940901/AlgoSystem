@@ -68,8 +68,8 @@ ListNode* mergeKLists(vector<ListNode*>& lists) {
             minHeap.push(list);
         }
     }
-    ListNode* head = new ListNode(0);
-    ListNode* current = head;
+    ListNode* dummy = new ListNode(0);
+    ListNode* current = dummy;
     while (!minHeap.empty()) {
         ListNode* node = minHeap.top();
         minHeap.pop();
@@ -79,7 +79,7 @@ ListNode* mergeKLists(vector<ListNode*>& lists) {
             minHeap.push(node->next);
         }
     }
-    return head->next;
+    return dummy->next;
 }
 
 /**

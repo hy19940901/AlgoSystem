@@ -12,7 +12,7 @@ using namespace std::chrono;
 
 /**
  * Displays the contents of the array.
- * 
+ *
  * @param arr The array to be displayed.
  */
 void displayArray(const vector<int>& arr) {
@@ -24,7 +24,7 @@ void displayArray(const vector<int>& arr) {
 
 /**
  * Checks if the array is sorted in non-decreasing order.
- * 
+ *
  * @param arr The array to check.
  * @return True if the array is sorted, false otherwise.
  */
@@ -40,7 +40,7 @@ bool isSorted(const vector<int>& arr) {
 /**
  * Generates an array of random integers of a given size.
  * Uses a high-quality random number generator (Mersenne Twister) to ensure better randomness.
- * 
+ *
  * @param size The size of the array to generate.
  * @return A vector of random integers between 0 and 2,000,000.
  */
@@ -62,7 +62,7 @@ vector<int> generateRandomArray(int size) {
 
 /**
  * Benchmarks a sorting function by measuring the time it takes to sort an array.
- * 
+ *
  * @param sortName The name of the sorting algorithm.
  * @param sortFunction The sorting function to benchmark.
  * @param arr The array to be sorted.
@@ -86,7 +86,7 @@ void benchmarkSort(const std::string& sortName, void(*sortFunction)(std::vector<
 
 /**
  * Demonstrates sorting an array with 10 elements and displays the result.
- * 
+ *
  * @param sortFunction The sorting function to demonstrate.
  */
 void demonstrateSortingWith10Elements(void(*sortFunction)(vector<int>&, int)) {
