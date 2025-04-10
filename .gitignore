@@ -1,59 +1,40 @@
-########################################
-# Build artifacts and binary outputs
-########################################
-
 # Object files
 *.o
 
-# Static libraries
+# Shared/static libraries
+*.so
 *.a
 
-# Shared libraries
-*.so
-*.so.*
+# Binary executables (no file extensions)
+**/*_program
+polling_system
+server
+log_parser
 
-# Executable files (no extension, common in Linux/macOS)
-Asynchronous_Programming
-Graph/Graph_program
-LinkedList/LinkedList_program
-Search/searching_program
-Tree/BinaryTree_program
+# General executables
+*.out
+*.exe
 
-# Or ignore all executables without file extension at any level
-# (Comment out if you want to be explicit instead)
-# **/*[^.]*
+# Build output directories
+/build/
+/bin/
+/out/
 
-# Build directories
-bin/
-build/
-out/
-dist/
+# CMake files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
 
-########################################
-# IDE / Editor files
-########################################
-
-# VS Code
+# VS Code project settings
 .vscode/
 
-# CLion / JetBrains
-.idea/
-
-########################################
-# System files
-########################################
-
-# macOS Finder metadata
+# macOS system file
 .DS_Store
 
-# Linux file metadata
+# Backup and temporary files
 *~
-
-########################################
-# Logs and debug
-########################################
-
-*.log
-*.trace
-core
+*.swp
+*.tmp
+*.bak
 
