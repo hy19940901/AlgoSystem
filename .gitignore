@@ -24,7 +24,8 @@ log_parser
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
-Makefile
+!**/Makefile
+
 
 # VS Code project settings
 .vscode/
