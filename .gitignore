@@ -1,25 +1,59 @@
-# Ignore object files
+########################################
+# Build artifacts and binary outputs
+########################################
+
+# Object files
 *.o
 
-# Ignore shared libraries (.so files)
-*.so
+# Static libraries
+*.a
 
-# Ignore executable files (Linux/Mac)
+# Shared libraries
+*.so
+*.so.*
+
+# Executable files (no extension, common in Linux/macOS)
 Asynchronous_Programming
 Graph/Graph_program
 LinkedList/LinkedList_program
 Search/searching_program
 Tree/BinaryTree_program
 
-# Ignore build artifacts directories
+# Or ignore all executables without file extension at any level
+# (Comment out if you want to be explicit instead)
+# **/*[^.]*
+
+# Build directories
 bin/
 build/
 out/
+dist/
 
-# Ignore macOS specific files
-*.DS_Store
+########################################
+# IDE / Editor files
+########################################
 
-# Ignore Visual Studio Code settings
+# VS Code
 .vscode/
 
-# Ignore other temporary or generated files as needed
+# CLion / JetBrains
+.idea/
+
+########################################
+# System files
+########################################
+
+# macOS Finder metadata
+.DS_Store
+
+# Linux file metadata
+*~
+
+########################################
+# Logs and debug
+########################################
+
+*.log
+*.trace
+core
+
