@@ -6,6 +6,7 @@
 #include <deque>
 #include <algorithm>
 #include <numeric>
+#include <climits>
 
 using namespace std;
 
@@ -22,12 +23,12 @@ using namespace std;
 int lengthOfLongestSubstring(string s) {
     unordered_map<char, int> charIndex;
     int left = 0, maxLength = 0;
-    for (int right = 0; right < s.size(); right++) {
+    for (size_t right = 0; right < s.size(); right++) {
         if (charIndex.find(s[right]) != charIndex.end()) {
             left = max(left, charIndex[s[right]] + 1); // Move left to avoid repeating character
         }
         charIndex[s[right]] = right;
-        maxLength = max(maxLength, right - left + 1);
+        maxLength = max(maxLength, static_cast<int>(right) - left + 1);
     }
     return maxLength;
 }
@@ -45,10 +46,10 @@ int lengthOfLongestSubstring(string s) {
  */
 int minSubArrayLen(int target, vector<int>& nums) {
     int left = 0, sum = 0, minLength = INT_MAX;
-    for (int right = 0; right < nums.size(); right++) {
+    for (size_t right = 0; right < nums.size(); right++) {
         sum += nums[right];  // Expand window
         while (sum >= target) {  // Contract window
-            minLength = min(minLength, right - left + 1);
+            minLength = min(minLength, static_cast<int>(right) - left + 1);
             sum -= nums[left++];
         }
     }
@@ -68,11 +69,11 @@ int minSubArrayLen(int target, vector<int>& nums) {
 vector<int> maxSlidingWindow(vector<int>& nums, int k) {
     deque<int> dq;
     vector<int> result;
-    for (int i = 0; i < nums.size(); i++) {
-        if (!dq.empty() && dq.front() == i - k) dq.pop_front();
+    for (size_t i = 0; i < nums.size(); i++) {
+        if (!dq.empty() && dq.front() == static_cast<int>(i) - k) dq.pop_front();
         while (!dq.empty() && nums[dq.back()] < nums[i]) dq.pop_back();
         dq.push_back(i);
-        if (i >= k - 1) result.push_back(nums[dq.front()]);
+        if (static_cast<int>(i) >= k - 1) result.push_back(nums[dq.front()]);
     }
     return result;
 }
@@ -92,9 +93,9 @@ vector<int> findAnagrams(string s, string p) {
     if (s.size() < p.size()) return result;
 
     for (char c : p) pCount[c - 'a']++;
-    for (int i = 0; i < s.size(); i++) {
+    for (size_t i = 0; i < s.size(); i++) {
         sCount[s[i] - 'a']++;
-        if (i >= p.size()) sCount[s[i - p.size()] - 'a']--;
+        if (static_cast<size_t>(i) >= p.size()) sCount[s[i - p.size()] - 'a']--;
         if (sCount == pCount) result.push_back(i - p.size() + 1);
     }
     return result;
@@ -114,13 +115,13 @@ vector<int> findAnagrams(string s, string p) {
 int characterReplacement(string s, int k) {
     vector<int> count(26, 0);
     int left = 0, maxCount = 0, maxLength = 0;
-    for (int right = 0; right < s.size(); right++) {
+    for (size_t right = 0; right < s.size(); right++) {
         maxCount = max(maxCount, ++count[s[right] - 'A']);
-        while (right - left + 1 - maxCount > k) {
+        while (static_cast<int>(right) - left + 1 - maxCount > k) {
             count[s[left] - 'A']--;
             left++;
         }
-        maxLength = max(maxLength, right - left + 1);
+        maxLength = max(maxLength, static_cast<int>(right) - left + 1);
     }
     return maxLength;
 }
@@ -139,7 +140,7 @@ int characterReplacement(string s, int k) {
 int atMostKDistinct(vector<int>& nums, int k) {
     unordered_map<int, int> freq;
     int left = 0, count = 0;
-    for (int right = 0; right < nums.size(); right++) {
+    for (size_t right = 0; right < nums.size(); right++) {
         if (freq[nums[right]]++ == 0) k--;
         while (k < 0) {
             if (--freq[nums[left]] == 0) k++;
@@ -167,7 +168,7 @@ int subarraysWithKDistinct(vector<int>& nums, int k) {
 int atMostSum(vector<int>& nums, int goal) {
     if (goal < 0) return 0;
     int left = 0, count = 0, sum = 0;
-    for (int right = 0; right < nums.size(); right++) {
+    for (size_t right = 0; right < nums.size(); right++) {
         sum += nums[right];
         while (sum > goal) sum -= nums[left++];
         count += right - left + 1;
@@ -191,12 +192,12 @@ int numSubarraysWithSum(vector<int>& nums, int goal) {
  */
 int longestSubarray(vector<int>& nums) {
     int left = 0, maxLength = 0, zeroCount = 0;
-    for (int right = 0; right < nums.size(); right++) {
+    for (size_t right = 0; right < nums.size(); right++) {
         if (nums[right] == 0) zeroCount++;
         while (zeroCount > 1) {
             if (nums[left++] == 0) zeroCount--;
         }
-        maxLength = max(maxLength, right - left);
+        maxLength = max(maxLength, static_cast<int>(right) - left);
     }
     return maxLength;
 }
@@ -239,7 +240,7 @@ int maxScore(vector<int>& cardPoints, int k) {
 int maximumUniqueSubarray(vector<int>& nums) {
     unordered_set<int> uniqueNums;
     int left = 0, maxSum = 0, currentSum = 0;
-    for (int right = 0; right < nums.size(); right++) {
+    for (size_t right = 0; right < nums.size(); right++) {
         while (uniqueNums.count(nums[right])) {
             currentSum -= nums[left];
             uniqueNums.erase(nums[left++]);

@@ -3,6 +3,7 @@
 #include <string>
 #include <algorithm>
 #include <numeric>
+#include <climits>
 
 using namespace std;
 
@@ -111,7 +112,7 @@ int zeroOneKnapsack1DWithoutBacktrack(int maxCapacity, const vector<Item>& items
 // 0-1 Knapsack (Brute Force with Backtracking)
 // =====================
 int zeroOneKnapsackBruteForce(int idx, int remainingCapacity, const vector<Item>& items, vector<int>& selectedItems) {
-    if (idx == items.size() || remainingCapacity == 0) {
+    if (static_cast<size_t>(idx) == items.size() || remainingCapacity == 0) {
         return 0;
     }
 
@@ -154,7 +155,7 @@ int completeKnapsack1DWithoutBacktrack(int maxCapacity, const vector<Item>& item
 // Complete Knapsack (Brute Force with Backtracking)
 // =====================
 int completeKnapsackBruteForce(int idx, int remainingCapacity, const vector<Item>& items, vector<int>& itemCounts) {
-    if (idx == items.size() || remainingCapacity == 0) {
+    if (static_cast<size_t>(idx) == items.size() || remainingCapacity == 0) {
         return 0;
     }
 
@@ -333,7 +334,7 @@ int main() {
     int maxValue2DWithBacktrack = zeroOneKnapsack2DWithBacktrack(maxCapacity, items, selectedItems2D);
     cout << "2D Array (With Backtracking): Maximum Value = " << maxValue2DWithBacktrack << endl;
     cout << "Selected Items: ";
-    for (int i = 0; i < selectedItems2D.size(); ++i) {
+    for (size_t i = 0; i < selectedItems2D.size(); ++i) {
         if (selectedItems2D[i]) cout << items[i].name << " ";
     }
     cout << endl;
@@ -347,7 +348,7 @@ int main() {
     int maxValue1DWithBacktrack = zeroOneKnapsack1DWithBacktrack(maxCapacity, items, selectedItems1D);
     cout << "1D Array (Rolling Array, With Backtracking): Maximum Value = " << maxValue1DWithBacktrack << endl;
     cout << "Selected Items: ";
-    for (int i = 0; i < selectedItems1D.size(); ++i) {
+    for (size_t i = 0; i < selectedItems1D.size(); ++i) {
         if (selectedItems1D[i]) cout << items[i].name << " ";
     }
     cout << endl;
@@ -361,7 +362,7 @@ int main() {
     int maxValueBruteForce = zeroOneKnapsackBruteForce(0, maxCapacity, items, selectedItemsBruteForce);
     cout << "Brute Force (With Backtracking): Maximum Value = " << maxValueBruteForce << endl;
     cout << "Selected Items: ";
-    for (int i = 0; i < selectedItemsBruteForce.size(); ++i) {
+    for (size_t i = 0; i < selectedItemsBruteForce.size(); ++i) {
         if (selectedItemsBruteForce[i]) cout << items[i].name << " ";
     }
     cout << endl;
@@ -375,7 +376,7 @@ int main() {
     int maxValueCompleteBruteForce = completeKnapsackBruteForce(0, maxCapacity, items, itemCountsCompleteBruteForce);
     cout << "Complete Knapsack (Brute Force with Backtracking): Maximum Value = " << maxValueCompleteBruteForce << endl;
     cout << "Selected Item Counts: ";
-    for (int i = 0; i < itemCountsCompleteBruteForce.size(); ++i) {
+    for (size_t i = 0; i < itemCountsCompleteBruteForce.size(); ++i) {
         if (itemCountsCompleteBruteForce[i] > 0) {
             cout << items[i].name << " x" << itemCountsCompleteBruteForce[i] << " ";
         }

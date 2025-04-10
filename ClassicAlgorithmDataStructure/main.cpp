@@ -104,7 +104,7 @@ public:
             cache[key] = newNode;
             addToHead(newNode);
 
-            if (cache.size() > capacity) {
+            if (cache.size() > static_cast<size_t>(capacity)) {
                 Node* tailNode = removeTail();
                 cache.erase(tailNode->key);
                 delete tailNode;
@@ -175,7 +175,7 @@ public:
         cache[key] = newNode;
         addToHead(newNode);
 
-        if (cache.size() > capacity) {
+        if (cache.size() > static_cast<size_t>(capacity)) {
             removeTail();
         }
     }
@@ -207,7 +207,7 @@ public:
         lock_guard<mutex> lock(mtx); // Follow up, for thread safety
         if (cacheMap.count(key)) {
             cacheList.erase(cacheMap[key]);
-        } else if (cacheList.size() >= capacity) {
+        } else if (cacheList.size() >= static_cast<size_t>(capacity)) {
             auto old = cacheList.back();
             cacheList.pop_back();
             cacheMap.erase(old.first);
@@ -332,7 +332,7 @@ public:
             keyMap[key]->value = value;
             get(key); // Update frequency
         } else {
-            if (keyMap.size() == capacity) {
+            if (keyMap.size() == static_cast<size_t>(capacity)) {
                 auto node = freqMap[minFreq].back();
                 keyMap.erase(node.key);
                 freqMap[minFreq].pop_back();

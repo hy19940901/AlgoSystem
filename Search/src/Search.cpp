@@ -7,7 +7,7 @@ bool SearchAlgorithms::linearSearch(const std::vector<int>& arr, int target) {
 
 // Private implementation for linear search (returns index)
 int SearchAlgorithms::linearSearchImpl(const std::vector<int>& arr, int target) {
-    for (int i = 0; i < arr.size(); i++) {
+    for (size_t i = 0; i < arr.size(); i++) {
         if (arr[i] == target) {
             return i; // Target found, return index
         }

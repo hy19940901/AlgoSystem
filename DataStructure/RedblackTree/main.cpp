@@ -19,13 +19,13 @@ using namespace std;
  */
 bool containsNearbyAlmostDuplicate(vector<int>& nums, int k, int t) {
     set<long> window;
-    for (int i = 0; i < nums.size(); ++i) {
+    for (size_t i = 0; i < nums.size(); ++i) {
         auto pos = window.lower_bound((long)nums[i] - t);
         if (pos != window.end() && *pos <= (long)nums[i] + t) {
             return true;
         }
         window.insert(nums[i]);
-        if (window.size() > k) {
+        if (window.size() > static_cast<size_t>(k)) {
             window.erase(nums[i - k]);
         }
     }
@@ -43,10 +43,10 @@ bool containsNearbyAlmostDuplicate(vector<int>& nums, int k, int t) {
  */
 vector<int> twoSum(vector<int>& nums, int target) {
     map<int, int> numMap;
-    for (int i = 0; i < nums.size(); ++i) {
+    for (size_t i = 0; i < nums.size(); ++i) {
         int complement = target - nums[i];
         if (numMap.find(complement) != numMap.end()) {
-            return {numMap[complement], i};
+            return {numMap[complement], static_cast<int>(i)};
         }
         numMap[nums[i]] = i;
     }
@@ -66,7 +66,7 @@ vector<int> twoSum(vector<int>& nums, int target) {
 vector<int> findDisappearedNumbers(vector<int>& nums) {
     set<int> numSet(nums.begin(), nums.end());
     vector<int> result;
-    for (int i = 1; i <= nums.size(); ++i) {
+    for (size_t i = 1; i <= nums.size(); ++i) {
         if (numSet.find(i) == numSet.end()) {
             result.push_back(i);
         }
@@ -87,12 +87,12 @@ vector<int> findDisappearedNumbers(vector<int>& nums) {
 vector<int> maxSlidingWindow(vector<int>& nums, int k) {
     multiset<int> window;
     vector<int> result;
-    for (int i = 0; i < nums.size(); ++i) {
+    for (size_t i = 0; i < nums.size(); ++i) {
         window.insert(nums[i]);
-        if (window.size() > k) {
+        if (window.size() > static_cast<size_t>(k)) {
             window.erase(window.find(nums[i - k]));
         }
-        if (window.size() == k) {
+        if (window.size() == static_cast<size_t>(k)) {
             result.push_back(*window.rbegin());
         }
     }
@@ -122,7 +122,7 @@ public:
 
     int add(int val) {
         elements.insert(val);
-        if (elements.size() > capacity) {
+        if (elements.size() > static_cast<size_t>(capacity)) {
             elements.erase(elements.begin());
         }
         return *elements.begin();
@@ -238,12 +238,12 @@ vector<string> topKFrequentWords(vector<string>& words, int k) {
 int lengthOfLongestSubstring(string s) {
     map<char, int> charIndex;
     int maxLength = 0, start = 0;
-    for (int i = 0; i < s.size(); ++i) {
+    for (size_t i = 0; i < s.size(); ++i) {
         if (charIndex.count(s[i]) && charIndex[s[i]] >= start) {
             start = charIndex[s[i]] + 1;
         }
         charIndex[s[i]] = i;
-        maxLength = max(maxLength, i - start + 1);
+        maxLength = max(maxLength, static_cast<int>(i) - start + 1);
     }
     return maxLength;
 }
@@ -412,12 +412,12 @@ string reorganizeString(string s) {
     int index = 0;
     for (auto& [cnt, ch] : sortedCount) {
         for (int i = 0; i < cnt; ++i) {
-            if (index >= s.size()) index = 1;
+            if (static_cast<size_t>(index) >= s.size()) index = 1;
             res[index] = ch;
             index += 2;
         }
     }
-    for (int i = 1; i < s.size(); ++i) {
+    for (size_t i = 1; i < s.size(); ++i) {
         if (res[i] == res[i - 1]) return "";
     }
     return res;

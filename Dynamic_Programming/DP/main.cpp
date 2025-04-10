@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <climits>
 #include <numeric>
+#include <cstdint>
 using namespace std;
 
 /**
@@ -38,7 +39,7 @@ int maxSubArray(vector<int>& nums) {
     vector<int> dp(nums.size(), 0); // dp[i] represents the maximum subarray sum ending at index i
     dp[0] = nums[0];
     int maxSum = dp[0];
-    for (int i = 1; i < nums.size(); ++i) {
+    for (size_t i = 1; i < nums.size(); ++i) {
         dp[i] = max(nums[i], dp[i - 1] + nums[i]);
         maxSum = max(maxSum, dp[i]);
     }
@@ -100,8 +101,8 @@ int coinChange(vector<int>& coins, int amount) {
 int lengthOfLIS(vector<int>& nums) {
     vector<int> dp(nums.size(), 1); // dp[i] represents the length of the LIS ending at index i
     int maxLen = 1;
-    for (int i = 1; i < nums.size(); ++i) {
-        for (int j = 0; j < i; ++j) {
+    for (size_t i = 1; i < nums.size(); ++i) {
+        for (size_t j = 0; j < i; ++j) {
             if (nums[i] > nums[j]) {
                 dp[i] = max(dp[i], dp[j] + 1);
             }
@@ -384,7 +385,7 @@ int findLengthOfLCIS(vector<int>& nums) {
     int maxLen = 1; // To track the maximum length of LCIS
     int currentLen = 1; // To track the length of the current LCIS
 
-    for (int i = 1; i < nums.size(); ++i) {
+    for (size_t i = 1; i < nums.size(); ++i) {
         if (nums[i] > nums[i - 1]) {
             currentLen++; // Extend the current LCIS
         } else {
@@ -401,7 +402,7 @@ int findLengthOfLCIS_DP(vector<int>& nums) {
 
     int maxLen = 1;
     vector<int> dp(nums.size(), 1);
-    for (int i = 1; i < nums.size(); i++) {
+    for (size_t i = 1; i < nums.size(); i++) {
         if (nums[i] > nums[i - 1]) dp[i] = dp[i - 1] + 1;
         maxLen = max(maxLen, dp[i]);
     }
@@ -461,11 +462,11 @@ int findLengthDP(vector<int>& nums1, vector<int>& nums2) {
 int numDistinctDP(string s, string t) {
     vector<vector<uint64_t>> dp(s.size() + 1, vector<uint64_t>(t.size() + 1, 0));
     // Initialize base cases
-    for (int i = 0; i <= s.size(); i++) dp[i][0] = 1; // Empty t is a subsequence of any s
+    for (size_t i = 0; i <= s.size(); i++) dp[i][0] = 1; // Empty t is a subsequence of any s
 
     // Fill DP table
-    for (int i = 1; i <= s.size(); i++) {
-        for (int j = 1; j <= t.size(); j++) {
+    for (size_t i = 1; i <= s.size(); i++) {
+        for (size_t j = 1; j <= t.size(); j++) {
             if (s[i - 1] == t[j - 1]) {
                 dp[i][j] = dp[i - 1][j - 1] + dp[i - 1][j]; // Match or skip
             } else {
@@ -574,12 +575,12 @@ string longestPalindrome(string s) {
     int end = 0;
     std::vector<std::vector<bool>> dp(s.length(), std::vector<bool>(s.length(), false));
 
-    for (int i = 0; i < s.length(); ++i) {
+    for (size_t i = 0; i < s.length(); ++i) {
         dp[i][i] = true;
-        for (int j = 0; j < i; ++j) {
+        for (size_t j = 0; j < i; ++j) {
             if (s[j] == s[i] && (i - j <= 2 || dp[j + 1][i - 1])) {
                 dp[j][i] = true;
-                if (i - j + 1 > max_len) {
+                if (static_cast<int>(i) - static_cast<int>(j) + 1 > max_len) {
                     max_len = i - j + 1;
                     start = j;
                     end = i;
@@ -742,7 +743,7 @@ int maxProfit(vector<int>& prices) {
  */
 int maxProfitMultiple(vector<int>& prices) {
     int profit = 0;
-    for (int i = 1; i < prices.size(); ++i) {
+    for (size_t i = 1; i < prices.size(); ++i) {
         if (prices[i] > prices[i - 1]) {
             profit += prices[i] - prices[i - 1];
         }
@@ -814,16 +815,16 @@ bool isMatch(string s, string p) {
  * Output: true
  */
 bool isInterleave(string s1, string s2, string s3) {
-    int m = s1.size(), n = s2.size();
+    size_t m = s1.size(), n = s2.size();
     if (m + n != s3.size()) return false;
     vector<vector<bool>> dp(m + 1, vector<bool>(n + 1, false));
     dp[0][0] = true;
 
-    for (int i = 1; i <= m; ++i) dp[i][0] = dp[i - 1][0] && s1[i - 1] == s3[i - 1];
-    for (int j = 1; j <= n; ++j) dp[0][j] = dp[0][j - 1] && s2[j - 1] == s3[j - 1];
+    for (size_t i = 1; i <= m; ++i) dp[i][0] = dp[i - 1][0] && s1[i - 1] == s3[i - 1];
+    for (size_t j = 1; j <= n; ++j) dp[0][j] = dp[0][j - 1] && s2[j - 1] == s3[j - 1];
 
-    for (int i = 1; i <= m; ++i) {
-        for (int j = 1; j <= n; ++j) {
+    for (size_t i = 1; i <= m; ++i) {
+        for (size_t j = 1; j <= n; ++j) {
             dp[i][j] = (dp[i - 1][j] && s1[i - 1] == s3[i + j - 1]) ||
                        (dp[i][j - 1] && s2[j - 1] == s3[i + j - 1]);
         }
@@ -893,9 +894,9 @@ int minCost(vector<vector<int>>& costMatrix) {
  */
 bool canJump(vector<int>& jumpNums) {
     int farthest = 0;
-    for (int i = 0; i < jumpNums.size(); ++i) {
-        if (i > farthest) return false; // Cannot reach this position
-        farthest = max(farthest, i + jumpNums[i]);
+    for (size_t i = 0; i < jumpNums.size(); ++i) {
+        if (static_cast<int>(i) > farthest) return false; // Cannot reach this position
+        farthest = max(farthest, static_cast<int>(i) + jumpNums[i]);
     }
     return true;
 }
@@ -912,9 +913,9 @@ bool canJump(vector<int>& jumpNums) {
  */
 int jumpMinSteps(vector<int>& jumpNums2) {
     int jumps = 0, end = 0, farthest = 0;
-    for (int i = 0; i < jumpNums2.size() - 1; ++i) {
-        farthest = max(farthest, i + jumpNums2[i]);
-        if (i == end) {
+    for (size_t i = 0; i < jumpNums2.size() - 1; ++i) {
+        farthest = max(farthest, static_cast<int>(i) + jumpNums2[i]);
+        if (static_cast<int>(i) == end) {
             jumps++;
             end = farthest;
         }

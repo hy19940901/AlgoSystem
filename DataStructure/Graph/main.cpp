@@ -220,7 +220,7 @@ vector<int> topologicalSort(int numVertices, vector<vector<int>>& graph) {
         }
     }
 
-    return (order.size() == numVertices) ? order : vector<int>();
+    return (order.size() == static_cast<size_t>(numVertices)) ? order : vector<int>();
 }
 
 /**
@@ -274,7 +274,7 @@ int primMinimumSpanningTree(int n, vector<vector<pair<int, int>>>& graph) {
  */
 
 void dfs(vector<vector<char>>& grid, int i, int j) {
-    if (i < 0 || i >= grid.size() || j < 0 || j >= grid[0].size() || grid[i][j] == '0') {
+    if (i < 0 || static_cast<size_t>(i) >= grid.size() || j < 0 || static_cast<size_t>(j) >= grid[0].size() || grid[i][j] == '0') {
         return;
     }
     grid[i][j] = '0';
@@ -286,8 +286,8 @@ void dfs(vector<vector<char>>& grid, int i, int j) {
 
 int numIslands(vector<vector<char>>& grid) {
     int count = 0;
-    for (int i = 0; i < grid.size(); ++i) {
-        for (int j = 0; j < grid[0].size(); ++j) {
+    for (size_t i = 0; i < grid.size(); ++i) {
+        for (size_t j = 0; j < grid[0].size(); ++j) {
             if (grid[i][j] == '1') {
                 ++count;
                 dfs(grid, i, j);
@@ -347,7 +347,7 @@ bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
     }
 
     queue<int> q;
-    for (int i = 0; i < numCourses; ++i) {
+    for (size_t i = 0; i < static_cast<size_t>(numCourses); ++i) {
         if (inDegree[i] == 0) q.push(i);
     }
 
@@ -380,7 +380,7 @@ vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
     }
 
     queue<int> q;
-    for (int i = 0; i < numCourses; ++i) {
+    for (size_t i = 0; i < static_cast<size_t>(numCourses); ++i) {
         if (inDegree[i] == 0) q.push(i);
     }
 
@@ -394,7 +394,7 @@ vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
         }
     }
 
-    if (order.size() == numCourses) return order;
+    if (order.size() == static_cast<size_t>(numCourses)) return order;
     return {};
 }
 
@@ -459,7 +459,7 @@ int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
 
         if (word == endWord) return steps;
 
-        for (int i = 0; i < word.size(); ++i) {
+        for (size_t i = 0; i < word.size(); ++i) {
             string newWord = word;
             for (char c = 'a'; c <= 'z'; ++c) {
                 newWord[i] = c;
@@ -536,7 +536,7 @@ string alienOrder(vector<string>& words) {
         }
     }
 
-    for (int i = 0; i < words.size() - 1; ++i) {
+    for (size_t i = 0; i < words.size() - 1; ++i) {
         string w1 = words[i], w2 = words[i + 1];
         int len = min(w1.size(), w2.size());
         bool foundDifference = false;
@@ -744,7 +744,7 @@ vector<string> findEulerianPath(vector<vector<string>>& tickets) {
  */
 
 bool hamiltonianDFS(int node, vector<vector<int>>& graph, vector<bool>& visited, int count) {
-    if (count == graph.size()) return true;
+    if (static_cast<size_t>(count) == graph.size()) return true;
     visited[node] = true;
     for (int neighbor : graph[node]) {
         if (!visited[neighbor] && hamiltonianDFS(neighbor, graph, visited, count + 1)) {

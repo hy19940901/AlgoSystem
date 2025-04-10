@@ -19,7 +19,7 @@ using namespace std;
 vector<int> twoSum(const vector<int>& nums, int target) {
     vector<int> res;
     unordered_map<int, int> numIndexMap;
-    for (int i = 0; i < nums.size(); ++i) {
+    for (size_t i = 0; i < nums.size(); ++i) {
         int complement = target - nums[i];
         if (numIndexMap.find(complement) != numIndexMap.end()) {
             res.push_back(numIndexMap[complement]);
@@ -152,7 +152,7 @@ bool checkSubarraySum(const vector<int>& nums, int k) {
     unordered_map<int, int> remainderMap;
     remainderMap[0] = -1;
     int runningSum = 0;
-    for (int i = 0; i < nums.size(); ++i) {
+    for (size_t i = 0; i < nums.size(); ++i) {
         runningSum += nums[i];
         int remainder = k == 0 ? runningSum : runningSum % k;
         if (remainderMap.find(remainder) != remainderMap.end()) {
@@ -175,12 +175,12 @@ bool checkSubarraySum(const vector<int>& nums, int k) {
 int lengthOfLongestSubstring(const string& s) {
     unordered_map<char, int> charIndexMap;
     int maxLength = 0, start = 0;
-    for (int i = 0; i < s.size(); ++i) {
+    for (size_t i = 0; i < s.size(); ++i) {
         if (charIndexMap.find(s[i]) != charIndexMap.end() && charIndexMap[s[i]] >= start) {
             start = charIndexMap[s[i]] + 1;
         }
         charIndexMap[s[i]] = i;
-        maxLength = max(maxLength, i - start + 1);
+        maxLength = max(maxLength, static_cast<int>(i - start + 1));
     }
     return maxLength;
 }
@@ -383,7 +383,7 @@ bool canConstruct(string ransomNote, string magazine) {
 int firstUniqChar(string s) {
     unordered_map<char, int> count;
     for (char c : s) count[c]++;
-    for (int i = 0; i < s.size(); i++) {
+    for (size_t i = 0; i < s.size(); i++) {
         if (count[s[i]] == 1) return i;
     }
     return -1;
@@ -399,8 +399,8 @@ int firstUniqChar(string s) {
  */
 bool containsNearbyDuplicate(vector<int>& nums, int k) {
     unordered_map<int, int> indexMap;
-    for (int i = 0; i < nums.size(); i++) {
-        if (indexMap.count(nums[i]) && i - indexMap[nums[i]] <= k) {
+    for (size_t i = 0; i < nums.size(); i++) {
+        if (indexMap.count(nums[i]) && static_cast<int>(i) - indexMap[nums[i]] <= k) {
             return true;
         }
         indexMap[nums[i]] = i;

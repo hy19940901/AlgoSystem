@@ -2,7 +2,10 @@
 #include <vector>
 #include <algorithm>
 #include <unordered_set>
+#include <unordered_map>
 #include <stack>
+#include <queue>
+#include <functional>
 using namespace std;
 
 struct ListNode {

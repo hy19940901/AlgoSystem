@@ -95,7 +95,7 @@ void permuteHelper(vector<int>& nums, vector<bool>& used, vector<int>& path, vec
         result.push_back(path);
         return;
     }
-    for (int i = 0; i < nums.size(); ++i) {
+    for (size_t i = 0; i < nums.size(); ++i) {
         if (used[i]) continue;
         used[i] = true;
         path.push_back(nums[i]);
@@ -126,7 +126,7 @@ vector<vector<int>> permute(vector<int>& nums) {
  */
 void subsetsHelper(vector<int>& nums, int index, vector<int>& current, vector<vector<int>>& result) {
     result.push_back(current);
-    for (int i = index; i < nums.size(); ++i) {
+    for (size_t i = index; i < nums.size(); ++i) {
         current.push_back(nums[i]);
         subsetsHelper(nums, i + 1, current, result);
         current.pop_back(); // Backtrack
@@ -155,8 +155,8 @@ vector<vector<int>> subsets(vector<int>& nums) {
  * Output: true
  */
 bool wordSearchHelper(vector<vector<char>>& board, string& word, int index, int row, int col) {
-    if (index == word.size()) return true; // Word found
-    if (row < 0 || row >= board.size() || col < 0 || col >= board[0].size() || board[row][col] != word[index])
+    if (static_cast<size_t>(index) == word.size()) return true; // Word found
+    if (row < 0 || static_cast<size_t>(row) >= board.size() || col < 0 || static_cast<size_t>(col) >= board[0].size() || board[row][col] != word[index])
         return false;
 
     char temp = board[row][col];
@@ -170,8 +170,8 @@ bool wordSearchHelper(vector<vector<char>>& board, string& word, int index, int 
 }
 
 bool exist(vector<vector<char>>& board, string word) {
-    for (int i = 0; i < board.size(); ++i) {
-        for (int j = 0; j < board[0].size(); ++j) {
+    for (size_t i = 0; i < board.size(); ++i) {
+        for (size_t j = 0; j < board[0].size(); ++j) {
             if (wordSearchHelper(board, word, 0, i, j)) return true;
         }
     }
@@ -194,7 +194,7 @@ void combinationSumHelper(vector<int>& candidates, int target, int index, vector
         result.push_back(current);
         return;
     }
-    for (int i = index; i < candidates.size(); ++i) {
+    for (size_t i = index; i < candidates.size(); ++i) {
         if (candidates[i] > target) continue;
         current.push_back(candidates[i]);
         combinationSumHelper(candidates, target - candidates[i], i, current, result);
@@ -228,11 +228,11 @@ bool isPalindrome(const string& s, int start, int end) {
 }
 
 void partitionHelper(string& s, int index, vector<string>& current, vector<vector<string>>& result) {
-    if (index == s.size()) {
+    if (static_cast<size_t>(index) == s.size()) {
         result.push_back(current);
         return;
     }
-    for (int i = index; i < s.size(); ++i) {
+    for (size_t i = index; i < s.size(); ++i) {
         if (isPalindrome(s, index, i)) {
             current.push_back(s.substr(index, i - index + 1));
             partitionHelper(s, i + 1, current, result);
@@ -273,7 +273,7 @@ void ratInMazeHelper(vector<vector<int>>& maze, int x, int y, vector<vector<int>
 
     vector<pair<int, int>> directions = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
     string moves = "DRUL";
-    for (int i = 0; i < directions.size(); ++i) {
+    for (size_t i = 0; i < directions.size(); ++i) {
         int nx = x + directions[i].first;
         int ny = y + directions[i].second;
         if (nx >= 0 && ny >= 0 && nx < n && ny < n && maze[nx][ny] == 1 && visited[nx][ny] == 0) {
@@ -367,7 +367,7 @@ vector<vector<int>> pathSum(TreeNode* root, int targetSum) {
  * Output: 2
  */
 void uniquePathsIIIHelper(vector<vector<int>>& grid, int x, int y, int remaining, int& result) {
-    if (x < 0 || y < 0 || x >= grid.size() || y >= grid[0].size() || grid[x][y] == -1) return;
+    if (x < 0 || y < 0 || static_cast<size_t>(x) >= grid.size() || static_cast<size_t>(y) >= grid[0].size() || grid[x][y] == -1) return;
 
     if (grid[x][y] == 2) {
         if (remaining == 0) result++;
@@ -386,8 +386,8 @@ int uniquePathsIII(vector<vector<int>>& grid) {
     int startX = 0, startY = 0, emptyCount = 0;
 
     // Find the starting point and count empty squares
-    for (int i = 0; i < grid.size(); ++i) {
-        for (int j = 0; j < grid[0].size(); ++j) {
+    for (size_t i = 0; i < grid.size(); ++i) {
+        for (size_t j = 0; j < grid[0].size(); ++j) {
             if (grid[i][j] == 1) {
                 startX = i;
                 startY = j;
@@ -415,7 +415,7 @@ int uniquePathsIII(vector<vector<int>>& grid) {
  * Output: true
  */
 bool canFormSquare(vector<int>& sides, int index, vector<int>& matchsticks, int target) {
-    if (index == matchsticks.size()) {
+    if (static_cast<size_t>(index) == matchsticks.size()) {
         return sides[0] == target && sides[1] == target && sides[2] == target && sides[3] == target;
     }
 
@@ -458,9 +458,9 @@ bool makesquare(vector<int>& matchsticks) {
  * Output: true
  */
 bool hamiltonianPathHelper(vector<vector<int>>& graph, vector<bool>& visited, int current, int visitedCount) {
-    if (visitedCount == graph.size()) return true;
+    if (static_cast<size_t>(visitedCount) == graph.size()) return true;
 
-    for (int i = 0; i < graph.size(); ++i) {
+    for (size_t i = 0; i < graph.size(); ++i) {
         if (graph[current][i] == 1 && !visited[i]) {
             visited[i] = true;
             if (hamiltonianPathHelper(graph, visited, i, visitedCount + 1)) return true;
@@ -493,7 +493,7 @@ bool hamiltonianPath(vector<vector<int>>& graph) {
  * Output: ["ad","ae","af","bd","be","bf","cd","ce","cf"]
  */
 vector<string> letterCombinationsHelper(const string& digits, int index, const vector<string>& mapping, string& current, vector<string>& result) {
-    if (index == digits.size()) {
+    if (static_cast<size_t>(index) == digits.size()) {
         result.push_back(current);
         return result;
     }
@@ -580,7 +580,7 @@ vector<string> wordBreakHelper(const string& s, unordered_set<string>& wordDict)
     if (memo.count(s)) return memo[s];
     vector<string> result;
     if (wordDict.count(s)) result.push_back(s);
-    for (int i = 1; i < s.size(); i++) {
+    for (size_t i = 1; i < s.size(); i++) {
         string prefix = s.substr(0, i), suffix = s.substr(i);
         if (wordDict.count(prefix)) {
             vector<string> suffixResults = wordBreakHelper(suffix, wordDict);
@@ -606,14 +606,14 @@ vector<string> wordBreak(string s, vector<string>& wordDict) {
  * Output: ["255.255.11.135","255.255.111.35"]
  */
 void restoreIPHelper(string& s, int start, int part, string current, vector<string>& result) {
-    if (part == 4 && start == s.size()) {
+    if (part == 4 && static_cast<size_t>(start) == s.size()) {
         result.push_back(current.substr(0, current.size() - 1)); // Remove last dot
         return;
     }
-    if (part == 4 || start == s.size()) return;
+    if (part == 4 || static_cast<size_t>(start) == s.size()) return;
 
     for (int len = 1; len <= 3; len++) {
-        if (start + len > s.size()) return;
+        if (static_cast<size_t>(start + len) > s.size()) return;
         string segment = s.substr(start, len);
         if ((segment.size() > 1 && segment[0] == '0') || stoi(segment) > 255) return;
         restoreIPHelper(s, start + len, part + 1, current + segment + ".", result);

@@ -56,7 +56,7 @@ bool isPalindrome(string s) {
  * Output: "hello world"
  */
 string toLowerCase(string s) {
-    for (int i = 0; i < s.size(); i++)
+    for (size_t i = 0; i < s.size(); i++)
         if (s[i] >= 'A' && s[i] <= 'Z') s[i] = s[i] + 32;
     return s;
 }
@@ -90,9 +90,9 @@ string reverseWords(string s) {
     vector<string> words;
     string word, result;
     int i = 0;
-    while (i < s.size()) {
-        while (i < s.size() && s[i] == ' ') i++; // Skip spaces
-        while (i < s.size() && s[i] != ' ') word += s[i++];
+    while (static_cast<size_t>(i) < s.size()) {
+        while (static_cast<size_t>(i) < s.size() && s[i] == ' ') i++; // Skip spaces
+        while (static_cast<size_t>(i) < s.size() && s[i] != ' ') word += s[i++];
         if (!word.empty()) words.push_back(word);
         word = "";
     }
@@ -135,11 +135,11 @@ char firstUniqChar(string s) {
 bool isAnagram(string s, string t) {
     if (s.size() != t.size()) return false;
     int count[26] = {0};
-    for (int i = 0; i < s.size(); i++) {
+    for (size_t i = 0; i < s.size(); i++) {
         count[s[i] - 'a']++;
         count[t[i] - 'a']--;
     }
-    for (int i = 0; i < 26; i++)
+    for (size_t i = 0; i < 26; i++)
         if (count[i] != 0) return false;
     return true;
 }
@@ -156,8 +156,8 @@ bool isAnagram(string s, string t) {
  */
 string longestCommonPrefix(vector<string>& strs) {
     if (strs.empty()) return "";
-    for (int i = 0; i < strs[0].size(); i++)
-        for (int j = 1; j < strs.size(); j++)
+    for (size_t i = 0; i < strs[0].size(); i++)
+        for (size_t j = 1; j < strs.size(); j++)
             if (strs[j][i] != strs[0][i]) return strs[0].substr(0, i);
     return strs[0];
 }
@@ -178,9 +178,9 @@ string longestCommonPrefix(vector<string>& strs) {
 string countAndSay(int n) {
     if (n == 1) return "1";
     string prev = countAndSay(n - 1), result = "";
-    for (int i = 0; i < prev.size(); i++) {
+    for (size_t i = 0; i < prev.size(); i++) {
         int count = 1;
-        while (i + 1 < prev.size() && prev[i] == prev[i + 1]) {
+        while (static_cast<size_t>(i) + 1 < prev.size() && prev[i] == prev[i + 1]) {
             count++;
             i++;
         }
@@ -201,7 +201,7 @@ string countAndSay(int n) {
  */
 bool isIsomorphic(string s, string t) {
     unordered_map<char, int> mapS, mapT;
-    for (int i = 0; i < s.size(); i++) {
+    for (size_t i = 0; i < s.size(); i++) {
         if (mapS[s[i]] != mapT[t[i]]) return false;
         mapS[s[i]] = mapT[t[i]] = i + 1;
     }
@@ -247,10 +247,10 @@ bool isValid(string s) {
  * Output: -1
  */
 int strStr(string haystack, string needle) {
-    for (int i = 0; i <= haystack.size() - needle.size(); i++) {
+    for (size_t i = 0; i <= haystack.size() - needle.size(); i++) {
         int j = 0;
-        while (j < needle.size() && haystack[i + j] == needle[j]) j++;
-        if (j == needle.size()) return i;
+        while (static_cast<size_t>(j) < needle.size() && haystack[i + j] == needle[j]) j++;
+        if (static_cast<size_t>(j) == needle.size()) return i;
     }
     return -1;
 }
@@ -331,10 +331,10 @@ string multiplyStrings(string num1, string num2) {
 int lengthOfLongestSubstring(string s) {
     unordered_map<char, int> lastIndex;
     int maxLength = 0, start = 0;
-    for (int i = 0; i < s.size(); i++) {
+    for (size_t i = 0; i < s.size(); i++) {
         if (lastIndex.count(s[i])) start = max(start, lastIndex[s[i]] + 1);
         lastIndex[s[i]] = i;
-        maxLength = max(maxLength, i - start + 1);
+        maxLength = max(maxLength, static_cast<int>(i) - start + 1);
     }
     return maxLength;
 }
@@ -393,11 +393,11 @@ string reverseOnlyLetters(string s) {
  */
 bool isSubsequence(string s, string t) {
     int i = 0, j = 0;
-    while (i < s.size() && j < t.size()) {
+    while (static_cast<size_t>(i) < s.size() && static_cast<size_t>(j) < t.size()) {
         if (s[i] == t[j]) i++;
         j++;
     }
-    return i == s.size();
+    return static_cast<size_t>(i) == s.size();
 }
 
 /**
@@ -410,7 +410,7 @@ bool isSubsequence(string s, string t) {
  */
 int countBinarySubstrings(string s) {
     int prevGroup = 0, curGroup = 1, count = 0;
-    for (int i = 1; i < s.size(); i++) {
+    for (size_t i = 1; i < s.size(); i++) {
         if (s[i] == s[i - 1]) {
             curGroup++;
         } else {

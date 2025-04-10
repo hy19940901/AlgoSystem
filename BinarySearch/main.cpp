@@ -71,7 +71,7 @@ vector<int> searchRange(vector<int>& nums, int target) {
         if (nums[mid] < target) left = mid + 1;
         else right = mid - 1;
     }
-    if (left >= nums.size() || nums[left] != target) return result;
+    if (static_cast<size_t>(left) >= nums.size() || nums[left] != target) return result;
     result[0] = left;
     right = nums.size() - 1;
     while (left <= right) {

@@ -36,7 +36,7 @@ vector<int> twoSum(vector<int>& numbers, int target) {
 int removeDuplicates(vector<int>& nums) {
     if (nums.empty()) return 0;
     int slow = 0;
-    for (int fast = 1; fast < nums.size(); fast++) {
+    for (size_t fast = 1; fast < nums.size(); fast++) {
         if (nums[fast] != nums[slow]) nums[++slow] = nums[fast];
     }
     return slow + 1;
@@ -53,7 +53,7 @@ int removeDuplicates(vector<int>& nums) {
  */
 void moveZeroes(vector<int>& nums) {
     int slow = 0;
-    for (int fast = 0; fast < nums.size(); fast++) {
+    for (size_t fast = 0; fast < nums.size(); fast++) {
         if (nums[fast] != 0) swap(nums[slow++], nums[fast]);
     }
 }
@@ -124,7 +124,7 @@ int maxArea(vector<int>& height) {
 vector<vector<int>> threeSum(vector<int>& nums) {
     sort(nums.begin(), nums.end());
     vector<vector<int>> res;
-    for (int i = 0; i < nums.size() - 2; i++) {
+    for (size_t i = 0; i < nums.size() - 2; i++) {
         if (i > 0 && nums[i] == nums[i - 1]) continue;
         int left = i + 1, right = nums.size() - 1;
         while (left < right) {
@@ -171,7 +171,7 @@ void sortColors(vector<int>& nums) {
  */
 int removeElement(vector<int>& nums, int val) {
     int slow = 0;
-    for (int fast = 0; fast < nums.size(); fast++) {
+    for (size_t fast = 0; fast < nums.size(); fast++) {
         if (nums[fast] != val) nums[slow++] = nums[fast];
     }
     return slow;

@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <unordered_map>
 #include <unordered_set>
+#include <functional>
+#include <climits> 
 using namespace std;
 
 struct TreeNode {
@@ -201,7 +203,7 @@ void dfsRightSideView(TreeNode* currentNode, int currentDepth, vector<int>& resu
     if (!currentNode) return;
 
     // If the current depth matches the result size, it means this is the first visible node at this depth.
-    if (currentDepth == result.size()) {
+    if (static_cast<size_t>(currentDepth) == result.size()) {
         result.push_back(currentNode->val);
     }
 
@@ -229,7 +231,7 @@ vector<int> rightSideViewDFS(TreeNode* root) {
  */
 TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
     unordered_map<int, int> inorderMap;
-    for (int i = 0; i < inorder.size(); ++i) {
+    for (size_t i = 0; i < inorder.size(); ++i) {
         inorderMap[inorder[i]] = i;
     }
     function<TreeNode*(int, int, int, int)> helper = [&](int preStart, int preEnd, int inStart, int inEnd) {
@@ -488,7 +490,7 @@ int maxPathSum(TreeNode* root) {
  */
 TreeNode* buildTreeFromPostIn(vector<int>& inorder, vector<int>& postorder) {
     unordered_map<int, int> inorderMap;
-    for (int i = 0; i < inorder.size(); ++i) {
+    for (size_t i = 0; i < inorder.size(); ++i) {
         inorderMap[inorder[i]] = i;
     }
     function<TreeNode*(int, int, int, int)> helper = [&](int inStart, int inEnd, int postStart, int postEnd) {

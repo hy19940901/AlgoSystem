@@ -161,11 +161,11 @@ int calculate(string s) {
     stack<int> stk;
     int num = 0;
     char sign = '+';
-    for (int i = 0; i < s.size(); ++i) {
+    for (size_t i = 0; i < s.size(); ++i) {
         if (isdigit(s[i])) {
             num = num * 10 + (s[i] - '0');
         }
-        if ((!isdigit(s[i]) && s[i] != ' ') || (i == s.size() - 1)) {
+        if ((!isdigit(s[i]) && s[i] != ' ') || (static_cast<size_t>(i) == s.size() - 1)) {
             if (sign == '+') stk.push(num);
             else if (sign == '-') stk.push(-num);
             else if (sign == '*') {
@@ -268,7 +268,7 @@ vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
         }
     }
 
-    return result.size() == numCourses ? result : vector<int>();
+    return result.size() == static_cast<size_t>(numCourses) ? result : vector<int>();
 }
 
 /**

@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <numeric>
+#include <unordered_map>
 
 using namespace std;
 
@@ -192,7 +193,7 @@ int kthLargestValue(vector<vector<int>>& matrix, int k) {
  */
 double mincostToHireWorkers(vector<int>& quality, vector<int>& wage, int k) {
     vector<double> ratio;
-    for (int i = 0; i < quality.size(); i++)
+    for (size_t i = 0; i < quality.size(); i++)
         ratio.push_back((double)wage[i] / quality[i]);
     return quickSelect(ratio, 0, ratio.size() - 1, k - 1);
 }
@@ -208,7 +209,7 @@ double mincostToHireWorkers(vector<int>& quality, vector<int>& wage, int k) {
  */
 vector<int> kWeakestRows(vector<vector<int>>& mat, int k) {
     vector<pair<int, int>> rowStrength;
-    for (int i = 0; i < mat.size(); i++)
+    for (size_t i = 0; i < mat.size(); i++)
         rowStrength.emplace_back(accumulate(mat[i].begin(), mat[i].end(), 0), i);
     sort(rowStrength.begin(), rowStrength.end());
     vector<int> result;

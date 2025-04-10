@@ -7,6 +7,8 @@
 #include <unordered_set>
 #include <queue>
 #include <map>
+#include <climits>
+#include <cstdint>
 using namespace std;
 
 /**
@@ -24,7 +26,7 @@ int findContentChildren(vector<int>& g, vector<int>& s) {
     sort(g.begin(), g.end());
     sort(s.begin(), s.end());
     int i = 0, j = 0;
-    while (i < g.size() && j < s.size()) {
+    while (static_cast<size_t>(i) < g.size() && static_cast<size_t>(j) < s.size()) {
         if (s[j] >= g[i]) i++;
         j++;
     }
@@ -42,9 +44,9 @@ int findContentChildren(vector<int>& g, vector<int>& s) {
  */
 bool canJump(vector<int>& nums) {
     int maxReach = 0;
-    for (int i = 0; i < nums.size(); ++i) {
-        if (i > maxReach) return false;
-        maxReach = max(maxReach, i + nums[i]);
+    for (size_t i = 0; i < nums.size(); ++i) {
+        if (static_cast<int>(i) > maxReach) return false;
+        maxReach = max(maxReach, static_cast<int>(i) + nums[i]);
     }
     return true;
 }
@@ -60,9 +62,9 @@ bool canJump(vector<int>& nums) {
  */
 int jump(vector<int>& nums) {
     int jumps = 0, end = 0, farthest = 0;
-    for (int i = 0; i < nums.size() - 1; ++i) {
-        farthest = max(farthest, i + nums[i]);
-        if (i == end) {
+    for (size_t i = 0; i < nums.size() - 1; ++i) {
+        farthest = max(farthest, static_cast<int>(i) + nums[i]);
+        if (static_cast<int>(i) == end) {
             jumps++;
             end = farthest;
         }
@@ -111,7 +113,7 @@ int eraseOverlapIntervals(vector<vector<int>>& intervals) {
     });
     int nonOverlapCount = 1;
     int end = intervals[0][1];
-    for (int i = 1; i < intervals.size(); ++i) {
+    for (size_t i = 1; i < intervals.size(); ++i) {
         if (intervals[i][0] >= end) {
             nonOverlapCount++;
             end = intervals[i][1];
@@ -131,7 +133,7 @@ int eraseOverlapIntervals(vector<vector<int>>& intervals) {
  */
 int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {
     int totalTank = 0, currTank = 0, start = 0;
-    for (int i = 0; i < gas.size(); ++i) {
+    for (size_t i = 0; i < gas.size(); ++i) {
         totalTank += gas[i] - cost[i];
         currTank += gas[i] - cost[i];
         if (currTank < 0) {
@@ -153,7 +155,7 @@ int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {
  */
 int maxSubArray(vector<int>& nums) {
     int maxSum = nums[0], currentSum = nums[0];
-    for (int i = 1; i < nums.size(); ++i) {
+    for (size_t i = 1; i < nums.size(); ++i) {
         currentSum = max(nums[i], currentSum + nums[i]);
         maxSum = max(maxSum, currentSum);
     }
@@ -163,7 +165,7 @@ int maxSubArray(vector<int>& nums) {
 int maxSubArray_kadane(vector<int>& nums) {
     int result = INT32_MIN;
     int count = 0;
-    for (int i = 0; i < nums.size(); i++) {
+    for (size_t i = 0; i < nums.size(); i++) {
         count += nums[i];
         if (count > result) { // 取区间累计的最大值（相当于不断确定最大子序终止位置）
             result = count;
@@ -249,14 +251,14 @@ vector<vector<int>> reconstructQueue(vector<vector<int>>& people) {
  */
 vector<int> partitionLabels(string s) {
     vector<int> lastIndex(26, 0);
-    for (int i = 0; i < s.size(); ++i) {
+    for (size_t i = 0; i < s.size(); ++i) {
         lastIndex[s[i] - 'a'] = i;
     }
     vector<int> partitions;
     int start = 0, end = 0;
-    for (int i = 0; i < s.size(); ++i) {
+    for (size_t i = 0; i < s.size(); ++i) {
         end = max(end, lastIndex[s[i] - 'a']);
-        if (i == end) {
+        if (static_cast<int>(i) == end) {
             partitions.push_back(end - start + 1);
             start = end + 1;
         }
@@ -275,7 +277,7 @@ vector<int> partitionLabels(string s) {
  */
 int largestSumAfterKNegations(vector<int>& nums, int k) {
     sort(nums.begin(), nums.end());
-    for (int i = 0; i < nums.size() && k > 0 && nums[i] < 0; ++i, --k) {
+    for (size_t i = 0; i < nums.size() && k > 0 && nums[i] < 0; ++i, --k) {
         nums[i] = -nums[i];
     }
     return accumulate(nums.begin(), nums.end(), 0) - (k % 2 ? 2 * *min_element(nums.begin(), nums.end()) : 0);

@@ -24,7 +24,7 @@ int findKthLargest(vector<int>& nums, int k) {
     priority_queue<int, vector<int>, greater<int>> minHeap;
     for (int num : nums) {
         minHeap.push(num);
-        if (minHeap.size() > k) {
+        if (minHeap.size() > static_cast<size_t>(k)) {
             minHeap.pop();
         }
     }
@@ -104,7 +104,7 @@ vector<int> topKFrequent(vector<int>& nums, int k) {
     priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> minHeap;
     for (const auto& [num, freq] : freqMap) {
         minHeap.push({freq, num});
-        if (minHeap.size() > k) {
+        if (minHeap.size() > static_cast<size_t>(k)) {
             minHeap.pop();
         }
     }
@@ -222,9 +222,9 @@ string reorganizeString(string S) {
 vector<int> sortKSortedArray(vector<int>& nums, int k) {
     priority_queue<int, vector<int>, greater<int>> minHeap;
     vector<int> result;
-    for (int i = 0; i < nums.size(); i++) {
+    for (size_t i = 0; i < nums.size(); i++) {
         minHeap.push(nums[i]);
-        if (minHeap.size() > k) {
+        if (minHeap.size() > static_cast<size_t>(k)) {
             result.push_back(minHeap.top());
             minHeap.pop();
         }
@@ -248,14 +248,14 @@ vector<int> sortKSortedArray(vector<int>& nums, int k) {
  */
 int kthSmallest(vector<vector<int>>& matrix, int k) {
     priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<>> minHeap;
-    for (int i = 0; i < matrix.size(); ++i) {
+    for (size_t i = 0; i < matrix.size(); ++i) {
         minHeap.push({matrix[i][0], {i, 0}});
     }
     while (--k > 0) {
         auto [val, pos] = minHeap.top();
         minHeap.pop();
         int row = pos.first, col = pos.second;
-        if (col + 1 < matrix[row].size()) {
+        if (static_cast<size_t>(col + 1) < matrix[row].size()) {
             minHeap.push({matrix[row][col + 1], {row, col + 1}});
         }
     }

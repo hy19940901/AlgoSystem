@@ -3,6 +3,7 @@
 #include <stack>
 #include <deque>
 #include <algorithm>
+#include <climits>
 
 using namespace std;
 
@@ -71,7 +72,7 @@ int largestRectangleArea(vector<int>& heights) {
     stack<int> st;
     heights.push_back(0); // Sentinel to clear stack
     int maxArea = 0;
-    for (int i = 0; i < heights.size(); i++) {
+    for (size_t i = 0; i < heights.size(); i++) {
         while (!st.empty() && heights[i] < heights[st.top()]) {
             int h = heights[st.top()];
             st.pop();
@@ -124,15 +125,15 @@ int maximalRectangle(vector<vector<char>>& matrix) {
 vector<int> maxSlidingWindow(vector<int>& nums, int k) {
     deque<int> dq;
     vector<int> result;
-    for (int i = 0; i < nums.size(); i++) {
-        if (!dq.empty() && dq.front() == i - k) {
+    for (size_t i = 0; i < nums.size(); i++) {
+        if (!dq.empty() && dq.front() == static_cast<int>(i) - k) {
             dq.pop_front();
         }
         while (!dq.empty() && nums[dq.back()] < nums[i]) {
             dq.pop_back();
         }
         dq.push_back(i);
-        if (i >= k - 1) {
+        if (static_cast<int>(i) >= k - 1) {
             result.push_back(nums[dq.front()]);
         }
     }
@@ -153,7 +154,7 @@ vector<int> maxSlidingWindow(vector<int>& nums, int k) {
 vector<int> dailyTemperatures(vector<int>& temperatures) {
     vector<int> result(temperatures.size(), 0);
     stack<int> st;
-    for (int i = 0; i < temperatures.size(); i++) {
+    for (size_t i = 0; i < temperatures.size(); i++) {
         while (!st.empty() && temperatures[i] > temperatures[st.top()]) {
             int index = st.top();
             st.pop();

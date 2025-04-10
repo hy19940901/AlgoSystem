@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <algorithm>
+#include <climits>
 
 using namespace std;
 
@@ -18,7 +19,7 @@ using namespace std;
 int removeDuplicates(vector<int>& nums) {
     if (nums.empty()) return 0;
     int index = 1;
-    for (int i = 1; i < nums.size(); i++) {
+    for (size_t i = 1; i < nums.size(); i++) {
         if (nums[i] != nums[i - 1]) {
             nums[index++] = nums[i];
         }
@@ -40,7 +41,7 @@ void moveZeroes(vector<int>& nums) {
     for (int num : nums) {
         if (num != 0) nums[index++] = num;
     }
-    while (index < nums.size()) nums[index++] = 0;
+    while (static_cast<size_t>(index) < nums.size()) nums[index++] = 0;
 }
 
 /**
@@ -54,10 +55,10 @@ void moveZeroes(vector<int>& nums) {
  */
 vector<int> twoSum(vector<int>& nums, int target) {
     unordered_map<int, int> seen;
-    for (int i = 0; i < nums.size(); i++) {
+    for (size_t i = 0; i < nums.size(); i++) {
         int complement = target - nums[i];
         if (seen.find(complement) != seen.end()) {
-            return {seen[complement], i};
+            return {seen[complement], static_cast<int>(i)};
         }
         seen[nums[i]] = i;
     }
@@ -216,7 +217,7 @@ int thirdMax(vector<int>& nums) {
 int pivotIndex(vector<int>& nums) {
     int totalSum = 0, leftSum = 0;
     for (int num : nums) totalSum += num;
-    for (int i = 0; i < nums.size(); i++) {
+    for (size_t i = 0; i < nums.size(); i++) {
         if (leftSum == totalSum - leftSum - nums[i]) return i;
         leftSum += nums[i];
     }
@@ -237,7 +238,7 @@ vector<int> findDisappearedNumbers(vector<int>& nums) {
         int index = abs(num) - 1;
         if (nums[index] > 0) nums[index] = -nums[index];
     }
-    for (int i = 0; i < nums.size(); i++)
+    for (size_t i = 0; i < nums.size(); i++)
         if (nums[i] > 0) result.push_back(i + 1);
     return result;
 }
@@ -252,7 +253,7 @@ vector<int> findDisappearedNumbers(vector<int>& nums) {
  */
 int maxSubArray(vector<int>& nums) {
     int maxSum = nums[0], curSum = nums[0];
-    for (int i = 1; i < nums.size(); i++) {
+    for (size_t i = 1; i < nums.size(); i++) {
         curSum = max(nums[i], curSum + nums[i]);
         maxSum = max(maxSum, curSum);
     }
@@ -341,9 +342,9 @@ int maximumProduct(vector<int>& nums) {
  */
 double findMaxAverage(vector<int>& nums, int k) {
     double sum = 0;
-    for (int i = 0; i < k; i++) sum += nums[i];
+    for (size_t i = 0; i < static_cast<size_t>(k); i++) sum += nums[i];
     double maxAvg = sum;
-    for (int i = k; i < nums.size(); i++) {
+    for (size_t i = k; i < nums.size(); i++) {
         sum += nums[i] - nums[i - k];
         maxAvg = max(maxAvg, sum);
     }
@@ -359,7 +360,7 @@ double findMaxAverage(vector<int>& nums, int k) {
  * Output: true
  */
 bool canPlaceFlowers(vector<int>& flowerbed, int n) {
-    for (int i = 0; i < flowerbed.size() && n > 0; i++) {
+    for (size_t i = 0; i < flowerbed.size() && n > 0; i++) {
         if (flowerbed[i] == 0 &&
             (i == 0 || flowerbed[i - 1] == 0) &&
             (i == flowerbed.size() - 1 || flowerbed[i + 1] == 0)) {
