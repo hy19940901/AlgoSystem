@@ -11,7 +11,9 @@ SRC = src/main.cpp src/BoostCoreExamples.cpp
 TARGET = boost_example
 
 # Boost libraries to link (macOS uses -mt, Ubuntu uses workaround symlinks)
-BOOST_LIBS = -lboost_system -lboost_thread-mt -lboost_chrono -lboost_filesystem
+BOOST_LIBS = \
+    -lboost_system -lboost_thread-mt -lboost_chrono -lboost_filesystem \
+    -lboost_program_options -lboost_serialization -lboost_coroutine -lboost_context
 
 # Build target
 all: check_boost_symlinks $(TARGET)

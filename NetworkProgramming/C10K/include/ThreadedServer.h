@@ -1,8 +1,7 @@
 #ifndef THREADED_SERVER_H
 #define THREADED_SERVER_H
 
-#include <boost/asio/thread_pool.hpp>
-#include <boost/asio/post.hpp>
+#include <boost/asio.hpp>
 #include <string>
 #include <atomic>
 #include <memory>
