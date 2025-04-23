@@ -16,6 +16,28 @@ struct Item {
 // ==========================
 // 0-1 Knapsack (2D Array with Backtracking)
 // ==========================
+/*
+Problem: 0-1 Knapsack (2D DP with Backtracking)
+----------------------------------------------
+Given a list of items with weights and values, and a maximum capacity,
+find the maximum value achievable without exceeding the capacity.
+Also track which items are selected.
+
+DP Definition:
+- dp[i][j]: max value using first i items within capacity j
+
+Transition:
+- If weight[i-1] <= j:
+    dp[i][j] = max(dp[i-1][j], dp[i-1][j - weight[i-1]] + value[i-1])
+- Else:
+    dp[i][j] = dp[i-1][j]
+
+Backtracking:
+- Compare dp[i][j] vs dp[i-1][j] to determine if item i-1 is selected
+
+Time Complexity: O(n * W)
+Space Complexity: O(n * W)
+*/
 int zeroOneKnapsack2DWithBacktrack(int maxCapacity, const vector<Item>& items, vector<int>& selectedItems) {
     int n = items.size();
     vector<vector<int>> dp(n + 1, vector<int>(maxCapacity + 1, 0));
@@ -46,6 +68,14 @@ int zeroOneKnapsack2DWithBacktrack(int maxCapacity, const vector<Item>& items, v
 // ===========================
 // 0-1 Knapsack (2D Array without Backtracking)
 // ===========================
+/*
+Problem: 0-1 Knapsack (2D DP without Backtracking)
+--------------------------------------------------
+Same logic as above, but no item tracking.
+
+Time Complexity: O(n * W)
+Space Complexity: O(n * W)
+*/
 int zeroOneKnapsack2DWithoutBacktrack(int maxCapacity, const vector<Item>& items) {
     int n = items.size();
     vector<vector<int>> dp(n + 1, vector<int>(maxCapacity + 1, 0));
@@ -66,6 +96,24 @@ int zeroOneKnapsack2DWithoutBacktrack(int maxCapacity, const vector<Item>& items
 // ============================
 // 0-1 Knapsack (1D Array with Backtracking)
 // ============================
+/*
+Problem: 0-1 Knapsack (1D DP with Backtracking)
+----------------------------------------------
+Use a 1D array to reduce space and a tracking array to recover selection.
+
+DP Definition:
+- dp[j]: max value with capacity j
+- last[j]: index of last item used to reach dp[j]
+
+Transition:
+- For each item i, traverse j from maxCapacity to weight[i] (reverse)
+
+Backtracking:
+- Trace last[j] to reconstruct selected items
+
+Time Complexity: O(n * W)
+Space Complexity: O(W)
+*/
 int zeroOneKnapsack1DWithBacktrack(int maxCapacity, const vector<Item>& items, vector<int>& selectedItems) {
     int n = items.size();
     vector<int> dp(maxCapacity + 1, 0);
@@ -95,6 +143,14 @@ int zeroOneKnapsack1DWithBacktrack(int maxCapacity, const vector<Item>& items, v
 // =============================
 // 0-1 Knapsack (1D Array without Backtracking)
 // =============================
+/*
+Problem: 0-1 Knapsack (1D DP without Backtracking)
+--------------------------------------------------
+Space-optimized version of 0-1 knapsack without selection recovery.
+
+Time Complexity: O(n * W)
+Space Complexity: O(W)
+*/
 int zeroOneKnapsack1DWithoutBacktrack(int maxCapacity, const vector<Item>& items) {
     int n = items.size();
     vector<int> dp(maxCapacity + 1, 0);
@@ -111,6 +167,14 @@ int zeroOneKnapsack1DWithoutBacktrack(int maxCapacity, const vector<Item>& items
 // =====================
 // 0-1 Knapsack (Brute Force with Backtracking)
 // =====================
+/*
+Problem: 0-1 Knapsack (Brute Force with Backtracking)
+-----------------------------------------------------
+Try all subsets using DFS. Update selected items if new path gives better value.
+
+Time Complexity: O(2^n)
+Space Complexity: O(n)
+*/
 int zeroOneKnapsackBruteForce(int idx, int remainingCapacity, const vector<Item>& items, vector<int>& selectedItems) {
     if (static_cast<size_t>(idx) == items.size() || remainingCapacity == 0) {
         return 0;
@@ -138,6 +202,22 @@ int zeroOneKnapsackBruteForce(int idx, int remainingCapacity, const vector<Item>
 // =====================
 // Complete Knapsack (1D Array without Backtracking)
 // =====================
+/*
+Problem: Complete Knapsack (1D DP without Backtracking)
+-------------------------------------------------------
+Each item can be chosen unlimited times.
+
+DP Definition:
+- dp[j]: max value for capacity j
+
+Transition:
+- For each item i:
+    for j from weight[i] to maxCapacity:
+        dp[j] = max(dp[j], dp[j - weight[i]] + value[i])
+
+Time Complexity: O(n * W)
+Space Complexity: O(W)
+*/
 int completeKnapsack1DWithoutBacktrack(int maxCapacity, const vector<Item>& items) {
     int n = items.size();
     vector<int> dp(maxCapacity + 1, 0);
@@ -154,6 +234,15 @@ int completeKnapsack1DWithoutBacktrack(int maxCapacity, const vector<Item>& item
 // =====================
 // Complete Knapsack (Brute Force with Backtracking)
 // =====================
+/*
+Problem: Complete Knapsack (Brute Force with Backtracking)
+----------------------------------------------------------
+Try all count options for each item (0 to max allowed).
+Track item counts leading to optimal value.
+
+Time Complexity: Exponential
+Space Complexity: O(n)
+*/
 int completeKnapsackBruteForce(int idx, int remainingCapacity, const vector<Item>& items, vector<int>& itemCounts) {
     if (static_cast<size_t>(idx) == items.size() || remainingCapacity == 0) {
         return 0;
@@ -201,6 +290,23 @@ bool canPartition(vector<int>& numsPartition) {
     }
     return dp[target];
 }
+/*
+Problem: Partition Equal Subset Sum (LC 416)
+--------------------------------------------
+Determine if the array can be split into two subsets with equal sum.
+
+Approach:
+- Equivalent to checking if there's a subset that sums to total / 2
+
+DP Definition:
+- dp[j]: whether subset sum j is possible
+
+Transition:
+- dp[j] = dp[j] || dp[j - num]
+
+Time Complexity: O(n * sum/2)
+Space Complexity: O(sum/2)
+*/
 
 /*
  * Problem 2: Target Sum (LC 494)
@@ -227,6 +333,23 @@ int findTargetSumWays(vector<int>& numsTarget, int target) {
     }
     return dp[newTarget];
 }
+/*
+Problem: Target Sum (LC 494)
+-----------------------------
+Assign '+' or '-' to each number to reach target sum.
+
+Transformation:
+- Subset sum with newTarget = (total + target) / 2
+
+DP Definition:
+- dp[j]: number of ways to reach sum j
+
+Transition:
+- dp[j] += dp[j - num]
+
+Time Complexity: O(n * newTarget)
+Space Complexity: O(newTarget)
+*/
 
 /*
  * Problem 3: Coin Change II (LC 518)
@@ -248,6 +371,22 @@ int change(int amount, vector<int>& coins) {
     }
     return dp[amount];
 }
+/*
+Problem: Coin Change II (LC 518)
+--------------------------------
+Return the number of combinations that make up a given amount using unlimited coins.
+
+DP Definition:
+- dp[j]: number of ways to form amount j
+
+Transition:
+- For each coin:
+    for j from coin to amount:
+        dp[j] += dp[j - coin]
+
+Time Complexity: O(n * amount)
+Space Complexity: O(amount)
+*/
 
 /*
  * Problem 4: Last Stone Weight II (LC 1049)
@@ -271,6 +410,25 @@ int lastStoneWeightII(vector<int>& stones) {
     }
     return sum - 2 * dp[target];
 }
+/*
+Problem: Last Stone Weight II (LC 1049)
+---------------------------------------
+Split stones into two subsets with minimal difference in sum.
+
+Equivalent to:
+- Maximize subset sum <= total/2
+
+DP Definition:
+- dp[j]: max subset sum not exceeding j
+
+Transition:
+- dp[j] = max(dp[j], dp[j - stone] + stone)
+
+Final Answer: total - 2 * dp[sum/2]
+
+Time Complexity: O(n * sum/2)
+Space Complexity: O(sum/2)
+*/
 
 /*
  * Problem 5: Coin Change (LC 322)
@@ -295,6 +453,20 @@ int coinChange(vector<int>& coins, int amount) {
     }
     return dp[amount] == INT_MAX ? -1 : dp[amount];
 }
+/*
+Problem: Coin Change (LC 322)
+------------------------------
+Find the minimum number of coins to make up a given amount.
+
+DP Definition:
+- dp[j]: min number of coins needed to make amount j
+
+Transition:
+- dp[j] = min(dp[j], dp[j - coin] + 1)
+
+Time Complexity: O(n * amount)
+Space Complexity: O(amount)
+*/
 
 /*
  * Problem 6: Perfect Squares (LC 279)
@@ -304,6 +476,16 @@ int coinChange(vector<int>& coins, int amount) {
  * Example:
  * Input: n = 12
  * Output: 3
+ */
+/**
+ * Problem: Perfect Squares (LC 279)
+ * ---------------------------------
+ * Return the least number of perfect square numbers which sum to n.
+ *
+ * dp[i]: minimum number of perfect squares that sum to i
+ *
+ * Time: O(n * sqrt(n))
+ * Space: O(n)
  */
 int numSquares(int n) {
     vector<int> dp(n + 1, INT_MAX);
@@ -316,6 +498,21 @@ int numSquares(int n) {
     }
     return dp[n];
 }
+/*
+Problem: Perfect Squares (LC 279)
+---------------------------------
+Find the minimum number of perfect square numbers that sum to n.
+
+DP Definition:
+- dp[j]: min number of squares summing to j
+
+Transition:
+- For all i*i <= j:
+    dp[j] = min(dp[j], dp[j - i*i] + 1)
+
+Time Complexity: O(n * sqrt(n))
+Space Complexity: O(n)
+*/
 
 // =====================
 // Main Function: Testing all versions
