@@ -1,6 +1,6 @@
 // thread_safe_stl.hpp
-#ifndef THREAD_SAFE_STL_HPP
-#define THREAD_SAFE_STL_HPP
+#ifndef SAFT_THREAD_STL_HPP
+#define SAFT_THREAD_STL_HPP
 
 #include <mutex>
 #include <shared_mutex>
@@ -431,4 +431,4 @@ private:
     
 } // namespace thread_safe
 
-#endif // THREAD_SAFE_STL_HPP
+#endif // SAFT_THREAD_STL_HPP

@@ -1,5 +1,5 @@
-#ifndef MY_STL_LOCKS_HPP
-#define MY_STL_LOCKS_HPP
+#ifndef LOCKS_HPP
+#define LOCKS_HPP
 
 #include <mutex>
 #include <shared_mutex>
@@ -167,4 +167,4 @@ private:
     }
 };
 
-#endif // MY_STL_LOCKS_HPP
+#endif // LOCKS_HPP

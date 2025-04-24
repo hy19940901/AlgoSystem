@@ -1,4 +1,4 @@
-#include "Lock.hpp"
+#include "Locks.hpp"
 
 MySharedMutex smtx;
 int shared_data = 0;

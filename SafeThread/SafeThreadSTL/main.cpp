@@ -1,4 +1,4 @@
-#include "thread_safe_stl.hpp"
+#include "SafeThreadSTL.hpp"
 #include <thread>
 #include <iostream>
 #include <chrono>
