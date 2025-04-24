@@ -2,12 +2,11 @@
 
 const int RUN = 32; // The minimum run size for the mergeSortWithInsertion algorithm
 
-
 namespace SortingAlgorithms {
 
 // Bubble Sort implementation
 // Time Complexity: O(n^2) in worst and average case
-void bubbleSort(vector<int>& arr, int n) {
+void bubbleSort(std::vector<int>& arr, int n) {
     bool swapped;
     for (int i = 0; i < n - 1; i++) {
         swapped = false;
@@ -23,7 +22,7 @@ void bubbleSort(vector<int>& arr, int n) {
 
 // Selection Sort implementation
 // Time Complexity: O(n^2)
-void selectionSort(vector<int>& arr, int n) {
+void selectionSort(std::vector<int>& arr, int n) {
     for (int i = 0; i < n - 1; i++) {
         int minIndex = i;
         // Find the minimum element in the unsorted part of the array
@@ -41,7 +40,7 @@ void selectionSort(vector<int>& arr, int n) {
 
 // Insertion Sort implementation
 // Time Complexity: O(n^2)
-void insertionSort(vector<int>& arr, int n) {
+void insertionSort(std::vector<int>& arr, int n) {
     for (int i = 1; i < n; i++) {
         int key = arr[i];
         int j = i - 1;
@@ -55,7 +54,7 @@ void insertionSort(vector<int>& arr, int n) {
 }
 
 // Merging two halves of an array for Merge Sort
-void merge(vector<int>& arr, int l, int m, int r) {
+void merge(std::vector<int>& arr, int l, int m, int r) {
     int n1 = m - l + 1; // Size of left subarray
     int n2 = r - m;     // Size of right subarray
 
@@ -99,7 +98,7 @@ void merge(vector<int>& arr, int l, int m, int r) {
 
 // Merge Sort implementation
 // Time Complexity: O(n log n)
-void mergeSort(vector<int>& arr, int l, int r) {
+void mergeSort(std::vector<int>& arr, int l, int r) {
     if (l < r) {
         int m = l + (r - l) / 2; // Find the middle point
         // Recursively sort the left and right halves
@@ -111,7 +110,7 @@ void mergeSort(vector<int>& arr, int l, int r) {
 }
 
 // Function to heapify a subtree rooted at index i for Heap Sort
-void heapify(vector<int>& arr, int n, int i) {
+void heapify(std::vector<int>& arr, int n, int i) {
     int largest = i;    // Initialize largest as root
     int left = 2 * i + 1; // Left child
     int right = 2 * i + 2; // Right child
@@ -133,7 +132,7 @@ void heapify(vector<int>& arr, int n, int i) {
 
 // Heap Sort implementation
 // Time Complexity: O(n log n)
-void heapSort(vector<int>& arr, int n) {
+void heapSort(std::vector<int>& arr, int n) {
     // Build heap (rearrange array)
     for (int i = n / 2 - 1; i >= 0; i--) {
         heapify(arr, n, i);
@@ -149,7 +148,7 @@ void heapSort(vector<int>& arr, int n) {
 }
 
 // Function to partition the array for Quick Sort using a random pivot
-int randomizedPartition(vector<int>& arr, int low, int high) {
+int randomizedPartition(std::vector<int>& arr, int low, int high) {
     // Use a random device and Mersenne Twister engine for better randomness
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -176,7 +175,7 @@ int randomizedPartition(vector<int>& arr, int low, int high) {
 
 // Quick Sort implementation
 // Time Complexity: O(n log n) on average, O(n^2) in the worst case
-void quickSort(vector<int>& arr, int low, int high) {
+void quickSort(std::vector<int>& arr, int low, int high) {
     if (low < high) {
         // Partition the array around a random pivot
         int pi = randomizedPartition(arr, low, high);
@@ -188,7 +187,7 @@ void quickSort(vector<int>& arr, int low, int high) {
 
 // Bucket Sort implementation
 // Time Complexity: O(n + k), where k is the number of buckets
-void bucketSort(vector<int>& arr, int n) {
+void bucketSort(std::vector<int>& arr, int n) {
     const int maxVal = *std::max_element(arr.begin(), arr.end());
     const int minVal = *std::min_element(arr.begin(), arr.end());
     const int range = maxVal - minVal + 1;
@@ -217,7 +216,7 @@ void bucketSort(vector<int>& arr, int n) {
     }
 }
 
-void threeWayPartition(vector<int>& arr, int low, int high, int& lt, int& gt) {
+void threeWayPartition(std::vector<int>& arr, int low, int high, int& lt, int& gt) {
     int pivot = medianOfThree(arr, low, high); // Use the median-of-three pivot selection
     lt = low;  // Initialize lt to the starting index
     gt = high; // Initialize gt to the ending index
@@ -235,7 +234,7 @@ void threeWayPartition(vector<int>& arr, int low, int high, int& lt, int& gt) {
     }
 }
 
-int medianOfThree(vector<int>& arr, int low, int high) {
+int medianOfThree(std::vector<int>& arr, int low, int high) {
     int mid = low + (high - low) / 2;
     // Arrange the first, middle, and last elements in ascending order
     if (arr[low] > arr[mid]) swap(arr[low], arr[mid]);
@@ -246,14 +245,14 @@ int medianOfThree(vector<int>& arr, int low, int high) {
     return arr[high];
 }
 
-void quickSortWithInsertion(vector<int>& arr, int low, int high) {
+void quickSortWithInsertion(std::vector<int>& arr, int low, int high) {
     const int threshold = 20;  // Switch to insertion sort when subarray size is below threshold
 
     if (low >= high) return;
 
     if (high - low + 1 <= threshold) {
         // Copy the subarray [low, high] into a temporary array
-        vector<int> subArr(arr.begin() + low, arr.begin() + high + 1);
+        std::vector<int> subArr(arr.begin() + low, arr.begin() + high + 1);
 
         // Use the existing insertionSort function on the temporary array
         insertionSort(subArr, subArr.size());
@@ -273,7 +272,7 @@ void quickSortWithInsertion(vector<int>& arr, int low, int high) {
     }
 }
 
-void mergeSortWithInsertion(vector<int>& arr, int n) {
+void mergeSortWithInsertion(std::vector<int>& arr, int n) {
     // Step 1: Use insertion sort to sort small runs of size RUN
     for (int i = 0; i < n; i += RUN) {
         int right = std::min(i + RUN - 1, n - 1);  // Define the right boundary of the current run
