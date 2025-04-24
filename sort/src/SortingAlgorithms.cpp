@@ -2,7 +2,7 @@
 
 const int RUN = 32; // The minimum run size for the mergeSortWithInsertion algorithm
 
-using namespace std;
+
 namespace SortingAlgorithms {
 
 // Bubble Sort implementation
