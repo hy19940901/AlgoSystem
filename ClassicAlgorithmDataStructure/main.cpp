@@ -292,6 +292,24 @@ public:
 
         auto it = cacheMap[key];
         cacheList.splice(cacheList.begin(), cacheList, it); // move to front
+        // ✅ Efficiently moves the node `it` to the front of the list (O(1) time).
+        // No memory is allocated or deallocated.
+        // Internally, it only adjusts pointers — this is the key benefit of std::list.
+
+        // 🟰 Functionally equivalent to:
+        /*
+            cacheList.push_front(*it);   // Create a new copy at the front
+            cacheList.erase(it);         // Delete the original node
+        */
+
+        // ❗ BUT:
+        // - push_front + erase = 1 copy + 1 destruction → more expensive
+        // - splice = pointer manipulation only → faster, no copy or destructor call
+
+        // 🚀 Summary:
+        // - splice() is the most efficient way to reorder nodes inside std::list
+        // - It keeps iterator validity and avoids memory churn
+        // - Ideal for LRU cache, MRU cache, or reordering operations
         return it->second;
     }
 
