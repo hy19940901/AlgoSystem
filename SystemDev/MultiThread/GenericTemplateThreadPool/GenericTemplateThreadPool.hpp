@@ -1,6 +1,6 @@
-// ThreadPool.hpp
-#ifndef THREAD_POOL_HPP
-#define THREAD_POOL_HPP
+// GenericTemplateThreadPool.hpp
+#ifndef GENERIC_TEMPLATE_THREAD_POOL_HPP
+#define GENERIC_TEMPLATE_THREAD_POOL_HPP
 
 #include <vector>
 #include <queue>
@@ -98,7 +98,7 @@ private:
     std::atomic<bool> stop_flag;
 };
 
-#endif // THREAD_POOL_HPP
+#endif // GENERIC_TEMPLATE_THREAD_POOL_HPP
 
 
 /**

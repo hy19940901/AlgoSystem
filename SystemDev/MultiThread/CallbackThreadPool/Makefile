@@ -3,7 +3,7 @@ CFLAGS = -std=c++20
 
 SOURCES = ./src/ThreadPool.cpp ./src/main.cpp
 OBJECTS = $(SOURCES:.cpp=.o)
-EXECUTABLE = Asynchronous_Programming
+EXECUTABLE = CallbackThreadPool_Programming
 
 all: $(EXECUTABLE)
 

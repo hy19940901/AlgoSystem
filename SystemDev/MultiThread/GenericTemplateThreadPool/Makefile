@@ -7,7 +7,7 @@ CXX = g++
 CXXFLAGS = -std=c++20 -Wall
 
 # Target executable
-TARGET = ThreadPool
+TARGET = GenericTemplateThreadPool
 
 # Source files
 SRC = ./main.cpp
