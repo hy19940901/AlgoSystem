@@ -4,7 +4,7 @@ CXXFLAGS = -std=c++20 -pthread -O2
 TARGET = polling_system
 BOOST_LIBS = -lboost_system -lboost_thread-mt -lboost_chrono -lboost_filesystem
 BOOST_INC = /usr/local/include
-BOOST_LIB = /usr/local/lib
+BOOST_LIB = /usr/lib
 
 all: $(TARGET)
 
