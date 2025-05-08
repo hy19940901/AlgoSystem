@@ -1,0 +1,361 @@
+// Memory Tracker
+// ✅ 1. Memory Tracker Hook 模块（设备端）
+// Hook 所有 malloc/new 和 free/delete 操作，记录每次分配的指针、大小、调用位置、时间戳和线程 ID。
+// 使用 ring buffer 和 live_map（哈希表）存储分配信息，确保低开销、可溯源。
+// Trade-off: 会占用部分内存，需注意采样控制，避免过度记录影响性能。
+
+void* tracked_malloc(size_t sz, const char* file, int line) {
+    void* p = malloc(sz);
+    MemInfo info = {sz, file, line, time(NULL), gettid()};
+    ring_buffer.push_back(p, info); // 非阻塞缓存
+    live_map[p] = info;
+    return p;
+}
+#define MALLOC(x) tracked_malloc(x, __FILE__, __LINE__)
+
+
+// ✅ 2. Snapshot & Leak Detector 模块
+// 周期性采样 live_map 快照，分析当前未释放对象数与上一次快照的差异，识别是否发生泄漏。
+// 可以记录 top N 热点文件、函数位置作为报告。
+// Trade-off: 快照比较开销低但不实时，精度受采样周期影响。
+
+void analyze_snapshot() {
+    auto now = get_live_map();
+    size_t growth = now.size() - last.size();
+    if (growth > THRESHOLD) {
+        generate_leak_report(now, last);
+    }
+    last = now;
+}
+
+
+// ✅ 3. 本地持久化模块（SQLite）
+// 使用 SQLite 存储泄漏报告和详细记录，方便设备断网缓存和后续上传。
+// 存储为结构化数据（summary）和压缩 blob（二进制 JSON 或文本）。
+// Trade-off: 文件大小受限，查询功能有限，适合本地暂存但不适合复杂分析。
+
+CREATE TABLE leak_summary (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ts TEXT,
+    total_growth INTEGER,
+    top_file TEXT,
+    blob_gz BLOB
+);
+
+
+// ✅ 4. 告警生成与回传队列模块
+// 将泄漏报告封装为 JSON 或 Protobuf 告警对象，加入回传队列（内存或文件），等待网络可用时发送。
+// 支持队列限流、持久化、加密传输等功能。
+// Trade-off: 回传可能延迟，确保队列稳定性和落盘持久化逻辑健壮。
+
+{
+  "device_id": "router-001",
+  "ts": "2025-03-31T10:30",
+  "growth": 1500,
+  "top_modules": ["netmod.c", "ssl.c"],
+  "max_obj": 128000
+}
+
+
+// ✅ 5. 上报模块（MQTT / HTTPS）
+// 从告警队列中读取数据，推送到远程 FortiAnalyzer 服务端，支持重试、断点续传、TLS 加密。
+// MQTT 更轻量，适合嵌入式设备；HTTPS 支持更强认证和集中管理。
+// Trade-off: MQTT 配置简单但功能有限；HTTPS 适配复杂但更标准。
+
+// 上报调用伪代码（MQTT）
+mqtt_publish("/agent/leak_report", payload_json);
+
+
+// ✅ 6. 服务端 Ingest 模块（Kafka）
+// 接收多个设备上传日志，缓存在 Kafka 中，保障高可用、高吞吐、解耦上下游。
+// 后续由日志消费程序写入 ClickHouse 或通知告警引擎。
+// Trade-off: Kafka 运维复杂度高，小型系统可用文件队列或 Redis 替代。
+
+// Kafka 消费伪代码（C++ 风格伪逻辑）
+KafkaConsumer consumer("leak-topic");
+while (true) {
+    auto msg = consumer.poll();
+    clickhouse_writer.write(msg);
+}
+
+
+// ✅ 7. ClickHouse 数据仓库
+// 存储所有泄漏上报数据，支持复杂聚合分析、告警策略执行、时间序列查询。
+// 结构化设计、分区索引优化查询性能。
+// Trade-off: 不适合频繁更新，适合日志写入 + 聚合读场景。
+
+CREATE TABLE leak_report (
+    ts DateTime,
+    device_id String,
+    module String,
+    growth UInt32,
+    obj_total UInt64,
+    blob_compressed String
+) ENGINE = MergeTree()
+PARTITION BY toYYYYMM(ts)
+ORDER BY (device_id, ts);
+
+
+// ✅ 8. 告警规则引擎（SQL 分析 + Redis 缓存）
+// 执行告警规则，检测泄漏趋势、版本回归、单模块爆发式增长等。
+// Redis 可缓存历史状态或黑名单设备加速规则判断。
+// Trade-off: Redis 占用资源较多，非必须可替换为 ClickHouse 中间表。
+
+-- 示例 SQL 告警规则：
+SELECT device_id
+FROM leak_report
+WHERE growth > 1000 AND ts > now() - INTERVAL 10 MINUTE
+GROUP BY device_id
+HAVING count() > 3;
+
+
+
+// ✅ 1. Memory Tracker Hook 模块（设备端）
+// Hook 所有 malloc/new 和 free/delete 操作，记录每次分配的指针、大小、调用位置、时间戳和线程 ID。
+// 使用 ring buffer 和 live_map（哈希表）存储分配信息，确保低开销、可溯源。
+// Trade-off: 会占用部分内存，需注意采样控制，避免过度记录影响性能。
+
+void* tracked_malloc(size_t sz, const char* file, int line) {
+    void* p = malloc(sz);
+    MemInfo info = {sz, file, line, time(NULL), gettid()};
+    ring_buffer.push_back(p, info); // 非阻塞缓存
+    live_map[p] = info;
+    return p;
+}
+#define MALLOC(x) tracked_malloc(x, __FILE__, __LINE__)
+
+
+// ✅ 2. Snapshot & Leak Detector 模块
+// 周期性采样 live_map 快照，分析当前未释放对象数与上一次快照的差异，识别是否发生泄漏。
+// 可以记录 top N 热点文件、函数位置作为报告。
+// Trade-off: 快照比较开销低但不实时，精度受采样周期影响。
+
+void analyze_snapshot() {
+    auto now = get_live_map();
+    size_t growth = now.size() - last.size();
+    if (growth > THRESHOLD) {
+        generate_leak_report(now, last);
+    }
+    last = now;
+}
+
+
+// ✅ 3. 本地持久化模块（SQLite）
+// 使用 SQLite 存储泄漏报告和详细记录，方便设备断网缓存和后续上传。
+// 存储为结构化数据（summary）和压缩 blob（二进制 JSON 或文本）。
+// Trade-off: 文件大小受限，查询功能有限，适合本地暂存但不适合复杂分析。
+
+CREATE TABLE leak_summary (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ts TEXT,
+    total_growth INTEGER,
+    top_file TEXT,
+    blob_gz BLOB
+);
+
+
+// ✅ 4. 告警生成与回传队列模块
+// 将泄漏报告封装为 JSON 或 Protobuf 告警对象，加入回传队列（内存或文件），等待网络可用时发送。
+// 支持队列限流、持久化、加密传输等功能。
+// Trade-off: 回传可能延迟，确保队列稳定性和落盘持久化逻辑健壮。
+
+{
+  "device_id": "router-001",
+  "ts": "2025-03-31T10:30",
+  "growth": 1500,
+  "top_modules": ["netmod.c", "ssl.c"],
+  "max_obj": 128000
+}
+
+
+// ✅ 5. 上报模块（MQTT / HTTPS）
+// 从告警队列中读取数据，推送到远程 FortiAnalyzer 服务端，支持重试、断点续传、TLS 加密。
+// MQTT 更轻量，适合嵌入式设备；HTTPS 支持更强认证和集中管理。
+// Trade-off: MQTT 配置简单但功能有限；HTTPS 适配复杂但更标准。
+
+// 上报调用伪代码（MQTT）
+mqtt_publish("/agent/leak_report", payload_json);
+
+
+// ✅ 6. 服务端 Ingest 模块（Kafka）
+// 接收多个设备上传日志，缓存在 Kafka 中，保障高可用、高吞吐、解耦上下游。
+// 后续由日志消费程序写入 ClickHouse 或通知告警引擎。
+// Trade-off: Kafka 运维复杂度高，小型系统可用文件队列或 Redis 替代。
+
+// Kafka 消费伪代码（C++ 风格伪逻辑）
+KafkaConsumer consumer("leak-topic");
+while (true) {
+    auto msg = consumer.poll();
+    clickhouse_writer.write(msg);
+}
+
+
+// ✅ 7. ClickHouse 数据仓库
+// 存储所有泄漏上报数据，支持复杂聚合分析、告警策略执行、时间序列查询。
+// 结构化设计、分区索引优化查询性能。
+// Trade-off: 不适合频繁更新，适合日志写入 + 聚合读场景。
+
+CREATE TABLE leak_report (
+    ts DateTime,
+    device_id String,
+    module String,
+    growth UInt32,
+    obj_total UInt64,
+    blob_compressed String
+) ENGINE = MergeTree()
+PARTITION BY toYYYYMM(ts)
+ORDER BY (device_id, ts);
+
+
+// ✅ 8. 告警规则引擎（SQL 分析 + Redis 缓存）
+// 执行告警规则，检测泄漏趋势、版本回归、单模块爆发式增长等。
+// Redis 可缓存历史状态或黑名单设备加速规则判断。
+// Trade-off: Redis 占用资源较多，非必须可替换为 ClickHouse 中间表。
+
+-- 示例 SQL 告警规则：
+SELECT device_id
+FROM leak_report
+WHERE growth > 1000 AND ts > now() - INTERVAL 10 MINUTE
+GROUP BY device_id
+HAVING count() > 3;
+
+
+// ✅ 9. 在线运行程序泄漏排查与自恢复模块
+// 用于处理设备已上线、无法重启调试的场景。通过监控 RSS 增长趋势或 live_map 大小，在运行中检测可疑泄漏，
+// 并结合热修复机制（释放缓存/重启模块）实现降级缓解。
+// Trade-off: 精度不如调试工具，适合线上保命级方案。
+
+void monitor_memory_leak() {
+    size_t prev_rss = get_rss_kb();
+    while (true) {
+        sleep(60);
+        size_t curr_rss = get_rss_kb();
+        if (curr_rss - prev_rss > RSS_THRESHOLD_MB) {
+            log_warning("RSS increasing, suspected leak");
+            dump_top_growth_modules();
+            attempt_lazy_cleanup();
+        }
+        prev_rss = curr_rss;
+    }
+}
+
+
+
+// 设计SIEM
+// ✅ 模块 1：日志采集器
+// 负责从系统（syslog）、网络设备（UDP/TCP）、应用（HTTP API）中收集日志数据。支持多格式（JSON、CEF、原始文本），
+// 可通过 socket 或文件监听方式接收并封装为统一结构。
+
+struct RawLog {
+    string source;
+    string payload;
+    time_t recv_time;
+};
+
+RawLog listen_udp_log(int port) {
+    int sock = socket(AF_INET, SOCK_DGRAM, 0);
+    bind(sock, ...);
+    char buffer[1024];
+    recvfrom(sock, buffer, sizeof(buffer), 0, ...);
+    return RawLog{"udp:514", buffer, time(NULL)};
+}
+
+
+// ✅ 模块 2：日志标准化处理器
+// 将不同来源的原始日志解析为标准事件结构，包括时间戳、事件类型、IP、用户、行为等字段。
+// 支持 JSON 解析、正则提取或固定格式解析。
+
+struct Event {
+    string event_type;
+    string src_ip;
+    string user;
+    string action;
+    time_t timestamp;
+};
+
+Event parse_json_log(const RawLog& log) {
+    json j = parse_json(log.payload);
+    return Event{j["event"], j["src_ip"], j["user"], j["action"], log.recv_time};
+}
+
+
+// ✅ 模块 3：数据存储索引
+// 将标准事件持久化保存到 SQLite 或轻量数据库中，并建立简单索引（如按时间、IP 过滤）。
+// 若在嵌入式环境，也可用本地文件或内存结构持久化。
+
+void save_event_to_sqlite(const Event& e) {
+    string sql = "INSERT INTO events (type, ip, user, action, ts) VALUES (?, ?, ?, ?, ?);";
+    sqlite_exec(sql, e.event_type, e.src_ip, e.user, e.action, e.timestamp);
+}
+
+
+// ✅ 模块 4：规则匹配与告警引擎
+// 根据配置的规则（如 src_ip = 192.168.1.1 且 action = login_failed）匹配事件，触发告警。
+// 支持布尔表达式或 DSL 规则，事件匹配成功后送入告警队列。
+
+bool match_rule(const Event& e) {
+    return (e.event_type == "auth") && (e.action == "fail") && (e.src_ip == "192.168.1.1");
+}
+
+void alert_if_match(const Event& e) {
+    if (match_rule(e)) send_alert(e);
+}
+
+
+// ✅ 模块 5：告警推送与队列
+// 将告警事件加入内存队列，定期异步发送到 webhook、邮件、MQTT、或写入本地日志文件。
+// 支持重试机制和限流。
+
+queue<Event> alert_queue;
+
+void send_alert_worker() {
+    while (true) {
+        if (!alert_queue.empty()) {
+            Event e = alert_queue.front(); alert_queue.pop();
+            send_http_post("http://alert.example.com", e);
+        }
+        sleep(1);
+    }
+}
+
+
+// ✅ 模块 6：可视化模块（仪表盘）
+// 提供基础的 Web 界面显示事件趋势、TopN IP、最近告警、按类型统计等。
+// 前端建议使用 ECharts + Vue/React，后端提供 REST API。
+
+// 示例 API 接口伪代码：
+vector<Event> get_last_100_events() {
+    return sqlite_query("SELECT * FROM events ORDER BY ts DESC LIMIT 100;");
+}
+
+
+// ✅ 模块 7：滑动窗口聚合分析
+// 支持近 1 分钟内同 IP 登录失败次数统计、爆发行为检测。
+// 适合通过 Redis 或本地 unordered_map 实现滑动时间窗口。
+
+unordered_map<string, deque<time_t>> ip_fail_logins;
+
+void record_fail(const Event& e) {
+    auto& dq = ip_fail_logins[e.src_ip];
+    dq.push_back(e.timestamp);
+    while (!dq.empty() && e.timestamp - dq.front() > 60) dq.pop_front();
+    if (dq.size() > 10) send_alert(e); // 超阈值告警
+}
+
+
+// ✅ 模块 8：威胁情报匹配（可选）
+// 加载 IOC（恶意 IP、域名、Hash）列表，在日志中快速匹配是否命中威胁库。
+
+unordered_set<string> ioc_ip_set;
+
+void load_ioc_list() {
+    ioc_ip_set = read_file_lines_to_set("threat_ioc.txt");
+}
+
+bool check_ioc(const Event& e) {
+    return ioc_ip_set.count(e.src_ip);
+}
+
+
+// ✅ 一句话总结：
+// 我会将轻量 SIEM 拆分为日志采集、解析、存储、匹配、告警、可视化等核心模块，使用嵌入式数据库和轻量处理逻辑，支持边缘部署、Web 展示和事件规则扩展，实现结构清晰、部署简单、可定制化的安全分析平台。
