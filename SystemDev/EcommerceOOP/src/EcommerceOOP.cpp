@@ -1,85 +1,132 @@
 #include "../include/EcommerceOOP.h"
-#include <iostream>
-using namespace std;
+#include <cstring>
+#include <vector>
+#include <cstdlib>
+
+#define DISCOUNT_RATE 0.2
 
 namespace ecommerce {
 
-void User::setUsername(const string& u) { username = u; }
-void User::setPassword(const string& p) { password = p; }
-void User::print() const { cout << "User: " << username << endl; }
+// --- User Implementation ---
+User::User(std::string i, std::string u, std::string e)
+    : id(std::move(i)), username(std::move(u)), email(std::move(e)) {}
 
-Product::Product(string n, double p) : name(n), price(p) {}
-void Product::print() const { cout << "Product: " << name << ", $" << price << endl; }
-Book::Book(string n, double p, string a) : Product(n, p), author(a) {}
-void Book::print() const { cout << "Book: " << name << " by " << author << ", $" << price << endl; }
-InternalProduct::InternalProduct(string n, double p) : Product(n, p) {}
-void InternalProduct::print() const { cout << "InternalProduct: " << name << ", $" << price << endl; }
-PrivateProduct::PrivateProduct(string n, double p) : Product(n, p) {}
-void PrivateProduct::print() const { cout << "PrivateProduct: [hidden details]" << endl; }
+std::string User::getId() const { return id; }
+std::string User::getName() const { return username; }
 
-double HolidayDiscount::apply(double price) const { return price * 0.8; }
+// --- Customer Implementation ---
+Customer::Customer(std::string id, std::string u, std::string e, std::string p)
+    : User(std::move(id), std::move(u), std::move(e)), password(std::move(p)) {}
 
-Order::Order(int i) : id(i) { cout << "Order created: " << id << endl; }
-Order::~Order() { cout << "Order destroyed: " << id << endl; }
-Cart::Cart(int val) { data = new int(val); }
-Cart::Cart(const Cart& other) { data = new int(*other.data); }
-Cart::~Cart() { delete data; }
-void Cart::print() const { cout << "Cart value: " << *data << endl; }
-int Platform::totalUsers = 0;
-const double TAX = 0.08;
-
-void userFlow() {
-    User u;
-    u.setUsername("alice");
-    u.setPassword("1234");
-    u.print();
+bool Customer::login(const std::string& input) const {
+    return input == password;
 }
 
-void productShowcase() {
-    Book b("C++ Primer", 59.9, "Lippman"); b.print();
-    InternalProduct ip("InternalWidget", 10.0); ip.print();
-    PrivateProduct pp("PrivateWidget", 5.0); pp.print();
+void Customer::print() const {
+    std::cout << "Customer: " << username << " <" << email << ">" << std::endl;
 }
 
-void discountSystem() {
-    HolidayDiscount h;
-    DiscountPolicy* d = &h;
-    cout << "Original: $100, Discounted: $" << d->apply(100) << endl;
-    cout << "Max(3, 7): " << getMax(3, 7) << endl;
+// --- Product Implementation ---
+Product::Product(std::string i, std::string n, double p, std::string c, int s)
+    : id(std::move(i)), name(std::move(n)), price(p), category(std::move(c)), stock(s) {}
+
+std::string Product::getId() const { return id; }
+std::string Product::getName() const { return name; }
+
+void Product::print() const {
+    std::cout << "Product: " << name << " [$" << price << ", Stock: " << stock << "]" << std::endl;
 }
 
-void orderLifecycle() {
-    Order* o = new Order(1);
-    delete o;
-    unique_ptr<Order> smart = make_unique<Order>(2);
+bool Product::isAvailable() const {
+    return stock > 0;
 }
 
-void cartCopyTest() {
-    Cart c1(10);
-    Cart c2 = c1;
-    *c1.data = 20;
-    c1.print();
-    c2.print();
+double Product::getPrice() const {
+    return price;
 }
 
-void platformStats() {
-    Platform::totalUsers++;
-    cout << "Total users: " << Platform::totalUsers << ", Tax: " << TAX << endl;
+// --- DiscountPolicy Implementation ---
+double HolidayDiscount::apply(double price) const {
+    return price * (1.0 - DISCOUNT_RATE);
 }
 
-void referenceExamples() {
-    int a = 5;
-    int& ref = a;
-    int&& r = 6 + 1;
-    cout << "Ref: " << ref << ", RVal: " << r << ", Square: " << square(ref) << endl;
+// --- Cart Implementation ---
+void Cart::addItem(std::shared_ptr<Product> p, int quantity) {
+    items[p] += quantity;
 }
 
-void inventoryOverview() {
-    vector<string> items = {"apple", "banana"};
-    unordered_map<string, double> prices = {{"apple", 1.0}, {"banana", 0.8}};
-    for (const auto& item : items) cout << item << " ";
-    cout << endl;
-    for (const auto& [k, v] : prices) cout << k << ": $" << v << endl;
+double Cart::computeTotal(const DiscountPolicy* policy) const {
+    double total = 0.0;
+    for (const auto& [product, qty] : items) {
+        double unit = product->getPrice();
+        if (policy) unit = policy->apply(unit);
+        total += unit * qty;
+    }
+    return total;
+}
+
+void Cart::print() const {
+    for (const auto& [product, qty] : items) {
+        product->print();
+        std::cout << "Qty: " << qty << std::endl;
+    }
+}
+
+// --- Order Implementation ---
+Order::Order(std::string i, std::shared_ptr<Customer> c, Cart crt)
+    : id(std::move(i)), customer(std::move(c)), cart(std::move(crt)), status(OrderStatus::Pending) {}
+
+std::string Order::getId() const {
+    return id;
+}
+
+std::string Order::getName() const {
+    return "Order for " + customer->getName();
+}
+
+void Order::print() const {
+    std::cout << "[Order] ID: " << id << ", Status: " << toString(status) << std::endl;
+    customer->print();
+    cart.print();
+}
+
+OrderStatus Order::getStatus() const {
+    return status;
+}
+
+void Order::updateStatus(OrderStatus newStatus) {
+    status = newStatus;
+}
+
+// --- Educational Demo Function ---
+void memoryDemo() {
+    std::cout << "\n--- Memory Management Demo ---" << std::endl;
+
+    // Manual new/delete
+    Product* legacyProduct = new Product("P003", "Legacy Mouse", 19.99, "Peripherals", 50);
+    legacyProduct->print();
+    delete legacyProduct;
+
+    // malloc/free
+    char* buffer = (char*)malloc(100);
+    std::strcpy(buffer, "C-style memory allocation");
+    std::cout << buffer << std::endl;
+    free(buffer);
+
+    // smart pointer
+    std::shared_ptr<Product> modernProduct = std::make_shared<Product>(
+        "P004", "Modern Headphones", 89.99, "Audio", 20);
+    modernProduct->print();
+
+    // vector
+    std::vector<std::shared_ptr<Product>> catalog;
+    catalog.push_back(modernProduct);
+    catalog.push_back(std::make_shared<Product>("P005", "Monitor", 199.99, "Display", 12));
+
+    std::cout << "\nCatalog Items:" << std::endl;
+    for (const auto& p : catalog) {
+        p->print();
+    }
 }
 
 } // namespace ecommerce
