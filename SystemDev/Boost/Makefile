@@ -1,41 +1,64 @@
-# Compiler
+# === Compiler settings ===
 CXX = g++
+CXXFLAGS = -std=c++20 -Wall -Wextra -g -Iinclude
 
-# Compiler flags
-CXXFLAGS = -std=c++20 -I./include
+# === Platform detection ===
+UNAME_S := $(shell uname -s)
 
-# Source files
-SRC = src/main.cpp src/BoostCoreExamples.cpp
+ifeq ($(UNAME_S),Darwin)  # macOS
+BOOST_SUFFIX = -mt
+BOOST_ROOT = /opt/homebrew/opt/boost
+CXXFLAGS += -I$(BOOST_ROOT)/include
+LDFLAGS += -L$(BOOST_ROOT)/lib
+else  # Assume Ubuntu / Linux
+BOOST_SUFFIX =
+LDFLAGS +=
+endif
 
-# Output executable
-TARGET = boost_example
-
-# Boost libraries to link (macOS uses -mt, Ubuntu uses workaround symlinks)
+# === Boost libraries (auto-suffixed) ===
 BOOST_LIBS = \
-    -lboost_system -lboost_thread-mt -lboost_chrono -lboost_filesystem \
-    -lboost_program_options -lboost_serialization -lboost_coroutine -lboost_context
+    -lboost_system$(BOOST_SUFFIX) \
+    -lboost_thread$(BOOST_SUFFIX) \
+    -lboost_chrono$(BOOST_SUFFIX) \
+    -lboost_filesystem$(BOOST_SUFFIX) \
+    -lboost_program_options$(BOOST_SUFFIX) \
+    -lboost_serialization$(BOOST_SUFFIX) \
+    -lboost_coroutine$(BOOST_SUFFIX) \
+    -lboost_context$(BOOST_SUFFIX)
 
-# Build target
-all: check_boost_symlinks $(TARGET)
+# === Directories ===
+SRCDIR = src
+INCDIR = include
+OBJDIR = obj
+BINDIR = bin
+LIBDIR = lib
 
-# Build executable
-$(TARGET): $(SRC)
-	$(CXX) $(CXXFLAGS) $(SRC) -o $(TARGET) $(BOOST_LIBS)
+# === Files ===
+SRC = $(SRCDIR)/main.cpp $(SRCDIR)/BoostCoreExamples.cpp
+OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SRC))
+EXEC = $(BINDIR)/boost_example
+SHARED_LIB = $(LIBDIR)/libboostexample.so
 
-# Clean up
+# === Default target ===
+all: $(EXEC) $(SHARED_LIB)
+
+# === Build executable ===
+$(EXEC): $(OBJS)
+	@mkdir -p $(BINDIR)
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $@ $(LDFLAGS) $(BOOST_LIBS)
+
+# === Build shared library ===
+$(SHARED_LIB): $(OBJS)
+	@mkdir -p $(LIBDIR)
+	$(CXX) -shared -fPIC $(OBJS) -o $@ $(LDFLAGS) $(BOOST_LIBS)
+
+# === Compile rule ===
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+	@mkdir -p $(OBJDIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# === Clean ===
 clean:
-	rm -f $(TARGET)
+	rm -rf $(OBJDIR) $(BINDIR) $(LIBDIR)
 	rm -f *.swo *.swp
-	rm -rf ./example_dir
-
-# Ubuntu compatibility: create symlinks if using non -mt Boost libs
-check_boost_symlinks:
-	@if [ -f /usr/lib/x86_64-linux-gnu/libboost_thread.so ] && [ ! -f /usr/lib/x86_64-linux-gnu/libboost_thread-mt.so ]; then \
-		echo "Creating Boost -mt compatibility symlinks for Ubuntu..."; \
-		sudo ln -sf /usr/lib/x86_64-linux-gnu/libboost_thread.so /usr/lib/x86_64-linux-gnu/libboost_thread-mt.so; \
-		sudo ln -sf /usr/lib/x86_64-linux-gnu/libboost_filesystem.so /usr/lib/x86_64-linux-gnu/libboost_filesystem-mt.so || true; \
-		sudo ln -sf /usr/lib/x86_64-linux-gnu/libboost_chrono.so /usr/lib/x86_64-linux-gnu/libboost_chrono-mt.so || true; \
-		sudo ln -sf /usr/lib/x86_64-linux-gnu/libboost_system.so /usr/lib/x86_64-linux-gnu/libboost_system-mt.so || true; \
-	else \
-		echo "Boost symlinks already exist or not needed."; \
-	fi
+	rm -rf $(OBJDIR) $(BINDIR) $(LIBDIR) example_dir

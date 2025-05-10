@@ -92,6 +92,34 @@ std::vector<int> BaseGraph::dijkstra(int source) {
     return distances;
 }
 
+std::vector<std::pair<int, int>> BaseGraph::kruskalMST() {
+    std::vector<std::tuple<int, int, int>> edges; // (weight, u, v)
+
+    // Convert adjacency list to edge list
+    for (int u = 0; u < numVertices_; ++u) {
+        for (const auto& [v, w] : adjacencyList_[u]) {
+            if (u < v) { // avoid duplicates for undirected graph
+                edges.emplace_back(w, u, v);
+            }
+        }
+    }
+
+    // Sort edges by weight
+    std::sort(edges.begin(), edges.end());
+
+    std::vector<std::pair<int, int>> result;
+    DisjointSet ds(numVertices_);
+
+    for (const auto& [w, u, v] : edges) {
+        if (ds.find(u) != ds.find(v)) {
+            ds.unite(u, v);
+            result.emplace_back(u, v);
+        }
+    }
+
+    return result;
+}
+
 bool BaseGraph::hasCycleUtil(int vertex, std::vector<bool>& visited, std::vector<bool>& recStack) {
     if(!visited[vertex]) {
         visited[vertex] = true;

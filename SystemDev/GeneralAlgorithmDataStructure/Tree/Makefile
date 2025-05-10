@@ -1,18 +1,36 @@
+# Compiler and flags
 CC = g++
-CFLAGS = -std=c++20
+CFLAGS = -std=c++20 -Wall -Iinclude -g
 
-SOURCES = ./src/BinaryTree.cpp ./src/BinarySearchTree.cpp ./src/main.cpp
-OBJECTS = $(SOURCES:.cpp=.o)
-EXECUTABLE = BinaryTree_program
+# Directories
+SRCDIR = src
+OBJDIR = obj
+BINDIR = bin
 
+# Sources and objects
+SOURCES = $(SRCDIR)/BinaryTree.cpp \
+          $(SRCDIR)/BinarySearchTree.cpp \
+          $(SRCDIR)/main.cpp
+
+OBJECTS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SOURCES))
+
+# Executable target
+EXECUTABLE = $(BINDIR)/BinaryTree_program
+
+# Default rule
 all: $(EXECUTABLE)
 
+# Link all objects
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(CFLAGS) $(OBJECTS) -o $(EXECUTABLE)
+	@mkdir -p $(BINDIR)
+	$(CC) $(CFLAGS) $^ -o $@
 
-.cpp.o:
+# Compile .cpp to .o
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+	@mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+# Clean
 clean:
-	rm -f $(OBJECTS) $(EXECUTABLE)
+	rm -rf $(OBJDIR) $(BINDIR)
 	rm -f *.swo *.swp

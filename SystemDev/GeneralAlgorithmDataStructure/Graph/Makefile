@@ -1,18 +1,34 @@
+# Compiler and flags
 CC = g++
-CFLAGS = -std=c++20
+CFLAGS = -std=c++20 -Iinclude -Wall -Wextra
 
-SOURCES = ./src/Graph.cpp ./src/main.cpp
-OBJECTS = $(SOURCES:.cpp=.o)
-EXECUTABLE = Graph_program
+# Source and build directories
+SRCDIR = src
+OBJDIR = obj
+BINDIR = bin
+EXECUTABLE = $(BINDIR)/Graph_program
 
+# Source files
+SOURCES = $(SRCDIR)/Graph.cpp \
+          $(SRCDIR)/main.cpp \
+          $(SRCDIR)/DisjointSet.cpp
+
+# Object files (replace .cpp with .o and put in obj/)
+OBJECTS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SOURCES))
+
+# Default target
 all: $(EXECUTABLE)
 
+# Link
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(CFLAGS) $(OBJECTS) -o $(EXECUTABLE)
+	@mkdir -p $(BINDIR)
+	$(CC) $(CFLAGS) $^ -o $@
 
-../src/%.o: ../src/%.cpp
+# Compile each .cpp to .o
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+	@mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+# Clean build files
 clean:
-	rm -f $(OBJECTS) $(EXECUTABLE)
-	rm -f *.swo *.swp
+	rm -rf $(OBJDIR) $(BINDIR)

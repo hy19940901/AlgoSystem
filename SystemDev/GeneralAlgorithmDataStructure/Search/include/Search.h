@@ -17,7 +17,7 @@ class SearchAlgorithms {
 public:
     /**
      * @brief Public interface for linear search on an array of integers.
-     * 
+     *
      * @param arr A vector of integers where the search is performed.
      * @param target The integer value to be searched.
      * @return bool True if the target is found, otherwise false.
@@ -26,7 +26,7 @@ public:
 
     /**
      * @brief Public interface for binary search on a sorted array of integers.
-     * 
+     *
      * @param arr A sorted vector of integers where the search is performed.
      * @param target The integer value to be searched.
      * @return bool True if the target is found, otherwise false.
@@ -35,7 +35,7 @@ public:
 
     /**
      * @brief Public interface for KMP search to find a pattern in a text.
-     * 
+     *
      * @param text The main text where the search is performed.
      * @param pattern The pattern string to be searched within the text.
      * @return bool True if the pattern is found in the text, otherwise false.
@@ -44,7 +44,7 @@ public:
 
     /**
      * @brief Public interface for searching for a key in an unordered map (hash search).
-     * 
+     *
      * @param hashMap An unordered_map where the search is performed.
      * @param key The key to be searched within the map.
      * @return bool True if the key is found, otherwise false.
@@ -53,7 +53,7 @@ public:
 
     /**
      * @brief Public interface for Depth-First Search (DFS) on a graph.
-     * 
+     *
      * @param graph A vector of adjacency lists representing the graph.
      * @param start The starting node for the search.
      * @param target The node to search for in the graph.
@@ -63,7 +63,7 @@ public:
 
     /**
      * @brief Public interface for Breadth-First Search (BFS) on a graph.
-     * 
+     *
      * @param graph A vector of adjacency lists representing the graph.
      * @param start The starting node for the search.
      * @param target The node to search for in the graph.
@@ -83,7 +83,7 @@ public:
 
     /**
      * @brief Public interface for DFS (Pre-order traversal) on a binary tree.
-     * 
+     *
      * @param root The root of the binary tree.
      * @param target The target value to search for.
      * @return bool True if the target value is found, otherwise false.
@@ -92,7 +92,7 @@ public:
 
     /**
      * @brief Public interface for BFS (Level-order traversal) on a binary tree.
-     * 
+     *
      * @param root The root of the binary tree.
      * @param target The target value to search for.
      * @return bool True if the target value is found, otherwise false.
@@ -102,7 +102,7 @@ public:
 private:
     /**
      * @brief Private implementation for linear search (returns index).
-     * 
+     *
      * @param arr A vector of integers where the search is performed.
      * @param target The integer value to be searched.
      * @return int The index of the target if found, otherwise returns -1.
@@ -111,7 +111,7 @@ private:
 
     /**
      * @brief Private implementation for binary search (returns index).
-     * 
+     *
      * @param arr A sorted vector of integers where the search is performed.
      * @param target The integer value to be searched.
      * @return int The index of the target if found, otherwise returns -1.
@@ -120,7 +120,7 @@ private:
 
     /**
      * @brief Builds the partial match table (prefix table) for the KMP algorithm.
-     * 
+     *
      * @param pattern The string pattern for which the table is built.
      * @return std::vector<int> The partial match table for the given pattern.
      */
@@ -128,7 +128,7 @@ private:
 
     /**
      * @brief Private implementation for KMP search (returns index).
-     * 
+     *
      * @param text The main text where the search is performed.
      * @param pattern The pattern string to be searched within the text.
      * @return int The starting index of the first match, otherwise returns -1.
@@ -138,7 +138,7 @@ private:
     /**
      * @brief Private implementation for hash search without using any standard library algorithms.
      *        This function manually iterates over the unordered_map and checks for the target key.
-     * 
+     *
      * @param hashMap The unordered_map in which the search is performed.
      * @param key The key to search for in the unordered_map.
      * @return bool True if the key is found, otherwise false.
@@ -147,7 +147,7 @@ private:
 
     /**
      * @brief Private DFS implementation for graphs.
-     * 
+     *
      * @param graph A vector of adjacency lists representing the graph.
      * @param start The starting node for the search.
      * @param target The target node to find.
@@ -157,7 +157,7 @@ private:
 
     /**
      * @brief Private BFS implementation for graphs.
-     * 
+     *
      * @param graph A vector of adjacency lists representing the graph.
      * @param start The starting node for the search.
      * @param target The target node to find.
@@ -167,7 +167,7 @@ private:
 
     /**
      * @brief Private DFS implementation for binary trees (Pre-order traversal).
-     * 
+     *
      * @param root The root of the binary tree.
      * @param target The target value to find.
      * @return bool True if the target value is found, otherwise false.
@@ -176,7 +176,7 @@ private:
 
     /**
      * @brief Private BFS implementation for binary trees (Level-order traversal).
-     * 
+     *
      * @param root The root of the binary tree.
      * @param target The target value to find.
      * @return bool True if the target value is found, otherwise false.

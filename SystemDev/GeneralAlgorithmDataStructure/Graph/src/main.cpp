@@ -4,7 +4,7 @@
 // Helper function to print all paths
 void printAllPaths(const std::vector<std::vector<int>>& allPaths) {
     for (const auto& path : allPaths) {
-        for (int i = 0; i < path.size(); ++i) {
+        for (size_t i = 0; i < path.size(); ++i) {
             std::cout << path[i];
             if (i < path.size() - 1) std::cout << " -> ";
         }
@@ -125,6 +125,13 @@ int main() {
 
     // 测试 Dijkstra 算法
     testDijkstraAlgorithm(dag);
+
+    std::cout << "Kruskal MST Edges (Undirected Acyclic Graph):" << std::endl;
+    auto kruskalResult = uag.kruskalMST();
+    for (const auto& edge : kruskalResult) {
+        std::cout << edge.first << " - " << edge.second << std::endl;
+    }
+    std::cout << std::endl;
 
     return 0;
 }
