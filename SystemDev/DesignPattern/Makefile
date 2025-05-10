@@ -1,18 +1,29 @@
-CC = g++
-CFLAGS = -std=c++20 -Wall -g
+# Makefile for DesignPattern project with output in bin/
 
-SRCS = main.cpp
-OBJS = $(SRCS:.cpp=.o)
-EXEC = DesignPattern_program
+CXX = g++
+CXXFLAGS = -std=c++20 -Wall -Wextra -Iinclude
+SRC_DIR = src
+OBJ_DIR = build
+BIN_DIR = bin
+TARGET = $(BIN_DIR)/design_patterns_demo
 
-all: $(EXEC)
+SRCS = $(SRC_DIR)/main.cpp $(SRC_DIR)/design_patterns.cpp
+OBJS = $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
-$(EXEC): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(EXEC)
+# Default target
+all: $(TARGET)
 
-%.o: %.cpp
-	$(CC) $(CFLAGS) -c $< -o $@
+# Link object files into final executable
+$(TARGET): $(OBJS)
+	@mkdir -p $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) -o $@ $(OBJS)
 
+# Compile source files into object files
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Clean up build artifacts
+.PHONY: clean
 clean:
-	rm -f $(OBJS) $(EXEC)
-	rm -f *.swo *.swp
+	rm -rf $(OBJ_DIR) $(BIN_DIR)

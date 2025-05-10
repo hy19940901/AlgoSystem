@@ -1,46 +1,60 @@
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -std=c++20 -I../include  # Use C++20 standard and include header path
+CXXFLAGS = -std=c++20 -Wall -Wextra -O2 -fPIC -Iinclude
+LDFLAGS = -llog4cxx
 
-# Determine OS
+# Determine OS and RPATH
 UNAME_S := $(shell uname -s)
-ifeq ($(UNAME_S), Darwin)  # macOS
-    LIB_EXT = dylib          # macOS uses .dylib
-    RPATH = @loader_path/    # macOS RPATH syntax
-else ifeq ($(UNAME_S), Linux)  # Linux
-    LIB_EXT = so             # Linux uses .so
-    RPATH = \$ORIGIN         # Linux RPATH syntax
+ifeq ($(UNAME_S), Darwin)
+    LIB_EXT = dylib
+    RPATH = @loader_path/
+else ifeq ($(UNAME_S), Linux)
+    LIB_EXT = so
+    RPATH = \$$ORIGIN
 endif
 
-# Shared library name and path
+# Directories and names
+SRC_DIR = src
+BUILD_DIR = build
+BIN_DIR = bin
 LIB_NAME = libstreamprovider.$(LIB_EXT)
-LIB_PATH = .
+LIB_FULL_PATH = $(BIN_DIR)/$(LIB_NAME)
+SERVER_BIN = $(BIN_DIR)/server
 
-# Source files for the shared library
-LIB_SRCS = ./src/stream_provider.cpp ./src/stream_provider_internal.cpp
+# Source files
+LIB_SRCS = $(SRC_DIR)/stream_provider.cpp \
+           $(SRC_DIR)/stream_provider_internal.cpp \
+           $(SRC_DIR)/log_config.cpp
 
-# Source files for the server executable
-SERVER_SRCS = ./src/server.cpp
+SERVER_SRCS = $(SRC_DIR)/server.cpp
 
-# Object files for the shared library (automatically generated)
-LIB_OBJS = $(LIB_SRCS:.cpp=.o)
+# Object files
+LIB_OBJS = $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(LIB_SRCS))
 
 # Default target
-all: $(LIB_NAME) server
+all: $(LIB_FULL_PATH) $(SERVER_BIN)
 
-# Compile the shared library
-$(LIB_NAME): $(LIB_OBJS)
-	$(CXX) $(CXXFLAGS) -fPIC -shared -o $(LIB_NAME) $(LIB_OBJS)
+# Compile .cpp to .o
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Compile the server executable, link the shared library, and set RPATH
-server: $(SERVER_SRCS) $(LIB_NAME)
-	$(CXX) $(CXXFLAGS) -o server $(SERVER_SRCS) -L$(LIB_PATH) -lstreamprovider -Wl,-rpath,$(RPATH)
+# Build shared library
+$(LIB_FULL_PATH): $(LIB_OBJS)
+	@mkdir -p $(BIN_DIR)
+	$(CXX) -shared -o $@ $^
 
-# Compile object files for the shared library
-%.o: %.cpp
-	$(CXX) $(CXXFLAGS) -fPIC -c $< -o $@
+# Build server executable
+$(SERVER_BIN): $(SERVER_SRCS) $(LIB_FULL_PATH)
+	@mkdir -p $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) -o $@ $(SERVER_SRCS) -L$(BIN_DIR) -lstreamprovider -Wl,-rpath,$(RPATH) $(LDFLAGS)
 
-# Clean up generated files
+# Run server
+run: $(SERVER_BIN)
+	./$(SERVER_BIN)
+
+# Clean build
 clean:
-	rm -f server $(LIB_NAME) $(LIB_OBJS)
-	rm -f *.swo *.swp
+	rm -rf $(BUILD_DIR) $(BIN_DIR)
+
+.PHONY: all clean run

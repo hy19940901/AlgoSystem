@@ -1,41 +1,64 @@
-# Object files
+# ---------------------------------
+# Build artifacts
+# ---------------------------------
 *.o
-
-# Shared/static libraries
-*.so
 *.a
+*.so
+*.dylib
+*.out
+*.exe
+/build/
+/bin/
+/obj/
+/out/
 
-# Binary executables (no file extensions)
+# ---------------------------------
+# Binary targets
+# ---------------------------------
 **/*_program
 polling_system
 server
 log_parser
+ecommerce_app
+cpp20_demo
+c10k_c_threadpool
+c10k_cpp_threadpool
+pthread_demo
 
-# General executables
-*.out
-*.exe
-
-# Build output directories
-/build/
-/bin/
-/out/
-
-# CMake files
+# ---------------------------------
+# CMake and Makefiles
+# ---------------------------------
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
-!**/Makefile
+Makefile  # Optional: remove if you version control it intentionally
 
-
-# VS Code project settings
+# ---------------------------------
+# VS Code & IDE settings
+# ---------------------------------
 .vscode/
+.idea/
 
+# ---------------------------------
 # macOS system file
 .DS_Store
 
-# Backup and temporary files
+# ---------------------------------
+# Backup and temp files
+# ---------------------------------
 *~
 *.swp
 *.tmp
 *.bak
 
+# ---------------------------------
+# Logs (log4cxx output)
+# ---------------------------------
+logs/
+*.log
+
+# ---------------------------------
+# Config or test output (optional)
+# ---------------------------------
+*.cfg
+*.test

@@ -1,14 +1,13 @@
-# Makefile for ecommerce_app project
-
 CXX = g++
-CXXFLAGS = -std=c++20 -Wall -Wextra -O2 -Iinclude
+CXXFLAGS = -std=c++20 -O2 -pthread -Iinclude
+
 SRC_DIR = src
 OBJ_DIR = build
 BIN_DIR = bin
-TARGET = $(BIN_DIR)/ecommerce_app
 
 SRCS = $(wildcard $(SRC_DIR)/*.cpp)
 OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRCS))
+TARGET = $(BIN_DIR)/benchmark
 
 all: $(TARGET)
 

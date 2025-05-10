@@ -1,18 +1,23 @@
-// server.cpp
-#include <iostream>
-#include "../include/server.h"  // Include the header file
+#include "../include/stream_provider.h"
+#include "../include/log_config.h"
+
+static log4cxx::LoggerPtr logger = logsys::LogConfig::getLogger("server");
 
 void streamCallback(const char* streamData, int size) {
-    std::cout << "Server: Received stream data of size " << size
-              << ". Data: " << streamData << std::endl;
+    if (logger->isDebugEnabled()) {
+        LOG4CXX_DEBUG(logger, "StreamCallback triggered.");
+    }
+
+    LOG4CXX_INFO(logger, "Received stream data of size " << size << ". Data: " << streamData);
 }
 
 int main() {
-    // Register the callback function to handle stream data
-    registerStreamCallback(streamCallback);
+    logsys::LogConfig::init();
+    LOG4CXX_INFO(logger, "Server starting...");
 
-    // Start the stream (triggers the callback)
+    registerStreamCallback(streamCallback);
     startStream();
 
+    LOG4CXX_INFO(logger, "Server exiting.");
     return 0;
 }

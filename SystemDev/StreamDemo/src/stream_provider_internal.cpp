@@ -1,25 +1,29 @@
-// stream_provider_internal.cpp
-#include <iostream>
-#include <string>
-#include "../include/stream_provider_internal.h"  // Include internal header
+#include "../include/stream_provider_internal.h"
+#include "../include/log_config.h"
+#include <cstring>
+
+static log4cxx::LoggerPtr logger = logsys::LogConfig::getLogger("provider_internal");
 
 void StreamProvider::registerCallback(StreamCallback cb) {
+    LOG4CXX_INFO(logger, "Callback registered.");
     callback = cb;
 }
 
 void StreamProvider::startStream() {
     if (!callback) {
-        std::cerr << "Error: No callback registered!" << std::endl;
+        LOG4CXX_ERROR(logger, "No callback registered! Cannot send data.");
         return;
     }
 
-    // Simulate stream data
-    std::string streamData = "Simulated stream data...";
-    sendStreamData(streamData);
-}
+    const char* message = "Simulated stream data...";
+    char* streamData = new char[strlen(message) + 1];
+    std::strcpy(streamData, message);
 
-void StreamProvider::sendStreamData(const std::string& data) {
-    int dataSize = data.size();
-    std::cout << "StreamProvider: Sending stream data to server..." << std::endl;
-    callback(data.c_str(), dataSize);  // Invoke the registered callback
+    if (logger->isDebugEnabled()) {
+        LOG4CXX_DEBUG(logger, "Sending stream data to callback...");
+    }
+
+    callback(streamData, strlen(streamData));
+
+    delete[] streamData;
 }
