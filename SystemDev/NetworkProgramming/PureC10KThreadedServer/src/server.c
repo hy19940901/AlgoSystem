@@ -1,6 +1,6 @@
-#include "server.h"
-#include "threadpool.h"
-#include "utils.h"
+#include "../include/server.h"
+#include "../include/threadpool.h"
+#include "../include/utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
