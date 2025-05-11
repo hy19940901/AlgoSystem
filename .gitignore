@@ -1,16 +1,17 @@
 # ---------------------------------
 # Build artifacts
 # ---------------------------------
+**/bin/
+**/build/
+**/obj/
+**/out/
 *.o
 *.a
 *.so
 *.dylib
-*.out
 *.exe
-/build/
-/bin/
-/obj/
-/out/
+*.out
+*.elf
 
 # ---------------------------------
 # Binary targets
