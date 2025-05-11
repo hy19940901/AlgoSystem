@@ -17,14 +17,7 @@
 # Binary targets
 # ---------------------------------
 **/*_program
-polling_system
-server
-log_parser
-ecommerce_app
-cpp20_demo
-c10k_c_threadpool
-c10k_cpp_threadpool
-pthread_demo
+!SystemDev/classic_c_program/
 
 # ---------------------------------
 # CMake and Makefiles
