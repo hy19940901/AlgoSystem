@@ -15,14 +15,14 @@ public:
      * @brief Initialize the logging system.
      *        Uses BasicConfigurator by default. Replaceable with config file later.
      */
-    static void init();
+    static void Init();
 
     /**
      * @brief Get a logger by name.
      * @param name The name of the logger.
      * @return A log4cxx::LoggerPtr to use for logging.
      */
-    static log4cxx::LoggerPtr get_logger(const std::string& name);
+    static log4cxx::LoggerPtr GetLogger(const std::string& name);
 };
 
 } // namespace logsys

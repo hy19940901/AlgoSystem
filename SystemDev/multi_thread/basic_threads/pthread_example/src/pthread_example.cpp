@@ -8,19 +8,19 @@
 using namespace std;
 
 // ======================= Thread Creation =======================
-void* thread_func(void* arg) {
+void* ThreadFunc(void* arg) {
     int id = *(int*)arg;
     cout << "[Thread " << id << "] running.\n";
     return nullptr;
 }
 
-void run_basic_threads() {
+void RunBasicThreads() {
     cout << "=== Thread Creation Demo ===\n";
     pthread_t threads[3];
     vector<int> ids = {0, 1, 2};  // safer than static array
 
     for (int i = 0; i < 3; ++i) {
-        if (pthread_create(&threads[i], nullptr, thread_func, &ids[i]) != 0) {
+        if (pthread_create(&threads[i], nullptr, ThreadFunc, &ids[i]) != 0) {
             perror("Failed to create thread");
         }
     }
@@ -34,7 +34,7 @@ void run_basic_threads() {
 pthread_mutex_t pthread_mutex = PTHREAD_MUTEX_INITIALIZER;
 int shared_counter = 0;
 
-void* mutex_worker(void* /*arg*/) {
+void* MutexWorker(void* /*arg*/) {
     for (int i = 0; i < 100000; ++i) {
         pthread_mutex_lock(&pthread_mutex); // critical section start
         shared_counter++;
@@ -43,13 +43,13 @@ void* mutex_worker(void* /*arg*/) {
     return nullptr;
 }
 
-void run_mutex_demo() {
+void RunMutex() {
     cout << "\n=== Mutex Demo ===\n";
     shared_counter = 0;
     pthread_t t1, t2;
 
-    pthread_create(&t1, nullptr, mutex_worker, nullptr);
-    pthread_create(&t2, nullptr, mutex_worker, nullptr);
+    pthread_create(&t1, nullptr, MutexWorker, nullptr);
+    pthread_create(&t2, nullptr, MutexWorker, nullptr);
 
     pthread_join(t1, nullptr);
     pthread_join(t2, nullptr);
@@ -63,7 +63,7 @@ pthread_mutex_t cond_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 bool ready = false;
 
-void* waiter(void*) {
+void* Waiter(void*) {
     pthread_mutex_lock(&cond_mutex);
     while (!ready) {
         // Use loop for spurious wakeups
@@ -74,10 +74,10 @@ void* waiter(void*) {
     return nullptr;
 }
 
-void run_condition_demo() {
+void RunConditionVariable() {
     cout << "\n=== Condition Variable Demo ===\n";
     pthread_t t;
-    pthread_create(&t, nullptr, waiter, nullptr);
+    pthread_create(&t, nullptr, Waiter, nullptr);
 
     sleep(1); // simulate some preparation
     pthread_mutex_lock(&cond_mutex);
@@ -94,14 +94,14 @@ void run_condition_demo() {
 pthread_rwlock_t rwlock = PTHREAD_RWLOCK_INITIALIZER;
 int shared_data = 0;
 
-void* reader(void* /*arg*/) {
+void* Reader(void* /*arg*/) {
     pthread_rwlock_rdlock(&rwlock);
     cout << "[Reader] Data = " << shared_data << endl;
     pthread_rwlock_unlock(&rwlock);
     return nullptr;
 }
 
-void* writer(void* /*arg*/) {
+void* Writer(void* /*arg*/) {
     pthread_rwlock_wrlock(&rwlock);
     shared_data++;
     cout << "[Writer] Updated data to " << shared_data << endl;
@@ -109,13 +109,13 @@ void* writer(void* /*arg*/) {
     return nullptr;
 }
 
-void run_rwlock_demo() {
+void RunReadWriteLock() {
     cout << "\n=== Read-Write Lock Demo ===\n";
     pthread_t r1, r2, w;
 
-    pthread_create(&r1, nullptr, reader, nullptr);
-    pthread_create(&w, nullptr, writer, nullptr);
-    pthread_create(&r2, nullptr, reader, nullptr);
+    pthread_create(&r1, nullptr, Reader, nullptr);
+    pthread_create(&w, nullptr, Writer, nullptr);
+    pthread_create(&r2, nullptr, Reader, nullptr);
 
     pthread_join(r1, nullptr);
     pthread_join(w, nullptr);
@@ -127,7 +127,7 @@ void run_rwlock_demo() {
 // ======================= Barrier =======================
 pthread_barrier_t barrier;
 
-void* barrier_task(void* arg) {
+void* BarrierTask(void* arg) {
     int id = *(int*)arg;
     cout << "[Thread " << id << "] waiting at barrier...\n";
     pthread_barrier_wait(&barrier); // wait until all threads arrive
@@ -135,16 +135,16 @@ void* barrier_task(void* arg) {
     return nullptr;
 }
 
-void run_barrier_demo() {
+void RunBarrier() {
     cout << "\n=== Barrier Demo ===\n";
     pthread_barrier_init(&barrier, nullptr, 3); // 3 threads must arrive
 
     pthread_t t1, t2, t3;
     vector<int> ids = {1, 2, 3};
 
-    pthread_create(&t1, nullptr, barrier_task, &ids[0]);
-    pthread_create(&t2, nullptr, barrier_task, &ids[1]);
-    pthread_create(&t3, nullptr, barrier_task, &ids[2]);
+    pthread_create(&t1, nullptr, BarrierTask, &ids[0]);
+    pthread_create(&t2, nullptr, BarrierTask, &ids[1]);
+    pthread_create(&t3, nullptr, BarrierTask, &ids[2]);
 
     pthread_join(t1, nullptr);
     pthread_join(t2, nullptr);
@@ -156,20 +156,20 @@ void run_barrier_demo() {
 // ======================= Thread Local Storage =======================
 __thread int tls_var = 0;  // Each thread gets its own tls_var
 
-void* tls_func(void* arg) {
+void* TlsFunc(void* arg) {
     int id = *(int*)arg;
     tls_var = id * 10;
     cout << "[Thread " << id << "] TLS var = " << tls_var << endl;
     return nullptr;
 }
 
-void run_tls_demo() {
+void RunTls() {
     cout << "\n=== TLS Demo ===\n";
     pthread_t t1, t2;
     vector<int> ids = {1, 2};
 
-    pthread_create(&t1, nullptr, tls_func, &ids[0]);
-    pthread_create(&t2, nullptr, tls_func, &ids[1]);
+    pthread_create(&t1, nullptr, TlsFunc, &ids[0]);
+    pthread_create(&t2, nullptr, TlsFunc, &ids[1]);
 
     pthread_join(t1, nullptr);
     pthread_join(t2, nullptr);
@@ -179,7 +179,7 @@ void run_tls_demo() {
 pthread_spinlock_t spinlock;
 int spin_counter = 0;
 
-void* spin_worker(void*) {
+void* SpinWorker(void*) {
     for (int i = 0; i < 100000; ++i) {
         pthread_spin_lock(&spinlock);
         spin_counter++;
@@ -188,14 +188,14 @@ void* spin_worker(void*) {
     return nullptr;
 }
 
-void run_spinlock_demo() {
+void RunSpinlock() {
     cout << "\n=== Spinlock Demo ===\n";
     spin_counter = 0;
     pthread_spin_init(&spinlock, PTHREAD_PROCESS_PRIVATE);
 
     pthread_t t1, t2;
-    pthread_create(&t1, nullptr, spin_worker, nullptr);
-    pthread_create(&t2, nullptr, spin_worker, nullptr);
+    pthread_create(&t1, nullptr, SpinWorker, nullptr);
+    pthread_create(&t2, nullptr, SpinWorker, nullptr);
 
     pthread_join(t1, nullptr);
     pthread_join(t2, nullptr);
@@ -208,7 +208,7 @@ void run_spinlock_demo() {
 sem_t semaphore;
 int sem_counter = 0;
 
-void* sem_worker(void* arg) {
+void* SemWorker(void* arg) {
     int id = *(int*)arg;
 
     sem_wait(&semaphore);
@@ -222,7 +222,7 @@ void* sem_worker(void* arg) {
     return nullptr;
 }
 
-void run_semaphore_demo() {
+void RunSemaphore() {
     cout << "\n=== Semaphore Demo ===\n";
 
     const int max_concurrent = 2;
@@ -233,7 +233,7 @@ void run_semaphore_demo() {
 
     for (int i = 0; i < thread_count; ++i) {
         ids[i] = i;
-        pthread_create(&threads[i], nullptr, sem_worker, &ids[i]);
+        pthread_create(&threads[i], nullptr, SemWorker, &ids[i]);
     }
 
     for (int i = 0; i < thread_count; ++i) {
@@ -245,7 +245,7 @@ void run_semaphore_demo() {
 }
 
 // ======================= Detached Threads =======================
-void* detached_task(void* arg) {
+void* DetachedTask(void* arg) {
     int id = *(int*)arg;
     cout << "[Detached Thread " << id << "] running and detaching\n";
     sleep(1);
@@ -253,22 +253,22 @@ void* detached_task(void* arg) {
     return nullptr;
 }
 
-void run_detached_threads_demo() {
+void RunDetachedThreads() {
     cout << "\n=== Detached Threads Demo ===\n";
     pthread_t t;
     int id = 1;
-    pthread_create(&t, nullptr, detached_task, &id);
+    pthread_create(&t, nullptr, DetachedTask, &id);
     pthread_detach(t);
     sleep(2);
 }
 
 // ======================= Cancellation Demo =======================
-void cleanup(void* /*arg*/) {
+void CleanUp(void* /*arg*/) {
     cout << "[Thread] Cleanup handler called." << endl;
 }
 
-void* cancellable_worker(void* /*arg*/) {
-    pthread_cleanup_push(cleanup, nullptr);
+void* CancellableWorker(void* /*arg*/) {
+    pthread_cleanup_push(CleanUp, nullptr);
     for (int i = 0; i < 5; ++i) {
         cout << "[Worker] Working...\n";
         sleep(1);
@@ -277,10 +277,10 @@ void* cancellable_worker(void* /*arg*/) {
     return nullptr;
 }
 
-void run_cancellation_demo() {
+void RunCancellation() {
     cout << "\n=== Cancellation Demo ===\n";
     pthread_t t;
-    pthread_create(&t, nullptr, cancellable_worker, nullptr);
+    pthread_create(&t, nullptr, CancellableWorker, nullptr);
     sleep(2);
     pthread_cancel(t);
     pthread_join(t, nullptr);
@@ -298,7 +298,7 @@ queue<int> buffer;
 const int MAX_BUFFER_SIZE = 5;
 bool done = false;
 
-void* producer(void*) {
+void* Producer(void*) {
     for (int i = 1; i <= 10; ++i) {
         pthread_mutex_lock(&pc_mutex);
         while (buffer.size() == MAX_BUFFER_SIZE) {
@@ -318,7 +318,7 @@ void* producer(void*) {
     return nullptr;
 }
 
-void* consumer(void* arg) {
+void* Consumer(void* arg) {
     int id = *(int*)arg;
     while (true) {
         pthread_mutex_lock(&pc_mutex);
@@ -341,7 +341,7 @@ void* consumer(void* arg) {
     return nullptr;
 }
 
-void run_producer_consumer_demo() {
+void RunProducerConsumer() {
     cout << "\n=== Producer-Consumer Demo ===\n";
     buffer = queue<int>();
     done = false;
@@ -349,9 +349,9 @@ void run_producer_consumer_demo() {
     pthread_t prod, cons1, cons2;
     int cid1 = 1, cid2 = 2;
 
-    pthread_create(&prod, nullptr, producer, nullptr);
-    pthread_create(&cons1, nullptr, consumer, &cid1);
-    pthread_create(&cons2, nullptr, consumer, &cid2);
+    pthread_create(&prod, nullptr, Producer, nullptr);
+    pthread_create(&cons1, nullptr, Consumer, &cid1);
+    pthread_create(&cons2, nullptr, Consumer, &cid2);
 
     pthread_join(prod, nullptr);
     pthread_join(cons1, nullptr);

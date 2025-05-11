@@ -115,11 +115,11 @@ void method2(const std::string& filename) {
 
 
 int main() {
-    std::string filename = "./src/log.txt";
+    std::string file_name = "./src/log.txt";
 
     // Run each method
-    method1(filename);  // Using unordered_map and stable_sort
-    method2(filename);  // Using map and set
+    method1(file_name);  // Using unordered_map and stable_sort
+    method2(file_name);  // Using map and set
 
     return 0;
 }

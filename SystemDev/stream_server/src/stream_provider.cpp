@@ -4,17 +4,17 @@
 #include "../include/stream_provider_internal.h"
 #include "../include/log_config.h"
 
-static log4cxx::LoggerPtr logger = logsys::LogConfig::get_logger("provider");
+static log4cxx::LoggerPtr logger = logsys::LogConfig::GetLogger("provider");
 
 // Dynamically allocate StreamProvider using std::unique_ptr
 static std::unique_ptr<StreamProvider> stream_provider(new StreamProvider());
 
-void register_stream_callback(StreamCallback cb) {
+void RegisterStreamCallback(StreamCallback cb) {
     LOG4CXX_INFO(logger, "Registering stream callback.");
-    stream_provider->register_callback(cb);
+    stream_provider->RegisterCallback(cb);
 }
 
-void start_stream() {
+void StartStream() {
     LOG4CXX_INFO(logger, "Starting stream.");
-    stream_provider->start_stream();
+    stream_provider->StartStream();
 }

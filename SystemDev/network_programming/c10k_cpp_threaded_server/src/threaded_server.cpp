@@ -17,7 +17,7 @@ void handle_signal(int signal) {
     if (signal == SIGINT || signal == SIGTERM) {
         std::cout << "\n[Signal] Caught signal " << signal << ", stopping server...\n";
         if (ThreadedServer::instance) {
-            ThreadedServer::instance->stop();  // Delegate stop to server instance
+            ThreadedServer::instance->Stop();  // Delegate stop to server instance
         }
     }
 }
@@ -34,18 +34,18 @@ ThreadedServer::~ThreadedServer() {
 }
 
 // Called by signal handler to set stop flag
-void ThreadedServer::stop() {
+void ThreadedServer::Stop() {
     stop_flag_ = true;
 }
 
 // Set file descriptor to non-blocking mode
-void ThreadedServer::set_non_blocking(int fd) {
+void ThreadedServer::SetNonBlocking(int fd) {
     int flags = fcntl(fd, F_GETFL, 0);
     fcntl(fd, F_SETFL, flags | O_NONBLOCK);
 }
 
 // Set up server socket, bind, listen, and register with epoll
-void ThreadedServer::setup_server() {
+void ThreadedServer::SetupServer() {
     server_fd_ = socket(AF_INET, SOCK_STREAM, 0);
     int opt = 1;
     setsockopt(server_fd_, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
@@ -56,7 +56,7 @@ void ThreadedServer::setup_server() {
     addr.sin_port = htons(port_);
     bind(server_fd_, (sockaddr*)&addr, sizeof(addr));
     listen(server_fd_, SOMAXCONN);
-    set_non_blocking(server_fd_);
+    SetNonBlocking(server_fd_);
 
     epoll_fd_ = epoll_create1(0);
     epoll_event ev{};
@@ -68,14 +68,14 @@ void ThreadedServer::setup_server() {
 }
 
 // Accept all new client connections until queue is empty
-void ThreadedServer::accept_clients() {
+void ThreadedServer::AcceptClients() {
     while (true) {
         sockaddr_in client{};
         socklen_t len = sizeof(client);
         int client_fd = accept(server_fd_, (sockaddr*)&client, &len);
         if (client_fd < 0) break;
 
-        set_non_blocking(client_fd);
+        SetNonBlocking(client_fd);
         epoll_event ev{};
         ev.data.fd = client_fd;
         ev.events = EPOLLIN | EPOLLET;
@@ -84,7 +84,7 @@ void ThreadedServer::accept_clients() {
 }
 
 // Generate a simulated HTTP JSON response with 1MB payload
-std::unique_ptr<std::string> ThreadedServer::get_http_response(const std::string& method, const std::string& path) {
+std::unique_ptr<std::string> ThreadedServer::GetHttpResponse(const std::string& method, const std::string& path) {
     std::ostringstream body_stream;
     body_stream << "{\n"
                 << "    \"method\": \"" << method << "\",\n"
@@ -107,7 +107,7 @@ std::unique_ptr<std::string> ThreadedServer::get_http_response(const std::string
 }
 
 // Read client request and respond with simulated HTTP JSON
-void ThreadedServer::handle_client(int client_fd) {
+void ThreadedServer::HandleClient(int client_fd) {
     char buffer[4096] = {0};
     ssize_t count = read(client_fd, buffer, sizeof(buffer) - 1);
     if (count <= 0) {
@@ -127,16 +127,16 @@ void ThreadedServer::handle_client(int client_fd) {
             path = request.substr(method_end + 1, path_end - method_end - 1);
     }
 
-    auto response = get_http_response(method, path);
+    auto response = GetHttpResponse(method, path);
     send(client_fd, response->c_str(), response->size(), 0);
     close(client_fd);
 }
 
 // Main server loop using epoll and thread pool to handle clients
-void ThreadedServer::run() {
+void ThreadedServer::Run() {
     signal(SIGINT, handle_signal);
     signal(SIGTERM, handle_signal);
-    setup_server();
+    SetupServer();
     epoll_event* events = new epoll_event[max_events_];
 
     while (!stop_flag_) {
@@ -144,10 +144,10 @@ void ThreadedServer::run() {
         for (int i = 0; i < n; ++i) {
             int fd = events[i].data.fd;
             if (fd == server_fd_) {
-                accept_clients();
+                AcceptClients();
             } else {
                 boost::asio::post(pool_, [this, fd]() {
-                    handle_client(fd);
+                    HandleClient(fd);
                 });
             }
         }

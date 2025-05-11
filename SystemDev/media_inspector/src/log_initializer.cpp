@@ -20,7 +20,7 @@ std::once_flag init_flag;
 
 }  // namespace
 
-void init() {
+void Init() {
     std::call_once(init_flag, [] {
         try {
             auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(
@@ -43,17 +43,17 @@ void init() {
     });
 }
 
-std::shared_ptr<spdlog::logger> get_logger() {
+std::shared_ptr<spdlog::logger> GetLogger() {
     return global_logger;
 }
 
-void set_level(spdlog::level::level_enum level) {
+void SetLevel(spdlog::level::level_enum level) {
     if (global_logger) {
         global_logger->set_level(level);
     }
 }
 
-void disable_console_output() {
+void DisableConsoleOutput() {
     if (console_sink) {
         console_sink->set_level(spdlog::level::off);
     }

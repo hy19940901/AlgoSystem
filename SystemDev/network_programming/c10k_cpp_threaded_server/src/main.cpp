@@ -4,6 +4,6 @@
 int main() {
     ThreadedServer server(8080, 8);
     ThreadedServer::instance = &server;
-    server.run();
+    server.Run();
     return 0;
 }

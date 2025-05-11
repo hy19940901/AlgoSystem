@@ -43,7 +43,7 @@
  * Use when:
  * - You need to launch threads and wait for their completion before proceeding.
  */
-void run_basic_threads();
+void RunBasicThreads();
 
 /**
  * @brief Demonstrates creating detached threads.
@@ -55,7 +55,7 @@ void run_basic_threads();
  * Use when:
  * - You want threads that run independently and do not require joining.
  */
-void run_detached_threads_demo();
+void RunDetachedThreads();
 
 /**
  * @brief Demonstrates use of a mutex (mutual exclusion lock).
@@ -67,7 +67,7 @@ void run_detached_threads_demo();
  * Use when:
  * - Multiple threads access shared variables and need exclusive access.
  */
-void run_mutex_demo();
+void RunMutex();
 
 /**
  * @brief Demonstrates use of a condition variable for signaling.
@@ -81,7 +81,7 @@ void run_mutex_demo();
  * - A thread must wait for another to produce/prepare data (e.g., producer-consumer).
  * - Always use while-loop around `pthread_cond_wait()` to handle spurious wakeups.
  */
-void run_condition_demo();
+void RunConditionVariable();
 
 /**
  * @brief Demonstrates read-write locks (pthread_rwlock_t).
@@ -93,7 +93,7 @@ void run_condition_demo();
  * Use when:
  * - Many threads read shared data, but only a few write to it.
  */
-void run_rwlock_demo();
+void RunReadWriteLock();
 
 /**
  * @brief Demonstrates use of pthread barriers (pthread_barrier_t).
@@ -105,7 +105,7 @@ void run_rwlock_demo();
  * Use when:
  * - Threads must synchronize at certain checkpoints before continuing.
  */
-void run_barrier_demo();
+void RunBarrier();
 
 /**
  * @brief Demonstrates thread-local storage using `__thread`.
@@ -117,7 +117,7 @@ void run_barrier_demo();
  * Use when:
  * - Each thread needs its own version of a variable (e.g., buffers, status).
  */
-void run_tls_demo();
+void RunTls();
 
 /**
  * @brief Demonstrates use of spinlock (busy-waiting mutex).
@@ -129,7 +129,7 @@ void run_tls_demo();
  * Use when:
  * - Critical section is very short and overhead of sleeping is too high.
  */
-void run_spinlock_demo();
+void RunSpinlock();
 
 /**
  * @brief Demonstrates use of semaphore (sem_t).
@@ -141,7 +141,7 @@ void run_spinlock_demo();
  * Use when:
  * - You want to limit concurrent access to a resource (e.g., max 3 threads at a time).
  */
-void run_semaphore_demo();
+void RunSemaphore();
 
 /**
  * @brief Demonstrates classic producer-consumer model using mutex + condition variable.
@@ -152,7 +152,7 @@ void run_semaphore_demo();
  * Use when:
  * - Threads need to coordinate production and consumption of items asynchronously.
  */
-void run_producer_consumer_demo();
+void RunProducerConsumer();
 
 /**
  * @brief Demonstrates cancelling a thread and using cleanup handlers.
@@ -163,6 +163,6 @@ void run_producer_consumer_demo();
  * Use when:
  * - You want to safely terminate long-running threads and free resources.
  */
-void run_cancellation_demo();
+void RunCancellation();
 
 #endif // PTHREAD_EXAMPLE_H

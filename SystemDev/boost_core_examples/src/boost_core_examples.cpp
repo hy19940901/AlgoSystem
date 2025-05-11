@@ -5,25 +5,25 @@ const int num_tasks = 10000;
 
 BoostCoreExamples::BoostCoreExamples() {}
 
-void BoostCoreExamples::shared_ptr_example() {
+void BoostCoreExamples::SharedPtrExample() {
     boost::shared_ptr<int> ptr1(new int(10));
     boost::shared_ptr<int> ptr2 = ptr1;
     std::cout << "Shared Pointer Value: " << *ptr1 << std::endl;
     std::cout << "Shared Pointer Use Count: " << ptr1.use_count() << std::endl;
 }
 
-void BoostCoreExamples::scoped_ptr_example() {
+void BoostCoreExamples::ScopedPtrExample() {
     boost::scoped_ptr<int> ptr(new int(20));
     std::cout << "Scoped Pointer Value: " << *ptr << std::endl;
 }
 
-void BoostCoreExamples::filesystem_example() {
+void BoostCoreExamples::FilesystemExample() {
     boost::filesystem::path path = boost::filesystem::current_path();
     std::cout << "Current Path: " << path << std::endl;
     boost::filesystem::create_directory("example_dir");
 }
 
-void BoostCoreExamples::regex_example() {
+void BoostCoreExamples::RegexExample() {
     std::string text = "Boost Libraries";
     boost::regex pattern("(\\w+)\\s(\\w+)");
     boost::smatch result;
@@ -32,13 +32,13 @@ void BoostCoreExamples::regex_example() {
     }
 }
 
-void BoostCoreExamples::thread_example() {
+void BoostCoreExamples::ThreadExample() {
     std::vector<std::future<void>> futures;
     std::atomic<int> completed_tasks(0);
     auto start_time = std::chrono::steady_clock::now();
 
     for (int i = 0; i < num_tasks; ++i) {
-        futures.push_back(std::async(std::launch::async, &BoostCoreExamples::execute_task, this, i, std::ref(completed_tasks)));
+        futures.push_back(std::async(std::launch::async, &BoostCoreExamples::ExecuteTask, this, i, std::ref(completed_tasks)));
     }
 
     for (auto& fut : futures) {
@@ -54,7 +54,7 @@ void BoostCoreExamples::thread_example() {
     std::cout << "Task with Thread. All tasks completed. Total time: " << total_duration << "ms\n";
 }
 
-void BoostCoreExamples::thread_pool_example() {
+void BoostCoreExamples::ThreadPoolExample() {
     unsigned int thread_count = std::thread::hardware_concurrency() * 2;
     std::cout << "Thread pool size: " << thread_count << " threads.\n";
 
@@ -63,7 +63,7 @@ void BoostCoreExamples::thread_pool_example() {
     auto start_time = std::chrono::steady_clock::now();
 
     for (int i = 0; i < num_tasks; ++i) {
-        boost::asio::post(pool, std::bind(&BoostCoreExamples::execute_task, this, i, std::ref(completed_tasks)));
+        boost::asio::post(pool, std::bind(&BoostCoreExamples::ExecuteTask, this, i, std::ref(completed_tasks)));
     }
 
     while (completed_tasks < num_tasks) {
@@ -76,7 +76,7 @@ void BoostCoreExamples::thread_pool_example() {
     std::cout << "Task with Thread Pool. All tasks completed. Total time: " << total_duration << "ms\n";
 }
 
-void BoostCoreExamples::async_calculation_example() {
+void BoostCoreExamples::AsyncCalculationExample() {
     unsigned int thread_count = std::thread::hardware_concurrency() * 2;
     std::cout << "Thread pool size: " << thread_count << " threads.\n";
 
@@ -86,7 +86,7 @@ void BoostCoreExamples::async_calculation_example() {
     auto start_time = std::chrono::steady_clock::now();
 
     for (int i = 0; i < num_tasks; ++i) {
-        boost::asio::post(pool, std::bind(&BoostCoreExamples::execute_task, this, i, std::ref(completed_tasks)));
+        boost::asio::post(pool, std::bind(&BoostCoreExamples::ExecuteTask, this, i, std::ref(completed_tasks)));
     }
 
     std::thread io_context_thread([&io_context]() {
@@ -107,17 +107,17 @@ void BoostCoreExamples::async_calculation_example() {
     pool.join();
 }
 
-void BoostCoreExamples::execute_task(int task_id, std::atomic<int>& completed_tasks) {
-    this->complex_calculation(task_id);
+void BoostCoreExamples::ExecuteTask(int task_id, std::atomic<int>& completed_tasks) {
+    this->ComplexCalculation(task_id);
     completed_tasks++;
 }
 
-int BoostCoreExamples::simple_calculation(int task_id) {
+int BoostCoreExamples::SimpleCalculation(int task_id) {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     return task_id;
 }
 
-int BoostCoreExamples::complex_calculation(int task_id) {
+int BoostCoreExamples::ComplexCalculation(int task_id) {
     if (task_id == 0) return 0;
     int result = 0;
     for (int i = 0; i < 1000000; ++i) {
@@ -126,7 +126,7 @@ int BoostCoreExamples::complex_calculation(int task_id) {
     return result;
 }
 
-void BoostCoreExamples::program_options_example() {
+void BoostCoreExamples::ProgramOptionsExample() {
     int age;
     std::string name;
 
@@ -145,7 +145,7 @@ void BoostCoreExamples::program_options_example() {
     std::cout << "Name: " << name << ", Age: " << age << std::endl;
 }
 
-void BoostCoreExamples::serialization_example() {
+void BoostCoreExamples::SerializationExample() {
     std::ostringstream oss;
     {
         boost::archive::text_oarchive oa(oss);
@@ -162,7 +162,7 @@ void BoostCoreExamples::serialization_example() {
     }
 }
 
-void BoostCoreExamples::coroutine_example() {
+void BoostCoreExamples::CoroutineExample() {
     typedef boost::coroutines2::coroutine<int> coro_t;
 
     coro_t::pull_type source([&](coro_t::push_type& sink) {
@@ -176,7 +176,7 @@ void BoostCoreExamples::coroutine_example() {
     }
 }
 
-void BoostCoreExamples::interprocess_example() {
+void BoostCoreExamples::InterprocessExample() {
     using namespace boost::interprocess;
 
     const char* shm_name = "MySharedMemory";
@@ -192,7 +192,7 @@ void BoostCoreExamples::interprocess_example() {
     shared_memory_object::remove(shm_name);
 }
 
-void BoostCoreExamples::lockfree_example() {
+void BoostCoreExamples::LockfreeExample() {
     boost::lockfree::queue<int> q(1024);
 
     for (int i = 0; i < 10; ++i) {
@@ -205,7 +205,7 @@ void BoostCoreExamples::lockfree_example() {
     }
 }
 
-void BoostCoreExamples::asio_socket_example() {
+void BoostCoreExamples::AsioSocketExample() {
     using namespace boost::asio;
     io_context io;
 
@@ -218,20 +218,20 @@ void BoostCoreExamples::asio_socket_example() {
     std::cout << "Connected to example.com\n";
 }
 
-void BoostCoreExamples::filesystem_traverse_example() {
+void BoostCoreExamples::FilesystemTraverseExample() {
     boost::filesystem::path path = boost::filesystem::current_path();
     for (const auto& entry : boost::filesystem::directory_iterator(path)) {
         std::cout << entry.path().string() << std::endl;
     }
 }
 
-void BoostCoreExamples::regex_replace_example() {
+void BoostCoreExamples::RegexReplaceExample() {
     std::string text = "Boost is amazing!";
     std::string replaced = boost::regex_replace(text, boost::regex("amazing"), "powerful");
     std::cout << "After replace: " << replaced << std::endl;
 }
 
-void BoostCoreExamples::boost_thread_example() {
+void BoostCoreExamples::BoostThreadExample() {
     auto thread_func = [](int id) {
         std::cout << "Thread " << id << " started\n";
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -250,7 +250,7 @@ void BoostCoreExamples::boost_thread_example() {
     std::cout << "All Boost threads joined.\n";
 }
 
-void BoostCoreExamples::barrier_example() {
+void BoostCoreExamples::BarrierExample() {
     boost::barrier sync_point(3);
 
     auto worker = [&](int id) {
@@ -265,7 +265,7 @@ void BoostCoreExamples::barrier_example() {
     t1.join(); t2.join(); t3.join();
 }
 
-void BoostCoreExamples::latch_example() {
+void BoostCoreExamples::LatchExample() {
     boost::latch sync_latch(3);
 
     auto task = [&](int id) {
@@ -281,7 +281,7 @@ void BoostCoreExamples::latch_example() {
     t1.join(); t2.join(); t3.join();
 }
 
-void BoostCoreExamples::condition_variable_example() {
+void BoostCoreExamples::ConditionVariableExample() {
     std::queue<int> q;
     boost::mutex mutex;
     boost::condition_variable cond;

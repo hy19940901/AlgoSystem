@@ -27,7 +27,7 @@ enum class OrderStatus {
  * @param status The enum value of the order status.
  * @return A human-readable string representing the order status.
  */
-inline std::string to_string(OrderStatus status) {
+inline std::string ToString(OrderStatus status) {
     switch (status) {
         case OrderStatus::Pending: return "Pending";
         case OrderStatus::Paid: return "Paid";
@@ -43,9 +43,9 @@ inline std::string to_string(OrderStatus status) {
  */
 class Entity {
  public:
-    virtual std::string get_id() const = 0;    ///< Returns the unique identifier of the entity
-    virtual std::string get_name() const = 0;  ///< Returns the name/label of the entity
-    virtual void print() const = 0;            ///< Prints summary information of the entity
+    virtual std::string GetId() const = 0;    ///< Returns the unique identifier of the entity
+    virtual std::string GetName() const = 0;  ///< Returns the name/label of the entity
+    virtual void Print() const = 0;            ///< Prints summary information of the entity
     virtual ~Entity() = default;               ///< Virtual destructor for safe polymorphic deletion
 };
 
@@ -60,15 +60,15 @@ class User : public Entity {
     std::string email_;     ///< Email for communication
  public:
     User(std::string id, std::string username, std::string email);
-    std::string get_id() const override;
-    std::string get_name() const override;
+    std::string GetId() const override;
+    std::string GetName() const override;
 
     /**
      * @brief Authenticates the user with a password.
      * @param password The input password to check.
      * @return True if the password is correct.
      */
-    virtual bool login(const std::string& password) const = 0;
+    virtual bool Login(const std::string& password) const = 0;
 };
 
 /**
@@ -79,8 +79,8 @@ class Customer : public User {
     std::string password_; ///< Stored user password
  public:
     Customer(std::string id, std::string username, std::string email, std::string password);
-    bool login(const std::string& input) const override;
-    void print() const override;
+    bool Login(const std::string& input) const override;
+    void Print() const override;
 };
 
 /**
@@ -97,21 +97,21 @@ class Product : public Entity {
  public:
     Product(std::string id, std::string name, double price,
             std::string category, int stock);
-    std::string get_id() const override;
-    std::string get_name() const override;
-    void print() const override;
+    std::string GetId() const override;
+    std::string GetName() const override;
+    void Print() const override;
 
     /**
      * @brief Checks if the product is available.
      * @return True if stock is greater than zero.
      */
-    bool is_available() const;
+    bool IsAvailable() const;
 
     /**
      * @brief Returns the price of the product.
      * @return Price per unit.
      */
-    double get_price() const;
+    double GetPrice() const;
 };
 
 /**
@@ -125,7 +125,7 @@ class DiscountPolicy {
      * @param price Original price.
      * @return Discounted price.
      */
-    virtual double apply(double price) const = 0;
+    virtual double Apply(double price) const = 0;
     virtual ~DiscountPolicy() = default;
 };
 
@@ -134,7 +134,7 @@ class DiscountPolicy {
  */
 class HolidayDiscount : public DiscountPolicy {
  public:
-    double apply(double price) const override;
+    double Apply(double price) const override;
 };
 
 /**
@@ -149,19 +149,19 @@ class Cart {
      * @param p Product to add.
      * @param quantity Number of units to add.
      */
-    void add_item(std::shared_ptr<Product> p, int quantity);
+    void AddItem(std::shared_ptr<Product> p, int quantity);
 
     /**
      * @brief Computes the total cost of the cart.
      * @param policy Optional discount policy to apply.
      * @return Total price after discount (if any).
      */
-    double compute_total(const DiscountPolicy* policy = nullptr) const;
+    double ComputeTotal(const DiscountPolicy* policy = nullptr) const;
 
     /**
      * @brief Prints all cart contents (products and their quantities).
      */
-    void print() const;
+    void Print() const;
 };
 
 /**
@@ -175,28 +175,28 @@ class Order : public Entity {
     OrderStatus status_;                          ///< Current status of the order
  public:
     Order(std::string id, std::shared_ptr<Customer> customer, Cart cart);
-    std::string get_id() const override;
-    std::string get_name() const override;
-    void print() const override;
+    std::string GetId() const override;
+    std::string GetName() const override;
+    void Print() const override;
 
     /**
      * @brief Retrieves the current status of the order.
      * @return Enum value of order status.
      */
-    OrderStatus get_status() const;
+    OrderStatus GetStatus() const;
 
     /**
      * @brief Updates the status of the order.
      * @param new_status New status to assign.
      */
-    void update_status(OrderStatus new_status);
+    void UpdateStatus(OrderStatus new_status);
 };
 
 /**
  * @brief Demonstrates different memory management techniques:
  *        new/delete, malloc/free, smart pointers, STL containers.
  */
-void memory_demo();
+void MemoryDemo();
 
 }  // namespace ecommerce
 

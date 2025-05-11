@@ -12,16 +12,16 @@
 class StreamProvider {
 public:
     // Registers the callback function for stream data
-    void register_callback(StreamCallback cb);
+    void RegisterCallback(StreamCallback cb);
 
     // Starts the streaming process
-    void start_stream();
+    void StartStream();
 
 private:
     StreamCallback callback_ = nullptr;  // Stores the callback function
 
     // Internal method to send stream data using the callback
-    void send_stream_data(const std::string& data);
+    void SendStreamData(const std::string& data);
 };
 
 #endif // STREAM_PROVIDER_INTERNAL_H

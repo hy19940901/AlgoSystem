@@ -2,14 +2,14 @@
 #include "../include/log_config.h"
 #include <cstring>
 
-static log4cxx::LoggerPtr logger = logsys::LogConfig::get_logger("provider_internal");
+static log4cxx::LoggerPtr logger = logsys::LogConfig::GetLogger("provider_internal");
 
-void StreamProvider::register_callback(StreamCallback cb) {
+void StreamProvider::RegisterCallback(StreamCallback cb) {
     LOG4CXX_INFO(logger, "Callback registered.");
     callback_ = cb;
 }
 
-void StreamProvider::start_stream() {
+void StreamProvider::StartStream() {
     if (!callback_) {
         LOG4CXX_ERROR(logger, "No callback registered! Cannot send data.");
         return;

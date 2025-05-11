@@ -38,7 +38,7 @@ public:
     /**
      * @brief Simulates the animal speaking.
      */
-    virtual void speak() const;
+    virtual void Speak() const;
 
 protected:
     string name_;  ///< Name of the animal
@@ -51,7 +51,7 @@ class Dog : public Animal {
 public:
     explicit Dog(const string& dog_name);
     ~Dog();
-    void speak() const override;
+    void Speak() const override;
 };
 
 /**
@@ -61,7 +61,7 @@ class Cat : public Animal {
 public:
     explicit Cat(const string& cat_name);
     ~Cat();
-    void speak() const override;
+    void Speak() const override;
 };
 
 // =======================================================================
@@ -94,7 +94,7 @@ public:
     /**
      * @brief Draws the shape.
      */
-    virtual void draw() const = 0;
+    virtual void Draw() const = 0;
 };
 
 /**
@@ -104,7 +104,7 @@ class Circle : public Shape {
 public:
     Circle();
     ~Circle();
-    void draw() const override;
+    void Draw() const override;
 };
 
 /**
@@ -114,7 +114,7 @@ class Rectangle : public Shape {
 public:
     Rectangle();
     ~Rectangle();
-    void draw() const override;
+    void Draw() const override;
 };
 
 // =======================================================================
@@ -141,12 +141,12 @@ public:
     /**
      * @brief Returns the single instance of Singleton.
      */
-    static Singleton* get_instance();
+    static Singleton* GetInstance();
 
     /**
      * @brief Prints a message from the singleton.
      */
-    void show_message();
+    void ShowMessage();
 
     ~Singleton();
 
@@ -160,9 +160,9 @@ private:
  */
 class FullSingleton {
 public:
-    static FullSingleton* get_instance();
-    static void destroy_instance();
-    void show_message();
+    static FullSingleton* GetInstance();
+    static void DestroyInstance();
+    void ShowMessage();
     ~FullSingleton();
 
 private:
@@ -202,7 +202,7 @@ public:
     /**
      * @brief Uses the product.
      */
-    virtual void use() const = 0;
+    virtual void Use() const = 0;
 
 protected:
     string name_; ///< Product name
@@ -214,7 +214,7 @@ protected:
 class ConcreteProductA : public Product {
 public:
     ConcreteProductA();
-    void use() const override;
+    void Use() const override;
 };
 
 /**
@@ -223,7 +223,7 @@ public:
 class ConcreteProductB : public Product {
 public:
     ConcreteProductB();
-    void use() const override;
+    void Use() const override;
 };
 
 /**
@@ -238,7 +238,7 @@ public:
      * @brief Creates a new product.
      * @return Pointer to dynamically allocated product
      */
-    virtual Product* create_product() const = 0;
+    virtual Product* CreateProduct() const = 0;
 };
 
 /**
@@ -246,7 +246,7 @@ public:
  */
 class FactoryA : public ProductFactory {
 public:
-    Product* create_product() const override;
+    Product* CreateProduct() const override;
 };
 
 /**
@@ -254,7 +254,7 @@ public:
  */
 class FactoryB : public ProductFactory {
 public:
-    Product* create_product() const override;
+    Product* CreateProduct() const override;
 };
 
 // =======================================================================
@@ -286,7 +286,7 @@ public:
      * @brief Callback function for when Subject changes.
      * @param message Notification message
      */
-    virtual void update(const string& message) = 0;
+    virtual void Update(const string& message) = 0;
     virtual ~Observer() = default;
 };
 
@@ -298,13 +298,13 @@ public:
     /**
      * @brief Registers an observer to the subject.
      */
-    void attach(Observer* observer);
+    void Attach(Observer* observer);
 
     /**
      * @brief Notifies all observers of an event.
      * @param message The notification message.
      */
-    void notify(const string& message);
+    void Notify(const string& message);
 
 private:
     std::vector<Observer*> observers_;  ///< List of registered observers
@@ -316,7 +316,7 @@ private:
 class ConcreteObserver : public Observer {
 public:
     explicit ConcreteObserver(const string& observer_name);
-    void update(const string& message) override;
+    void Update(const string& message) override;
 
 private:
     string name_; ///< Observer's name for display
@@ -347,7 +347,7 @@ private:
  */
 class Strategy {
 public:
-    virtual void execute() const = 0;
+    virtual void Execute() const = 0;
     virtual ~Strategy() = default;
 };
 
@@ -356,7 +356,7 @@ public:
  */
 class StrategyA : public Strategy {
 public:
-    void execute() const override;
+    void Execute() const override;
 };
 
 /**
@@ -364,7 +364,7 @@ public:
  */
 class StrategyB : public Strategy {
 public:
-    void execute() const override;
+    void Execute() const override;
 };
 
 /**
@@ -377,12 +377,12 @@ public:
     /**
      * @brief Sets a new strategy.
      */
-    void set_strategy(Strategy* new_strategy);
+    void SetStrategy(Strategy* new_strategy);
 
     /**
      * @brief Performs an action using the current strategy.
      */
-    void perform_action() const;
+    void PerformAction() const;
 
 private:
     Strategy* strategy_;

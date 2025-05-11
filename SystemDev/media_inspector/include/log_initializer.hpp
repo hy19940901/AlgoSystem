@@ -12,16 +12,16 @@
 namespace log_initializer {
 
 // Initializes all loggers and sinks.
-void init();
+void Init();
 
 // Returns a named logger.
-std::shared_ptr<spdlog::logger> get_logger(const std::string& name);
+std::shared_ptr<spdlog::logger> GetLogger(const std::string& name);
 
 // Sets the global log level.
-void set_level(spdlog::level::level_enum level);
+void SetLevel(spdlog::level::level_enum level);
 
 // Disables console output for all loggers.
-void disable_console_output();
+void DisableConsoleOutput();
 
 }  // namespace log_initializer
 

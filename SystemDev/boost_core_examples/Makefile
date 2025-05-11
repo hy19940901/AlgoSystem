@@ -1,6 +1,6 @@
 # === Compiler settings ===
 CXX = g++
-CXXFLAGS = -std=c++20 -Wall -Wextra -g -Iinclude
+CXXFLAGS = -std=c++20 -Wall -Wextra -g -fPIC -Iinclude
 
 # === Platform detection ===
 UNAME_S := $(shell uname -s)

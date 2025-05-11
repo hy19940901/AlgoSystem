@@ -6,51 +6,51 @@ int main() {
     // ==================== Inheritance and Polymorphism ====================
     Animal* dog = new Dog("Buddy");
     Animal* cat = new Cat("Kitty");
-    dog->speak();  // Dog-specific behavior
-    cat->speak();  // Cat-specific behavior
+    dog->Speak();  // Dog-specific behavior
+    cat->Speak();  // Cat-specific behavior
     delete dog;
     delete cat;
 
     // ===================== Abstract Class: Shape ==========================
     Shape* circle = new Circle();
     Shape* rectangle = new Rectangle();
-    circle->draw();    // Circle-specific draw
-    rectangle->draw(); // Rectangle-specific draw
+    circle->Draw();    // Circle-specific draw
+    rectangle->Draw(); // Rectangle-specific draw
     delete circle;
     delete rectangle;
 
     // ===================== Singleton Usage ================================
-    Singleton* s1 = Singleton::get_instance();
-    s1->show_message();
+    Singleton* s1 = Singleton::GetInstance();
+    s1->ShowMessage();
 
-    FullSingleton* fs1 = FullSingleton::get_instance();
-    fs1->show_message();
-    FullSingleton::destroy_instance(); // clean-up
+    FullSingleton* fs1 = FullSingleton::GetInstance();
+    fs1->ShowMessage();
+    FullSingleton::DestroyInstance(); // clean-up
 
     // ===================== Factory Method Pattern =========================
     std::unique_ptr<ProductFactory> factory_a(new FactoryA());
-    std::unique_ptr<Product> product_a(factory_a->create_product());
-    product_a->use();
+    std::unique_ptr<Product> product_a(factory_a->CreateProduct());
+    product_a->Use();
 
     std::unique_ptr<ProductFactory> factory_b(new FactoryB());
-    std::unique_ptr<Product> product_b(factory_b->create_product());
-    product_b->use();
+    std::unique_ptr<Product> product_b(factory_b->CreateProduct());
+    product_b->Use();
 
     // ===================== Observer Pattern ===============================
     Subject subject;
     ConcreteObserver observer1("Observer1");
     ConcreteObserver observer2("Observer2");
-    subject.attach(&observer1);
-    subject.attach(&observer2);
-    subject.notify("Event triggered!");
+    subject.Attach(&observer1);
+    subject.Attach(&observer2);
+    subject.Notify("Event triggered!");
 
     // ===================== Strategy Pattern ===============================
     StrategyA strategy_a;
     StrategyB strategy_b;
     Context context(&strategy_a);
-    context.perform_action(); // Executes Strategy A
-    context.set_strategy(&strategy_b);
-    context.perform_action(); // Executes Strategy B
+    context.PerformAction(); // Executes Strategy A
+    context.SetStrategy(&strategy_b);
+    context.PerformAction(); // Executes Strategy B
 
     return 0;
 }

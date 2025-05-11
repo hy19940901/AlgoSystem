@@ -8,7 +8,7 @@
 
 constexpr int TASK_COUNT = 100000;
 
-void benchmark_thread_pool() {
+void BenchmarkThreadPool() {
     FixedThreadPool pool(8);
     std::atomic<int> counter{0};
     std::vector<std::future<void>> results;
@@ -16,7 +16,7 @@ void benchmark_thread_pool() {
     auto start = std::chrono::high_resolution_clock::now();
 
     for (int i = 0; i < TASK_COUNT; ++i) {
-        results.emplace_back(pool.submit([&counter]() {
+        results.emplace_back(pool.Submit([&counter]() {
             counter.fetch_add(1, std::memory_order_relaxed);
         }));
     }
@@ -29,7 +29,7 @@ void benchmark_thread_pool() {
               << " ms, counter = " << counter << "\n";
 }
 
-void benchmark_direct_threads() {
+void BenchmarkDirectThreads() {
     std::atomic<int> counter{0};
     std::vector<std::thread> threads;
 
@@ -52,8 +52,8 @@ void benchmark_direct_threads() {
 int main() {
     std::cout << "Running benchmark with TASK_COUNT = " << TASK_COUNT << "\n";
 
-    benchmark_thread_pool();
-    benchmark_direct_threads();
+    BenchmarkThreadPool();
+    BenchmarkDirectThreads();
 
     return 0;
 }

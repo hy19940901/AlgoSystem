@@ -15,11 +15,11 @@ public:
     explicit FfmpegHandler(const std::string& path);
     ~FfmpegHandler();
 
-    bool open();
-    void print_media_info() const;
+    bool Open();
+    void PrintMediaInfo() const;
 
 private:
-    void print_audio_info(void* stream) const;
+    void PrintAudioInfo(void* stream) const;
     std::string file_path_;
     void* format_ctx_;
 };

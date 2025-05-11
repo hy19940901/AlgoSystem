@@ -18,32 +18,32 @@ int main() {
 
     // Add products to cart
     Cart cart;
-    cart.add_item(product1, 2);  // 2 books
-    cart.add_item(product2, 1);  // 1 keyboard
+    cart.AddItem(product1, 2);  // 2 books
+    cart.AddItem(product2, 1);  // 1 keyboard
 
     // Display cart contents
     std::cout << "\n--- CART CONTENTS ---" << std::endl;
-    cart.print();
+    cart.Print();
 
     // Apply discount
     HolidayDiscount discount;
-    double discounted_total = cart.compute_total(&discount);
+    double discounted_total = cart.ComputeTotal(&discount);
 
     // Create order
     Order order("O1001", customer, cart);
 
     // Print order
     std::cout << "\n--- ORDER DETAILS ---" << std::endl;
-    order.print();
+    order.Print();
     std::cout << std::fixed << std::setprecision(2);
     std::cout << "Total after discount: $" << discounted_total << std::endl;
 
     // Update order status
-    order.update_status(OrderStatus::Paid);
-    std::cout << "Updated status: " << to_string(order.get_status()) << std::endl;
+    order.UpdateStatus(OrderStatus::Paid);
+    std::cout << "Updated status: " << ToString(order.GetStatus()) << std::endl;
 
     // Run memory demo
-    memory_demo();
+    MemoryDemo();
 
     return 0;
 }

@@ -10,7 +10,7 @@ public:
     explicit TaglibMetadataReader(const std::string& file_path);
 
     // Print metadata to provided logger (e.g., spdlog::get("taglib"))
-    void print_to_log(std::shared_ptr<spdlog::logger> logger) const;
+    void PrintToLog(std::shared_ptr<spdlog::logger> logger) const;
 
 private:
     std::string file_path_;

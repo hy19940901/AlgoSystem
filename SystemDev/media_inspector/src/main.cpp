@@ -7,7 +7,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-void suppress_ffmpeg_stderr() {
+void SuppressFfmpegStderr() {
     int null_fd = open("/dev/null", O_WRONLY);
     if (null_fd != -1) {
         dup2(null_fd, STDERR_FILENO);  // Redirect stderr to /dev/null
@@ -16,25 +16,25 @@ void suppress_ffmpeg_stderr() {
 }
 
 int main(int argc, char* argv[]) {
-    suppress_ffmpeg_stderr();
+    SuppressFfmpegStderr();
     
-    log_initializer::init();
+    log_initializer::Init();
     spdlog::info("MediaInspector started");
 
-    log_initializer::disable_console_output();
+    log_initializer::DisableConsoleOutput();
 
     FfmpegHandler handler("media/Adele-Hello.mp3");
-    if (!handler.open()) {
+    if (!handler.Open()) {
         spdlog::error("Failed to open media file");
         return 1;
     }
 
-    handler.print_media_info();
+    handler.PrintMediaInfo();
 
     auto taglib_logger = spdlog::get("taglib");
     if (taglib_logger) {
         TaglibMetadataReader reader("media/Adele-Hello.mp3");
-        reader.print_to_log(taglib_logger);
+        reader.PrintToLog(taglib_logger);
     }
 
     return 0;

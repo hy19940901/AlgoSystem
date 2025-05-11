@@ -8,7 +8,7 @@
 
 constexpr int TASK_COUNT = 100000;
 
-void benchmark_thread_pool() {
+void BenchmarkThreadPool() {
     ThreadPool pool(8);
     std::atomic<int> counter{0};
 
@@ -30,7 +30,7 @@ void benchmark_thread_pool() {
               << " ms, counter = " << counter << "\n";
 }
 
-void benchmark_std_async() {
+void BenchmarkStdAsync() {
     std::atomic<int> counter{0};
 
     auto start = std::chrono::high_resolution_clock::now();
@@ -51,7 +51,7 @@ void benchmark_std_async() {
               << " ms, counter = " << counter << "\n";
 }
 
-void benchmark_single_thread() {
+void BenchmarkSingleThread() {
     int counter = 0;
 
     auto start = std::chrono::high_resolution_clock::now();
@@ -69,9 +69,9 @@ void benchmark_single_thread() {
 int main() {
     std::cout << "Benchmark started with TASK_COUNT = " << TASK_COUNT << "\n";
 
-    benchmark_thread_pool();
-    benchmark_std_async();
-    benchmark_single_thread();
+    BenchmarkThreadPool();
+    BenchmarkStdAsync();
+    BenchmarkSingleThread();
 
     return 0;
 }

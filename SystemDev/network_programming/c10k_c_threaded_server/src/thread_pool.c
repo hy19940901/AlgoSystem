@@ -1,4 +1,4 @@
-#include "../include/threadpool.h"
+#include "../include/thread_pool.h"
 #include <pthread.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -10,7 +10,7 @@ typedef struct task {
     int arg;
 } task_t;
 
-struct threadpool {
+struct ThreadPool {
     pthread_t* threads;
     task_t queue[QUEUE_SIZE];
     int head, tail;
@@ -19,8 +19,8 @@ struct threadpool {
     int stop;
 };
 
-void* thread_loop(void* arg) {
-    threadpool_t* pool = (threadpool_t*)arg;
+void* ThreadLoop(void* arg) {
+    ThreadPool_T* pool = (ThreadPool_T*)arg;
     while (1) {
         pthread_mutex_lock(&pool->lock);
         while (pool->head == pool->tail && !pool->stop)
@@ -37,19 +37,19 @@ void* thread_loop(void* arg) {
     return NULL;
 }
 
-threadpool_t* threadpool_create(int thread_count) {
-    threadpool_t* pool = calloc(1, sizeof(threadpool_t));
+ThreadPool_T* ThreadPoolCreate(int thread_count) {
+    ThreadPool_T* pool = calloc(1, sizeof(ThreadPool_T));
     pthread_mutex_init(&pool->lock, NULL);
     pthread_cond_init(&pool->cond, NULL);
     pool->threads = malloc(sizeof(pthread_t) * thread_count);
 
     for (int i = 0; i < thread_count; ++i)
-        pthread_create(&pool->threads[i], NULL, thread_loop, pool);
+        pthread_create(&pool->threads[i], NULL, ThreadLoop, pool);
 
     return pool;
 }
 
-void threadpool_add_task(threadpool_t* pool, void (*func)(int), int arg) {
+void ThreadPoolAddTask(ThreadPool_T* pool, void (*func)(int), int arg) {
     pthread_mutex_lock(&pool->lock);
     pool->queue[pool->tail] = (task_t){func, arg};
     pool->tail = (pool->tail + 1) % QUEUE_SIZE;
@@ -57,7 +57,7 @@ void threadpool_add_task(threadpool_t* pool, void (*func)(int), int arg) {
     pthread_mutex_unlock(&pool->lock);
 }
 
-void threadpool_destroy(threadpool_t* pool) {
+void ThreadPoolDestroy(ThreadPool_T* pool) {
     pthread_mutex_lock(&pool->lock);
     pool->stop = 1;
     pthread_cond_broadcast(&pool->cond);

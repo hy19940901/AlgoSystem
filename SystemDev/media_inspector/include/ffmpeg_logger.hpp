@@ -12,6 +12,6 @@
  * 
  * @param logger A shared pointer to the spdlog logger instance that will receive FFmpeg logs.
  */
-void register_ffmpeg_log_callback(std::shared_ptr<spdlog::logger> logger);
+void RegisterFfmpegLogCallback(std::shared_ptr<spdlog::logger> logger);
 
 #endif // FFMPEG_LOGGER_HPP

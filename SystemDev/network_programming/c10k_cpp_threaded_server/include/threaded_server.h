@@ -30,12 +30,12 @@ class ThreadedServer {
   /**
    * @brief Run the server event loop (blocking call)
    */
-  void run();
+  void Run();
 
   /**
    * @brief Set the stop flag to initiate graceful shutdown
    */
-  void stop();
+  void Stop();
 
   /**
    * @brief Global pointer used in signal handling for safe shutdown
@@ -53,24 +53,24 @@ class ThreadedServer {
   /**
    * @brief Initialize socket, bind, listen, and epoll registration
    */
-  void setup_server();
+  void SetupServer();
 
   /**
    * @brief Set a socket file descriptor to non-blocking mode
    * @param fd File descriptor to modify
    */
-  void set_non_blocking(int fd);
+  void SetNonBlocking(int fd);
 
   /**
    * @brief Accept all pending client connections from the server socket
    */
-  void accept_clients();
+  void AcceptClients();
 
   /**
    * @brief Handle individual client request/response cycle
    * @param client_fd File descriptor of the accepted client socket
    */
-  void handle_client(int client_fd);
+  void HandleClient(int client_fd);
 
   /**
    * Generate a complete HTTP response with dynamic JSON payload.
@@ -78,7 +78,7 @@ class ThreadedServer {
    * @param path Path from client request.
    * @return Smart pointer holding full HTTP response.
    */
-  std::unique_ptr<std::string> get_http_response(const std::string& method, const std::string& path);
+  std::unique_ptr<std::string> GetHttpResponse(const std::string& method, const std::string& path);
 };
 
 #endif  // THREADED_SERVER_H_

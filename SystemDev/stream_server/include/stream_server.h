@@ -14,6 +14,6 @@
  * @param stream_data Pointer to the stream data.
  * @param size Size of the stream data in bytes.
  */
-void stream_callback(const char* stream_data, int size);
+void StreamDataCallback(const char* stream_data, int size);
 
 #endif // STREAM_SERVER_H

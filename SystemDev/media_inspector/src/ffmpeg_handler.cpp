@@ -13,7 +13,7 @@ FfmpegHandler::~FfmpegHandler() {
     }
 }
 
-bool FfmpegHandler::open() {
+bool FfmpegHandler::Open() {
     AVFormatContext* ctx = nullptr;
     if (avformat_open_input(&ctx, file_path_.c_str(), nullptr, nullptr) != 0) {
         spdlog::error("Failed to open media file: {}", file_path_);
@@ -28,13 +28,13 @@ bool FfmpegHandler::open() {
     return true;
 }
 
-void FfmpegHandler::print_media_info() const {
+void FfmpegHandler::PrintMediaInfo() const {
     auto ctx = reinterpret_cast<AVFormatContext*>(format_ctx_);
     av_dump_format(ctx, 0, file_path_.c_str(), 0);
 
     for (unsigned int i = 0; i < ctx->nb_streams; ++i) {
         if (ctx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
-            print_audio_info(ctx->streams[i]);
+            PrintAudioInfo(ctx->streams[i]);
         }
     }
 
@@ -45,7 +45,7 @@ void FfmpegHandler::print_media_info() const {
     }
 }
 
-void FfmpegHandler::print_audio_info(void* stream_ptr) const {
+void FfmpegHandler::PrintAudioInfo(void* stream_ptr) const {
     auto stream = reinterpret_cast<AVStream*>(stream_ptr);
     auto codecpar = stream->codecpar;
     spdlog::info("[AUDIO STREAM]");

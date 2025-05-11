@@ -1,9 +1,9 @@
 #include "../include/stream_provider.h"
 #include "../include/log_config.h"
 
-static log4cxx::LoggerPtr logger = logsys::LogConfig::get_logger("server");
+static log4cxx::LoggerPtr logger = logsys::LogConfig::GetLogger("server");
 
-void stream_callback(const char* stream_data, int size) {
+void StreamDataCallback(const char* stream_data, int size) {
     if (logger->isDebugEnabled()) {
         LOG4CXX_DEBUG(logger, "stream_callback triggered.");
     }
@@ -12,11 +12,11 @@ void stream_callback(const char* stream_data, int size) {
 }
 
 int main() {
-    logsys::LogConfig::init();
+    logsys::LogConfig::Init();
     LOG4CXX_INFO(logger, "Server starting...");
 
-    register_stream_callback(stream_callback);
-    start_stream();
+    RegisterStreamCallback(StreamDataCallback);
+    StartStream();
 
     LOG4CXX_INFO(logger, "Server exiting.");
     return 0;

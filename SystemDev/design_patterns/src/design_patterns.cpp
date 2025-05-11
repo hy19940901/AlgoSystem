@@ -8,7 +8,7 @@ Animal::Animal(const string& animalName) : name_(animalName) {
     cout << "Animal Constructor: " << name_ << " created." << endl;
 }
 
-void Animal::speak() const {
+void Animal::Speak() const {
     cout << "Animal " << name_ << " makes a sound." << endl;
 }
 
@@ -20,7 +20,7 @@ Dog::Dog(const string& dogName) : Animal(dogName) {
     cout << "Dog Constructor: " << name_ << " created." << endl;
 }
 
-void Dog::speak() const {
+void Dog::Speak() const {
     cout << "Dog " << name_ << " barks: Woof!" << endl;
 }
 
@@ -32,7 +32,7 @@ Cat::Cat(const string& catName) : Animal(catName) {
     cout << "Cat Constructor: " << name_ << " created." << endl;
 }
 
-void Cat::speak() const {
+void Cat::Speak() const {
     cout << "Cat " << name_ << " meows: Meow!" << endl;
 }
 
@@ -53,7 +53,7 @@ Circle::Circle() {
     cout << "Circle Constructor: Circle created." << endl;
 }
 
-void Circle::draw() const {
+void Circle::Draw() const {
     cout << "Drawing a Circle." << endl;
 }
 
@@ -65,7 +65,7 @@ Rectangle::Rectangle() {
     cout << "Rectangle Constructor: Rectangle created." << endl;
 }
 
-void Rectangle::draw() const {
+void Rectangle::Draw() const {
     cout << "Drawing a Rectangle." << endl;
 }
 
@@ -80,14 +80,14 @@ Singleton::Singleton() {
     cout << "Singleton Constructor: Instance created." << endl;
 }
 
-Singleton* Singleton::get_instance() {
+Singleton* Singleton::GetInstance() {
     if (!instance_) {
         instance_ = new Singleton();
     }
     return instance_;
 }
 
-void Singleton::show_message() {
+void Singleton::ShowMessage() {
     cout << "Singleton Instance Accessed." << endl;
 }
 
@@ -102,7 +102,7 @@ FullSingleton::FullSingleton() {
     cout << "Full Singleton Constructor: Instance created." << endl;
 }
 
-FullSingleton* FullSingleton::get_instance() {
+FullSingleton* FullSingleton::GetInstance() {
     lock_guard<mutex> lock(instance_mutex_);
     if (!instance_) {
         instance_ = new FullSingleton();
@@ -110,14 +110,14 @@ FullSingleton* FullSingleton::get_instance() {
     return instance_;
 }
 
-void FullSingleton::destroy_instance() {
+void FullSingleton::DestroyInstance() {
     lock_guard<mutex> lock(instance_mutex_);
     delete instance_;
     instance_ = nullptr;
     cout << "Full Singleton Destructor: Instance destroyed." << endl;
 }
 
-void FullSingleton::show_message() {
+void FullSingleton::ShowMessage() {
     cout << "Full Singleton Instance Accessed." << endl;
 }
 
@@ -134,13 +134,13 @@ Product::~Product() {
 
 ConcreteProductA::ConcreteProductA() : Product("Product A") {}
 
-void ConcreteProductA::use() const {
+void ConcreteProductA::Use() const {
     cout << "Using " << name_ << "." << endl;
 }
 
 ConcreteProductB::ConcreteProductB() : Product("Product B") {}
 
-void ConcreteProductB::use() const {
+void ConcreteProductB::Use() const {
     cout << "Using " << name_ << "." << endl;
 }
 
@@ -152,46 +152,46 @@ ProductFactory::~ProductFactory() {
     cout << "ProductFactory Destructor called." << endl;
 }
 
-Product* FactoryA::create_product() const {
+Product* FactoryA::CreateProduct() const {
     return new ConcreteProductA();
 }
 
-Product* FactoryB::create_product() const {
+Product* FactoryB::CreateProduct() const {
     return new ConcreteProductB();
 }
 
 // ======================== Observer Pattern =========================== //
-void Subject::attach(Observer* observer) {
+void Subject::Attach(Observer* observer) {
     observers_.push_back(observer);
 }
 
-void Subject::notify(const string& message) {
+void Subject::Notify(const string& message) {
     for (auto observer : observers_) {
-        observer->update(message);
+        observer->Update(message);
     }
 }
 
 ConcreteObserver::ConcreteObserver(const string& observerName) : name_(observerName) {}
 
-void ConcreteObserver::update(const string& message) {
+void ConcreteObserver::Update(const string& message) {
     cout << "Observer " << name_ << " received: " << message << endl;
 }
 
 // ======================== Strategy Pattern =========================== //
 Context::Context(Strategy* strategy) : strategy_(strategy) {}
 
-void Context::set_strategy(Strategy* new_strategy) {
+void Context::SetStrategy(Strategy* new_strategy) {
     strategy_ = new_strategy;
 }
 
-void Context::perform_action() const {
-    strategy_->execute();
+void Context::PerformAction() const {
+    strategy_->Execute();
 }
 
-void StrategyA::execute() const {
+void StrategyA::Execute() const {
     cout << "Executing Strategy A." << endl;
 }
 
-void StrategyB::execute() const {
+void StrategyB::Execute() const {
     cout << "Executing Strategy B." << endl;
 }

@@ -27,7 +27,7 @@ typedef void (*StreamCallback)(const char* stream_data, int size);
  * @param cb A function pointer to the user-defined callback function that conforms
  *           to the StreamCallback type.
  */
-void register_stream_callback(StreamCallback cb);
+void RegisterStreamCallback(StreamCallback cb);
 
 /**
  * @brief Starts the stream and uses the registered callback to pass data.
@@ -36,7 +36,7 @@ void register_stream_callback(StreamCallback cb);
  * the function will generate stream data and pass it to the registered callback. If no
  * callback has been registered, an error message will be logged.
  */
-void start_stream();
+void StartStream();
 
 #ifdef __cplusplus
 }

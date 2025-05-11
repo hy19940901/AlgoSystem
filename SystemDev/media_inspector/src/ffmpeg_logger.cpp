@@ -9,7 +9,7 @@ extern "C" {
 static std::shared_ptr<spdlog::logger> ffmpeg_logger;
 static std::mutex logger_mutex;
 
-extern "C" void ffmpeg_log_callback(void* /*ptr*/, int level, const char* fmt, va_list vl) {
+extern "C" void FfmpegLogCallback(void* /*ptr*/, int level, const char* fmt, va_list vl) {
     char buffer[1024];
     vsnprintf(buffer, sizeof(buffer), fmt, vl);
 
@@ -47,12 +47,12 @@ extern "C" void ffmpeg_log_callback(void* /*ptr*/, int level, const char* fmt, v
     }
 }
 
-void register_ffmpeg_log_callback(std::shared_ptr<spdlog::logger> logger) {
+void RegisterFfmpegLogCallback(std::shared_ptr<spdlog::logger> logger) {
     std::lock_guard<std::mutex> lock(logger_mutex);
     ffmpeg_logger = std::move(logger);
 
     // 1. Register your callback first
-    av_log_set_callback(ffmpeg_log_callback);
+    av_log_set_callback(FfmpegLogCallback);
 
     // 2. Set FFmpeg log level high enough to capture logs (e.g., INFO)
     av_log_set_level(AV_LOG_INFO);

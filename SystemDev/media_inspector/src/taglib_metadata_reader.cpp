@@ -11,7 +11,7 @@
 TaglibMetadataReader::TaglibMetadataReader(const std::string& file_path)
     : file_path_(file_path) {}
 
-std::string utf16le_to_utf8_manual(const unsigned char* data, size_t len) {
+std::string Utf16LeToUtf8Manual(const unsigned char* data, size_t len) {
     std::string utf8;
     for (size_t i = 0; i + 1 < len; i += 2) {
         uint16_t ch = data[i] | (data[i + 1] << 8);
@@ -31,7 +31,7 @@ std::string utf16le_to_utf8_manual(const unsigned char* data, size_t len) {
     return utf8;
 }
 
-void TaglibMetadataReader::print_to_log(std::shared_ptr<spdlog::logger> logger) const {
+void TaglibMetadataReader::PrintToLog(std::shared_ptr<spdlog::logger> logger) const {
     logger->info("[TAGLIB METADATA]");
     TagLib::MPEG::File file(file_path_.c_str());
 
@@ -73,7 +73,7 @@ void TaglibMetadataReader::print_to_log(std::shared_ptr<spdlog::logger> logger) 
                 logger->info("Char {}: U+{:04x}", i / 2, static_cast<uint32_t>(ch));
             }
 
-            std::string utf8 = utf16le_to_utf8_manual(bytes + offset, size - offset);
+            std::string utf8 = Utf16LeToUtf8Manual(bytes + offset, size - offset);
             logger->info("Comment (manually decoded): {}", utf8);
 
             // std::ofstream out("test_utf8.txt", std::ios::out | std::ios::binary);

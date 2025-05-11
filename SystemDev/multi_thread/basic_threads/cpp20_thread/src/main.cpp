@@ -1,24 +1,33 @@
 #include "../include/cpp20_thread.h"
+#include <iostream>
 
 int main() {
-    thread_demo::run_basic_threads();
-    thread_demo::run_detached_threads_demo();
-    thread_demo::run_mutex_demo();
-    thread_demo::run_condition_demo();
-    thread_demo::run_rwlock_demo();
-    thread_demo::run_barrier_demo();
-    thread_demo::run_tls_demo();
-    thread_demo::run_spinlock_demo();
-    thread_demo::run_semaphore_demo();
-    thread_demo::run_producer_consumer_demo();
-    thread_demo::run_cancellation_demo();
+    using namespace thread_demo;
+    using namespace future_demo;
 
-    future_demo::run_wait_for_demo();
-    future_demo::run_promise_demo();
-    future_demo::run_promise_exception_demo();
-    future_demo::run_deferred_demo();
+    std::cout << "\n===== Threading Demos =====" << std::endl;
+    BasicThreadsDemo().Run();
+    DetachedThreadsDemo().Run();
+    MutexDemo().Run();
+    ConditionDemo().Run();
+    RwlockDemo().Run();
+    BarrierDemo().Run();
+    TlsDemo().Run();
+    SpinlockDemo().Run();
+    SemaphoreDemo().Run();
+    ProducerConsumerDemo().Run();
+    CancellationDemo().Run();
+    ThreadBenchmarkDemo().Run();
+    ParallelVsSerialDemo().Run();
 
-    thread_demo::run_thread_benchmark();
-    thread_demo::run_parallel_vs_serial_benchmark();
+    std::cout << "\n===== Future / Async Demos =====" << std::endl;
+    FutureDemo::Run();
+    PackagedTaskDemo::Run();
+    SharedFutureDemo::Run();
+    WaitForDemo::Run();
+    PromiseDemo::Run();
+    PromiseExceptionDemo::Run();
+    DeferredDemo::Run();
+
     return 0;
 }

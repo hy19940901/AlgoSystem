@@ -1,4 +1,3 @@
-// FixedThreadPool.h
 #ifndef FIXED_THREAD_POOL_H
 #define FIXED_THREAD_POOL_H
 
@@ -17,18 +16,18 @@
  */
 class FixedThreadPool {
 public:
-    explicit FixedThreadPool(size_t thread_count);
+    explicit FixedThreadPool(size_t threadCount);
     ~FixedThreadPool();
 
-    std::future<void> submit(std::function<void()> task);
-    void submit(std::function<void()> task, std::function<void()> callback);
+    std::future<void> Submit(std::function<void()> task);
+    void Submit(std::function<void()> task, std::function<void()> callback);
 
 private:
-    std::vector<std::thread> workers;
-    std::queue<std::function<void()>> tasks;
-    std::mutex queue_mutex;
-    std::condition_variable condition;
-    std::atomic<bool> stop_flag;
+    std::vector<std::thread> workers_;
+    std::queue<std::function<void()>> tasks_;
+    std::mutex queueMutex_;
+    std::condition_variable condition_;
+    std::atomic<bool> stopFlag_;
 };
 
-#endif // FIXED_THREAD_POOL_H
+#endif  // FIXED_THREAD_POOL_H
