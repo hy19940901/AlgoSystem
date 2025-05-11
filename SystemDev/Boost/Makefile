@@ -34,9 +34,9 @@ BINDIR = bin
 LIBDIR = lib
 
 # === Files ===
-SRC = $(SRCDIR)/main.cpp $(SRCDIR)/BoostCoreExamples.cpp
+SRC = $(SRCDIR)/main.cpp $(SRCDIR)/boost_core_examples.cpp
 OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SRC))
-EXEC = $(BINDIR)/boost_example
+EXEC = $(BINDIR)/boost_core_examples
 SHARED_LIB = $(LIBDIR)/libboostexample.so
 
 # === Default target ===
