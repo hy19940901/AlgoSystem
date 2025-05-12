@@ -8,9 +8,9 @@ OBJDIR = obj
 BINDIR = bin
 
 # Sources and objects
-SRCS = $(SRCDIR)/sorting_algorithms.cpp $(SRCDIR)/main.cpp
+SRCS = $(SRCDIR)/sort_algorithms.cpp $(SRCDIR)/main.cpp
 OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SRCS))
-EXEC = $(BINDIR)/sorting_algorithms
+EXEC = $(BINDIR)/sort_algorithms
 
 # Default target
 all: $(EXEC)
@@ -21,7 +21,7 @@ $(EXEC): $(OBJS)
 	$(CC) $(CFLAGS) $^ -o $@
 
 # Compile .cpp -> .o
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp include/sorting_algorithms.h
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp include/sort_algorithms.h
 	@mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 

@@ -5,7 +5,7 @@
 #include <ctime>
 #include <chrono>
 #include <random>  // Include the random number generation library
-#include "../include/sorting_algorithms.h"
+#include "../include/sort_algorithms.h"
 
 
 /**
@@ -119,49 +119,49 @@ int main() {
 
         // Benchmark Bubble Sort (limit to smaller arrays due to its O(n^2) time complexity)
         if (size <= 10000) {
-            BenchmarkSort("Bubble Sort", sorting_algorithms::BubbleSort, arr);
+            BenchmarkSort("Bubble Sort", sort_algorithms::BubbleSort, arr);
         }
 
         // Benchmark Selection Sort (limit to smaller arrays due to its O(n^2) time complexity)
         if (size <= 10000) {
-            BenchmarkSort("Selection Sort", sorting_algorithms::SelectionSort, arr);
+            BenchmarkSort("Selection Sort", sort_algorithms::SelectionSort, arr);
         }
 
         // Benchmark Insertion Sort (limit to smaller arrays due to its O(n^2) time complexity)
         if (size <= 10000) {
-            BenchmarkSort("Insertion Sort", sorting_algorithms::InsertionSort, arr);
+            BenchmarkSort("Insertion Sort", sort_algorithms::InsertionSort, arr);
         }
 
         // Benchmark Merge Sort (can handle larger arrays efficiently)
-        BenchmarkSort("Merge Sort", [](std::vector<int>& arr, int n) { sorting_algorithms::MergeSort(arr, 0, n - 1); }, arr);
+        BenchmarkSort("Merge Sort", [](std::vector<int>& arr, int n) { sort_algorithms::MergeSort(arr, 0, n - 1); }, arr);
 
         // Benchmark Heap Sort (can handle larger arrays efficiently)
-        BenchmarkSort("Heap Sort", sorting_algorithms::HeapSort, arr);
+        BenchmarkSort("Heap Sort", sort_algorithms::HeapSort, arr);
 
         // Benchmark Quick Sort (can handle larger arrays efficiently)
-        BenchmarkSort("Quick Sort", [](std::vector<int>& arr, int n) { sorting_algorithms::QuickSort(arr, 0, n - 1); }, arr);
+        BenchmarkSort("Quick Sort", [](std::vector<int>& arr, int n) { sort_algorithms::QuickSort(arr, 0, n - 1); }, arr);
 
         // Benchmark Bucket Sort (can handle larger arrays efficiently)
-        BenchmarkSort("Bucket Sort", sorting_algorithms::BucketSort, arr);
+        BenchmarkSort("Bucket Sort", sort_algorithms::BucketSort, arr);
 
         // Benchmark 3-Way Quick Sort (optimized for large arrays with duplicates)
-        BenchmarkSort("3-Way Quick Sort combined with insertion", [](std::vector<int>& arr, int n) { sorting_algorithms::QuickSortWithInsertion(arr, 0, n - 1); }, arr);
+        BenchmarkSort("3-Way Quick Sort combined with insertion", [](std::vector<int>& arr, int n) { sort_algorithms::QuickSortWithInsertion(arr, 0, n - 1); }, arr);
 
         // Benchmark Timsort
-        BenchmarkSort("Merge Sort combined with insertion", [](std::vector<int>& arr, int n) { sorting_algorithms::MergeSortWithInsertion(arr, n); }, arr);
+        BenchmarkSort("Merge Sort combined with insertion", [](std::vector<int>& arr, int n) { sort_algorithms::MergeSortWithInsertion(arr, n); }, arr);
     }
 
     // Demonstrate sorting with 10 elements using various algorithms
     std::cout << "\nDemonstrating sorting with 10 elements:" << std::endl;
-    DemonstrateSortingWith10Elements(sorting_algorithms::BubbleSort);
-    DemonstrateSortingWith10Elements(sorting_algorithms::SelectionSort);
-    DemonstrateSortingWith10Elements(sorting_algorithms::InsertionSort);
-    DemonstrateSortingWith10Elements(sorting_algorithms::HeapSort);
-    DemonstrateSortingWith10Elements([](std::vector<int>& arr, int n){ sorting_algorithms::MergeSort(arr, 0, n-1); });
-    DemonstrateSortingWith10Elements([](std::vector<int>& arr, int n){ sorting_algorithms::QuickSort(arr, 0, n-1); });
-    DemonstrateSortingWith10Elements(sorting_algorithms::BucketSort);
-    DemonstrateSortingWith10Elements([](std::vector<int>& arr, int n){ sorting_algorithms::QuickSortWithInsertion(arr, 0, n-1); });
-    DemonstrateSortingWith10Elements([](std::vector<int>& arr, int n){ sorting_algorithms::MergeSortWithInsertion(arr, n); });
+    DemonstrateSortingWith10Elements(sort_algorithms::BubbleSort);
+    DemonstrateSortingWith10Elements(sort_algorithms::SelectionSort);
+    DemonstrateSortingWith10Elements(sort_algorithms::InsertionSort);
+    DemonstrateSortingWith10Elements(sort_algorithms::HeapSort);
+    DemonstrateSortingWith10Elements([](std::vector<int>& arr, int n){ sort_algorithms::MergeSort(arr, 0, n-1); });
+    DemonstrateSortingWith10Elements([](std::vector<int>& arr, int n){ sort_algorithms::QuickSort(arr, 0, n-1); });
+    DemonstrateSortingWith10Elements(sort_algorithms::BucketSort);
+    DemonstrateSortingWith10Elements([](std::vector<int>& arr, int n){ sort_algorithms::QuickSortWithInsertion(arr, 0, n-1); });
+    DemonstrateSortingWith10Elements([](std::vector<int>& arr, int n){ sort_algorithms::MergeSortWithInsertion(arr, n); });
 
     return 0;
 }

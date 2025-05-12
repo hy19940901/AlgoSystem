@@ -10,7 +10,7 @@
 using namespace std;
 using std::vector;
 
-namespace sorting_algorithms {
+namespace sort_algorithms {
 /**
  * Sorts an array using the Bubble Sort algorithm.
  *

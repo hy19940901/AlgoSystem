@@ -1,8 +1,8 @@
-#include "../include/sorting_algorithms.h"
+#include "../include/sort_algorithms.h"
 
 const int RUN = 32; // The minimum run size for the mergeSortWithInsertion algorithm
 
-namespace sorting_algorithms {
+namespace sort_algorithms {
 
 // Bubble Sort implementation
 // Time Complexity: O(n^2) in worst and average case
