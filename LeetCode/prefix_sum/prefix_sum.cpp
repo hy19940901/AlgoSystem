@@ -14,15 +14,16 @@ using namespace std;
  * Output: sumRange(0, 2) = 1
  */
 class NumArray {
-    vector<int> prefix;
+private:
+    vector<int> prefix_;
 public:
     NumArray(vector<int>& nums) {
-        prefix.push_back(0);
+        prefix_.push_back(0);
         for (int num : nums)
-            prefix.push_back(prefix.back() + num);
+            prefix_.push_back(prefix_.back() + num);
     }
-    int sumRange(int left, int right) {
-        return prefix[right + 1] - prefix[left];
+    int SumRange(int left, int right) {
+        return prefix_[right + 1] - prefix_[left];
     }
 };
 
@@ -36,13 +37,13 @@ public:
  * Input: nums = [1,1,1], k = 2
  * Output: 2
  */
-int subarraySum(vector<int>& nums, int k) {
-    unordered_map<int, int> prefixCount{{0, 1}};
+int SubarraySum(vector<int>& nums, int k) {
+    unordered_map<int, int> prefix_count{{0, 1}};
     int sum = 0, count = 0;
     for (int num : nums) {
         sum += num;
-        count += prefixCount[sum - k];
-        prefixCount[sum]++;
+        count += prefix_count[sum - k];
+        prefix_count[sum]++;
     }
     return count;
 }
@@ -57,16 +58,16 @@ int subarraySum(vector<int>& nums, int k) {
  * Input: nums = [23,2,4,6,7], k = 6
  * Output: true
  */
-bool checkSubarraySum(vector<int>& nums, int k) {
-    unordered_map<int, int> modIndex{{0, -1}};
+bool CheckSubarraySum(vector<int>& nums, int k) {
+    unordered_map<int, int> mod_index{{0, -1}};
     int sum = 0;
-    for (int i = 0; i < nums.size(); i++) {
+    for (size_t i = 0; i < nums.size(); i++) {
         sum += nums[i];
         int mod = k == 0 ? sum : sum % k;
-        if (modIndex.count(mod)) {
-            if (i - modIndex[mod] >= 2) return true;
+        if (mod_index.count(mod)) {
+            if (i - mod_index[mod] >= 2) return true;
         } else {
-            modIndex[mod] = i;
+            mod_index[mod] = i;
         }
     }
     return false;
@@ -82,14 +83,14 @@ bool checkSubarraySum(vector<int>& nums, int k) {
  * Input: nums = [4,5,0,-2,-3,1], k = 5
  * Output: 7
  */
-int subarraysDivByK(vector<int>& nums, int k) {
-    unordered_map<int, int> modCount{{0, 1}};
+int SubarraysDivByK(vector<int>& nums, int k) {
+    unordered_map<int, int> mod_count{{0, 1}};
     int sum = 0, count = 0;
     for (int num : nums) {
         sum += num;
         int mod = ((sum % k) + k) % k; // handle negative
-        count += modCount[mod];
-        modCount[mod]++;
+        count += mod_count[mod];
+        mod_count[mod]++;
     }
     return count;
 }
@@ -104,18 +105,18 @@ int subarraysDivByK(vector<int>& nums, int k) {
  * Input: nums = [1, -1, 5, -2, 3], k = 3
  * Output: 4
  */
-int maxSubArrayLen(vector<int>& nums, int k) {
-    unordered_map<int, int> prefixIndex;
-    int sum = 0, maxLen = 0;
-    for (int i = 0; i < nums.size(); i++) {
+int MaxSubArrayLen(vector<int>& nums, int k) {
+    unordered_map<int, int> prefix_index;
+    int sum = 0, max_len = 0;
+    for (size_t i = 0; i < nums.size(); i++) {
         sum += nums[i];
-        if (sum == k) maxLen = i + 1;
-        if (prefixIndex.count(sum - k))
-            maxLen = max(maxLen, i - prefixIndex[sum - k]);
-        if (!prefixIndex.count(sum))
-            prefixIndex[sum] = i;
+        if (sum == k) max_len = i + 1;
+        if (prefix_index.count(sum - k))
+            max_len = max(max_len, static_cast<int>(i) - prefix_index[sum - k]);
+        if (!prefix_index.count(sum))
+            prefix_index[sum] = i;
     }
-    return maxLen;
+    return max_len;
 }
 
 /**
@@ -128,7 +129,7 @@ int maxSubArrayLen(vector<int>& nums, int k) {
  * Input: nums = [1,2,3,4]
  * Output: [24,12,8,6]
  */
-vector<int> productExceptSelf(vector<int>& nums) {
+vector<int> ProductExceptSelf(vector<int>& nums) {
     int n = nums.size();
     vector<int> res(n, 1);
     int left = 1, right = 1;
@@ -153,7 +154,7 @@ vector<int> productExceptSelf(vector<int>& nums) {
  * Input: nums = [1,1,2,1,1], k = 3
  * Output: 2
  */
-int numberOfSubarrays(vector<int>& nums, int k) {
+int NumberOfSubarrays(vector<int>& nums, int k) {
     unordered_map<int, int> count{{0, 1}};
     int odd = 0, res = 0;
     for (int num : nums) {
@@ -174,13 +175,13 @@ int numberOfSubarrays(vector<int>& nums, int k) {
  * Input: nums = [1,0,1,0,1], goal = 2
  * Output: 4
  */
-int numSubarraysWithSum(vector<int>& nums, int goal) {
-    unordered_map<int, int> prefixCount{{0, 1}};
+int NumSubarraysWithSum(vector<int>& nums, int goal) {
+    unordered_map<int, int> prefix_count{{0, 1}};
     int sum = 0, count = 0;
     for (int num : nums) {
         sum += num;
-        count += prefixCount[sum - goal];
-        prefixCount[sum]++;
+        count += prefix_count[sum - goal];
+        prefix_count[sum]++;
     }
     return count;
 }
@@ -196,17 +197,18 @@ int numSubarraysWithSum(vector<int>& nums, int goal) {
  * Output: 8
  */
 class NumMatrix {
-    vector<vector<int>> prefix;
+private:
+    vector<vector<int>> prefix_;
 public:
     NumMatrix(vector<vector<int>>& matrix) {
         int m = matrix.size(), n = m ? matrix[0].size() : 0;
-        prefix = vector<vector<int>>(m + 1, vector<int>(n + 1, 0));
+        prefix_ = vector<vector<int>>(m + 1, vector<int>(n + 1, 0));
         for (int i = 0; i < m; ++i)
             for (int j = 0; j < n; ++j)
-                prefix[i + 1][j + 1] = matrix[i][j] + prefix[i][j + 1] + prefix[i + 1][j] - prefix[i][j];
+                prefix_[i + 1][j + 1] = matrix[i][j] + prefix_[i][j + 1] + prefix_[i + 1][j] - prefix_[i][j];
     }
-    int sumRegion(int row1, int col1, int row2, int col2) {
-        return prefix[row2 + 1][col2 + 1] - prefix[row1][col2 + 1] - prefix[row2 + 1][col1] + prefix[row1][col1];
+    int SumRegion(int row1, int col1, int row2, int col2) {
+        return prefix_[row2 + 1][col2 + 1] - prefix_[row1][col2 + 1] - prefix_[row2 + 1][col1] + prefix_[row1][col1];
     }
 };
 
@@ -220,7 +222,7 @@ public:
  * Input: matrix = [[0,1,0],[1,1,1],[0,1,0]], target = 0
  * Output: 4
  */
-int numSubmatrixSumTarget(vector<vector<int>>& matrix, int target) {
+int NumSubmatrixSumTarget(vector<vector<int>>& matrix, int target) {
     int m = matrix.size(), n = matrix[0].size(), res = 0;
     for (int top = 0; top < m; ++top) {
         vector<int> sum(n, 0);
@@ -245,38 +247,38 @@ int main() {
     // Problem 1
     vector<int> nums1 = {-2, 0, 3, -5, 2, -1};
     NumArray obj(nums1);
-    cout << "Problem 1: sumRange(0,2) = " << obj.sumRange(0,2) << "\n\n";
+    cout << "Problem 1: SumRange(0,2) = " << obj.SumRange(0,2) << "\n\n";
 
     // Problem 2
     vector<int> nums2 = {1,1,1};
-    cout << "Problem 2: subarraySum = " << subarraySum(nums2, 2) << "\n\n";
+    cout << "Problem 2: SubarraySum = " << SubarraySum(nums2, 2) << "\n\n";
 
     // Problem 3
     vector<int> nums3 = {23, 2, 4, 6, 7};
-    cout << "Problem 3: checkSubarraySum = " << (checkSubarraySum(nums3, 6) ? "true" : "false") << "\n\n";
+    cout << "Problem 3: CheckSubarraySum = " << (CheckSubarraySum(nums3, 6) ? "true" : "false") << "\n\n";
 
     // Problem 4
     vector<int> nums4 = {4,5,0,-2,-3,1};
-    cout << "Problem 4: subarraysDivByK = " << subarraysDivByK(nums4, 5) << "\n\n";
+    cout << "Problem 4: SubarraysDivByK = " << SubarraysDivByK(nums4, 5) << "\n\n";
 
     // Problem 5
     vector<int> nums5 = {1, -1, 5, -2, 3};
-    cout << "Problem 5: maxSubArrayLen = " << maxSubArrayLen(nums5, 3) << "\n\n";
+    cout << "Problem 5: MaxSubArrayLen = " << MaxSubArrayLen(nums5, 3) << "\n\n";
 
     // Problem 6
     vector<int> nums6 = {1,2,3,4};
-    vector<int> res6 = productExceptSelf(nums6);
-    cout << "Problem 6: productExceptSelf = ";
+    vector<int> res6 = ProductExceptSelf(nums6);
+    cout << "Problem 6: ProductExceptSelf = ";
     for (int x : res6) cout << x << " ";
     cout << "\n\n";
 
     // Problem 7
     vector<int> nums7 = {1,1,2,1,1};
-    cout << "Problem 7: numberOfSubarrays = " << numberOfSubarrays(nums7, 3) << "\n\n";
+    cout << "Problem 7: NumberOfSubarrays = " << NumberOfSubarrays(nums7, 3) << "\n\n";
 
     // Problem 8
     vector<int> nums8 = {1,0,1,0,1};
-    cout << "Problem 8: numSubarraysWithSum = " << numSubarraysWithSum(nums8, 2) << "\n\n";
+    cout << "Problem 8: NumSubarraysWithSum = " << NumSubarraysWithSum(nums8, 2) << "\n\n";
 
     // Problem 9
     vector<vector<int>> mat9 = {{3, 0, 1, 4, 2},
@@ -285,11 +287,11 @@ int main() {
                                 {4, 1, 0, 1, 7},
                                 {1, 0, 3, 0, 5}};
     NumMatrix obj9(mat9);
-    cout << "Problem 9: sumRegion = " << obj9.sumRegion(2, 1, 4, 3) << "\n\n";
+    cout << "Problem 9: SumRegion = " << obj9.SumRegion(2, 1, 4, 3) << "\n\n";
 
     // Problem 10
     vector<vector<int>> mat10 = {{0,1,0},{1,1,1},{0,1,0}};
-    cout << "Problem 10: numSubmatrixSumTarget = " << numSubmatrixSumTarget(mat10, 0) << "\n\n";
+    cout << "Problem 10: NumSubmatrixSumTarget = " << NumSubmatrixSumTarget(mat10, 0) << "\n\n";
 
     return 0;
 }

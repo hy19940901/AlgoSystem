@@ -1,9 +1,9 @@
 CC = g++
 CFLAGS = -std=c++20 -Wall -g
 
-SRCS = main.cpp
+SRCS = monotonic_stack.cpp
 OBJS = $(SRCS:.cpp=.o)
-EXEC = SlidingWindow_program
+EXEC = monotonic_stack
 
 all: $(EXEC)
 

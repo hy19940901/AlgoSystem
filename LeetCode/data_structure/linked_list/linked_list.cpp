@@ -25,7 +25,7 @@ struct ListNode {
  * Input: head = [1, 2, 3, 4, 5]
  * Output: [5, 4, 3, 2, 1]
  */
-ListNode* reverseList(ListNode* head) {
+ListNode* ReverseList(ListNode* head) {
     ListNode* prev = nullptr;
     ListNode* curr = head;
     while (curr) {
@@ -46,7 +46,7 @@ ListNode* reverseList(ListNode* head) {
  * Input: l1 = [1, 2, 4], l2 = [1, 3, 4]
  * Output: [1, 1, 2, 3, 4, 4]
  */
-ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
+ListNode* MergeTwoLists(ListNode* list1, ListNode* list2) {
     if (!list1) return list2;
     if (!list2) return list1;
     ListNode* dummy = new ListNode(0);
@@ -77,7 +77,7 @@ ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
  * Input: head = [3, 2, 0, -4] (cycle at node with value 2)
  * Output: true
  */
-bool hasCycle(ListNode* head) {
+bool HasCycle(ListNode* head) {
     ListNode* slow = head;
     ListNode* fast = head;
     while (fast && fast->next) {
@@ -96,7 +96,7 @@ bool hasCycle(ListNode* head) {
  * Input: head = [1, 2, 3, 4, 5], n = 2
  * Output: [1, 2, 3, 5]
  */
-ListNode* removeNthFromEnd(ListNode* head, int n) {
+ListNode* RemoveNthFromEnd(ListNode* head, int n) {
     ListNode dummy(0, head);
     ListNode* fast = &dummy;
     ListNode* slow = &dummy;
@@ -122,7 +122,7 @@ ListNode* removeNthFromEnd(ListNode* head, int n) {
  * Input: intersectVal = 8, listA = [4, 1, 8, 4, 5], listB = [5, 6, 1, 8, 4, 5]
  * Output: Intersection at node with value 8
  */
-ListNode* getIntersectionNode(ListNode* headA, ListNode* headB) {
+ListNode* GetIntersectionNode(ListNode* headA, ListNode* headB) {
     if (!headA || !headB) return nullptr;
     ListNode* a = headA;
     ListNode* b = headB;
@@ -141,7 +141,7 @@ ListNode* getIntersectionNode(ListNode* headA, ListNode* headB) {
  * Input: head = [1, 2, 2, 1]
  * Output: true
  */
-bool isPalindrome(ListNode* head) {
+bool IsPalindrome(ListNode* head) {
     if (!head || !head->next) return true;
     ListNode* slow = head;
     ListNode* fast = head;
@@ -149,17 +149,17 @@ bool isPalindrome(ListNode* head) {
         slow = slow->next;
         fast = fast->next->next;
     }
-    ListNode* secondHalf = reverseList(slow);
-    ListNode* firstHalf = head;
-    while (secondHalf) {
-        if (firstHalf->val != secondHalf->val) return false;
-        firstHalf = firstHalf->next;
-        secondHalf = secondHalf->next;
+    ListNode* second_half = ReverseList(slow);
+    ListNode* first_half = head;
+    while (second_half) {
+        if (first_half->val != second_half->val) return false;
+        first_half = first_half->next;
+        second_half = second_half->next;
     }
     return true;
 }
 
-bool isPalindrome_stack(ListNode* head) {
+bool IsPalindrome_stack(ListNode* head) {
     stack<int> stack;
     ListNode* curr = head;
     while (curr) {
@@ -182,7 +182,7 @@ bool isPalindrome_stack(ListNode* head) {
  * Input: head = [1, 2, 6, 3, 4, 5, 6], val = 6
  * Output: [1, 2, 3, 4, 5]
  */
-ListNode* removeElements(ListNode* head, int val) {
+ListNode* RemoveElements(ListNode* head, int val) {
     ListNode dummy(0, head);
     ListNode* pre = &dummy;
     while (pre->next) {
@@ -207,7 +207,7 @@ ListNode* removeElements(ListNode* head, int val) {
  * Input: head = [1, 2, 3, 4, 5], k = 2
  * Output: [2, 1, 4, 3, 5]
  */
-ListNode* reverseKGroup(ListNode* head, int k) {
+ListNode* ReverseKGroup(ListNode* head, int k) {
     ListNode* curr = head;
     int count = 0;
     while (curr && count < k) {
@@ -215,12 +215,12 @@ ListNode* reverseKGroup(ListNode* head, int k) {
         count++;
     }
     if (count == k) {
-        curr = reverseKGroup(curr, k);
+        curr = ReverseKGroup(curr, k);
         while (count--) {
-            ListNode* nextTemp = head->next;
+            ListNode* next_temp = head->next;
             head->next = curr;
             curr = head;
-            head = nextTemp;
+            head = next_temp;
         }
         head = curr;
     }
@@ -236,19 +236,19 @@ ListNode* reverseKGroup(ListNode* head, int k) {
  * Input: head = [4, 2, 1, 3]
  * Output: [1, 2, 3, 4]
  */
-ListNode* merge(ListNode* l1, ListNode* l2) {
+ListNode* Merge(ListNode* l1, ListNode* l2) {
     if (!l1) return l2;
     if (!l2) return l1;
     if (l1->val < l2->val) {
-        l1->next = merge(l1->next, l2);
+        l1->next = Merge(l1->next, l2);
         return l1;
     } else {
-        l2->next = merge(l1, l2->next);
+        l2->next = Merge(l1, l2->next);
         return l2;
     }
 }
 
-ListNode* sortList(ListNode* head) {
+ListNode* SortList(ListNode* head) {
     if (!head || !head->next) return head;
     ListNode* slow = head;
     ListNode* fast = head->next;
@@ -258,9 +258,9 @@ ListNode* sortList(ListNode* head) {
     }
     ListNode* mid = slow->next;
     slow->next = nullptr;
-    ListNode* left = sortList(head);
-    ListNode* right = sortList(mid);
-    return merge(left, right);
+    ListNode* left = SortList(head);
+    ListNode* right = SortList(mid);
+    return Merge(left, right);
 }
 
 /**
@@ -271,7 +271,7 @@ ListNode* sortList(ListNode* head) {
  * Input: head = [1, 2, 3, 4, 5], k = 2
  * Output: [4, 5, 1, 2, 3]
  */
-ListNode* rotateRight(ListNode* head, int k) {
+ListNode* RotateRight(ListNode* head, int k) {
     if (!head || !head->next || k == 0) return head;
     ListNode* curr = head;
     int length = 1;
@@ -281,8 +281,8 @@ ListNode* rotateRight(ListNode* head, int k) {
     }
     curr->next = head; // Make it a circular list
     k = k % length;
-    int stepsToNewHead = length - k;
-    while (stepsToNewHead--) {
+    int steps_to_new_head = length - k;
+    while (steps_to_new_head--) {
         curr = curr->next;
     }
     head = curr->next;
@@ -299,11 +299,11 @@ ListNode* rotateRight(ListNode* head, int k) {
  * Input: head = [1, 4, 3, 2, 5, 2], x = 3
  * Output: [1, 2, 2, 4, 3, 5]
  */
-ListNode* partition(ListNode* head, int x) {
+ListNode* Partition(ListNode* head, int x) {
     ListNode* before = new ListNode(0);
     ListNode* after = new ListNode(0);
-    ListNode* beforeHead = before;
-    ListNode* afterHead = after;
+    ListNode* before_head = before;
+    ListNode* after_head = after;
     while (head) {
         if (head->val < x) {
             before->next = head;
@@ -315,8 +315,8 @@ ListNode* partition(ListNode* head, int x) {
         head = head->next;
     }
     after->next = nullptr;
-    before->next = afterHead->next;
-    return beforeHead->next;
+    before->next = after_head->next;
+    return before_head->next;
 }
 
 /**
@@ -341,21 +341,21 @@ public:
     }
 };
 
-Node* copyRandomList(Node* head) {
+Node* CopyRandomList(Node* head) {
     if (!head) return nullptr;
-    unordered_map<Node*, Node*> oldToNew;
+    unordered_map<Node*, Node*> old_to_new;
     Node* curr = head;
     while (curr) {
-        oldToNew[curr] = new Node(curr->val);
+        old_to_new[curr] = new Node(curr->val);
         curr = curr->next;
     }
     curr = head;
     while (curr) {
-        oldToNew[curr]->next = oldToNew[curr->next];
-        oldToNew[curr]->random = oldToNew[curr->random];
+        old_to_new[curr]->next = old_to_new[curr->next];
+        old_to_new[curr]->random = old_to_new[curr->random];
         curr = curr->next;
     }
-    return oldToNew[head];
+    return old_to_new[head];
 }
 
 /**
@@ -368,7 +368,7 @@ Node* copyRandomList(Node* head) {
  * Input: l1 = [2, 4, 3], l2 = [5, 6, 4]
  * Output: [7, 0, 8]
  */
-ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+ListNode* AddTwoNumbers(ListNode* l1, ListNode* l2) {
     ListNode dummy(0);
     ListNode* curr = &dummy;
     int carry = 0;
@@ -398,7 +398,7 @@ ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
  * Input: head = [1, 2, 3, 4]
  * Output: [2, 1, 4, 3]
  */
-ListNode* swapPairs(ListNode* head) {
+ListNode* SwapPairs(ListNode* head) {
     ListNode dummy(0, head);
     ListNode* curr = &dummy;
     while (curr->next && curr->next->next) {
@@ -420,7 +420,7 @@ ListNode* swapPairs(ListNode* head) {
  * Input: head = [1, 1, 2]
  * Output: [1, 2]
  */
-ListNode* deleteDuplicates(ListNode* head) {
+ListNode* DeleteDuplicates(ListNode* head) {
     ListNode* curr = head;
     while (curr && curr->next) {
         if (curr->val == curr->next->val) {
@@ -442,18 +442,18 @@ ListNode* deleteDuplicates(ListNode* head) {
  * Input: head = [1, 2, 3, 4, 5]
  * Output: [1, 3, 5, 2, 4]
  */
-ListNode* oddEvenList(ListNode* head) {
+ListNode* OddEvenList(ListNode* head) {
     if (!head || !head->next) return head;
     ListNode* odd = head;
     ListNode* even = head->next;
-    ListNode* evenHead = even;
+    ListNode* even_head = even;
     while (even && even->next) {
         odd->next = even->next;
         odd = odd->next;
         even->next = odd->next;
         even = even->next;
     }
-    odd->next = evenHead;
+    odd->next = even_head;
     return head;
 }
 
@@ -465,7 +465,7 @@ ListNode* oddEvenList(ListNode* head) {
  * Input: head = [3, 2, 0, -4] (cycle at node with value 2)
  * Output: Node with value 2
  */
-ListNode* detectCycle(ListNode* head) {
+ListNode* DetectCycle(ListNode* head) {
     if (!head || !head->next) return nullptr;
     ListNode* slow = head;
     ListNode* fast = head;
@@ -508,13 +508,13 @@ public:
     }
 };
 
-DoublyListNode* flatten(DoublyListNode* head) {
+DoublyListNode* Flatten(DoublyListNode* head) {
     if (!head) return nullptr;
     DoublyListNode* curr = head;
     while (curr) {
         if (curr->child) {
             DoublyListNode* next = curr->next;
-            DoublyListNode* child = flatten(curr->child);
+            DoublyListNode* child = Flatten(curr->child);
             curr->child = nullptr;
             curr->next = child;
             child->prev = curr;
@@ -549,7 +549,7 @@ DoublyListNode* flatten(DoublyListNode* head) {
  * - -100 <= Node.val <= 100
  * - The list is guaranteed to be sorted in ascending order.
  */
-ListNode* deleteAllDuplicates(ListNode* head) {
+ListNode* DeleteAllDuplicates(ListNode* head) {
     if (!head || !head->next) return head;
     ListNode* dummy = new ListNode(0);
     dummy->next = head;
@@ -586,7 +586,7 @@ ListNode* deleteAllDuplicates(ListNode* head) {
  * Input: lists = [[1, 4, 5], [1, 3, 4], [2, 6]]
  * Output: [1, 1, 2, 3, 4, 4, 5, 6]
  */
-ListNode* mergeKLists(vector<ListNode*>& lists) {
+ListNode* MergeKLists(vector<ListNode*>& lists) {
     auto compare = [](ListNode* a, ListNode* b) { return a->val > b->val; };
     priority_queue<ListNode*, vector<ListNode*>, decltype(compare)> pq(compare);
 
@@ -598,11 +598,11 @@ ListNode* mergeKLists(vector<ListNode*>& lists) {
     ListNode* tail = &dummy;
 
     while (!pq.empty()) {
-        ListNode* minNode = pq.top();
+        ListNode* min_node = pq.top();
         pq.pop();
-        tail->next = minNode;
+        tail->next = min_node;
         tail = tail->next;
-        if (minNode->next) pq.push(minNode->next);
+        if (min_node->next) pq.push(min_node->next);
     }
 
     return dummy.next;
@@ -619,7 +619,7 @@ ListNode* mergeKLists(vector<ListNode*>& lists) {
  * Input: head = [1, 2, 3, 4], k = 5
  * Output: [[1], [2], [3], [4], []]
  */
-vector<ListNode*> splitListToParts(ListNode* head, int k) {
+vector<ListNode*> SplitListToParts(ListNode* head, int k) {
     int length = 0;
     ListNode* curr = head;
     while (curr) {
@@ -627,7 +627,7 @@ vector<ListNode*> splitListToParts(ListNode* head, int k) {
         curr = curr->next;
     }
 
-    int partSize = length / k;
+    int part_size = length / k;
     int extra = length % k;
 
     vector<ListNode*> result(k, nullptr);
@@ -635,13 +635,13 @@ vector<ListNode*> splitListToParts(ListNode* head, int k) {
 
     for (int i = 0; i < k && curr; ++i) {
         result[i] = curr;
-        int currentPartSize = partSize + (extra-- > 0 ? 1 : 0);
-        for (int j = 1; j < currentPartSize; ++j) {
+        int current_part_size = part_size + (extra-- > 0 ? 1 : 0);
+        for (int j = 1; j < current_part_size; ++j) {
             curr = curr->next;
         }
-        ListNode* nextPart = curr->next;
+        ListNode* next_part = curr->next;
         curr->next = nullptr;
-        curr = nextPart;
+        curr = next_part;
     }
 
     return result;
@@ -665,7 +665,7 @@ struct TreeNode {
     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
 };
 
-TreeNode* sortedListToBST(ListNode* head) {
+TreeNode* SortedListToBST(ListNode* head) {
     if (!head) return nullptr;
     if (!head->next) return new TreeNode(head->val);
 
@@ -681,8 +681,8 @@ TreeNode* sortedListToBST(ListNode* head) {
 
     TreeNode* root = new TreeNode(slow->val);
     if (prev) prev->next = nullptr;
-    root->left = sortedListToBST(head == slow ? nullptr : head);
-    root->right = sortedListToBST(slow->next);
+    root->left = SortedListToBST(head == slow ? nullptr : head);
+    root->right = SortedListToBST(slow->next);
 
     return root;
 }
@@ -690,7 +690,7 @@ TreeNode* sortedListToBST(ListNode* head) {
 int main() {
     // Test Problem 1: Reverse Linked List
     ListNode* head = new ListNode(1, new ListNode(2, new ListNode(3, new ListNode(4, new ListNode(5)))));
-    head = reverseList(head);
+    head = ReverseList(head);
     cout << "Reversed List: ";
     while (head) {
         cout << head->val << " ";
@@ -701,7 +701,7 @@ int main() {
     // Test Problem 2: Merge Two Sorted Lists
     ListNode* l1 = new ListNode(1, new ListNode(2, new ListNode(4)));
     ListNode* l2 = new ListNode(1, new ListNode(3, new ListNode(4)));
-    ListNode* merged = mergeTwoLists(l1, l2);
+    ListNode* merged = MergeTwoLists(l1, l2);
     cout << "Merged List: ";
     while (merged) {
         cout << merged->val << " ";
@@ -710,150 +710,150 @@ int main() {
     cout << endl;
 
     // Test Problem 3: Detect Cycle in Linked List
-    ListNode* cycleHead = new ListNode(3, new ListNode(2, new ListNode(0, new ListNode(-4))));
-    cycleHead->next->next->next->next = cycleHead->next; // Create cycle
-    cout << "Has Cycle: " << (hasCycle(cycleHead) ? "True" : "False") << endl;
+    ListNode* cycle_head = new ListNode(3, new ListNode(2, new ListNode(0, new ListNode(-4))));
+    cycle_head->next->next->next->next = cycle_head->next; // Create cycle
+    cout << "Has Cycle: " << (HasCycle(cycle_head) ? "True" : "False") << endl;
 
     // Test Problem 4: Remove Nth Node From End of List
-    ListNode* removeNthHead = new ListNode(1, new ListNode(2, new ListNode(3, new ListNode(4, new ListNode(5)))));
-    removeNthHead = removeNthFromEnd(removeNthHead, 2);
+    ListNode* remove_nth_head = new ListNode(1, new ListNode(2, new ListNode(3, new ListNode(4, new ListNode(5)))));
+    remove_nth_head = RemoveNthFromEnd(remove_nth_head, 2);
     cout << "After Removing Nth Node: ";
-    while (removeNthHead) {
-        cout << removeNthHead->val << " ";
-        removeNthHead = removeNthHead->next;
+    while (remove_nth_head) {
+        cout << remove_nth_head->val << " ";
+        remove_nth_head = remove_nth_head->next;
     }
     cout << endl;
 
     // Test Problem 5: Intersection of Two Linked Lists
-    ListNode* intersectA = new ListNode(4, new ListNode(1));
-    ListNode* intersectB = new ListNode(5, new ListNode(6, new ListNode(1)));
+    ListNode* intersect_a = new ListNode(4, new ListNode(1));
+    ListNode* intersect_b = new ListNode(5, new ListNode(6, new ListNode(1)));
     ListNode* intersection = new ListNode(8, new ListNode(4, new ListNode(5)));
-    intersectA->next->next = intersection;
-    intersectB->next->next->next = intersection;
-    ListNode* intersectNode = getIntersectionNode(intersectA, intersectB);
-    cout << "Intersection Node: " << (intersectNode ? to_string(intersectNode->val) : "None") << endl;
+    intersect_a->next->next = intersection;
+    intersect_b->next->next->next = intersection;
+    ListNode* intersect_node = GetIntersectionNode(intersect_a, intersect_b);
+    cout << "Intersection Node: " << (intersect_node ? to_string(intersect_node->val) : "None") << endl;
 
     // Test Problem 6: Palindrome Linked List
-    ListNode* palindromeHead = new ListNode(1, new ListNode(2, new ListNode(2, new ListNode(1))));
-    cout << "Is Palindrome: " << (isPalindrome(palindromeHead) ? "True" : "False") << endl;
-    ListNode* palindromeHead_copy = new ListNode(1, new ListNode(2, new ListNode(2, new ListNode(1))));
-    cout << "Is Palindrome: " << (isPalindrome_stack(palindromeHead_copy) ? "True" : "False") << endl;
+    ListNode* palindrome_head = new ListNode(1, new ListNode(2, new ListNode(2, new ListNode(1))));
+    cout << "Is Palindrome: " << (IsPalindrome(palindrome_head) ? "True" : "False") << endl;
+    ListNode* palindrome_Head_copy = new ListNode(1, new ListNode(2, new ListNode(2, new ListNode(1))));
+    cout << "Is Palindrome: " << (IsPalindrome_stack(palindrome_Head_copy) ? "True" : "False") << endl;
 
     // Test Problem 7: Remove Linked List Elements
-    ListNode* removeElementsHead = new ListNode(1, new ListNode(2, new ListNode(6, new ListNode(3, new ListNode(4, new ListNode(5, new ListNode(6)))))));
-    removeElementsHead = removeElements(removeElementsHead, 6);
+    ListNode* remove_elements_head = new ListNode(1, new ListNode(2, new ListNode(6, new ListNode(3, new ListNode(4, new ListNode(5, new ListNode(6)))))));
+    remove_elements_head = RemoveElements(remove_elements_head, 6);
     cout << "After Removing Elements: ";
-    while (removeElementsHead) {
-        cout << removeElementsHead->val << " ";
-        removeElementsHead = removeElementsHead->next;
+    while (remove_elements_head) {
+        cout << remove_elements_head->val << " ";
+        remove_elements_head = remove_elements_head->next;
     }
     cout << endl;
 
     // Test Problem 8: Reverse Nodes in k-Group
-    ListNode* reverseKGroupHead = new ListNode(1, new ListNode(2, new ListNode(3, new ListNode(4, new ListNode(5)))));
-    reverseKGroupHead = reverseKGroup(reverseKGroupHead, 2);
+    ListNode* reverse_k_group_head = new ListNode(1, new ListNode(2, new ListNode(3, new ListNode(4, new ListNode(5)))));
+    reverse_k_group_head = ReverseKGroup(reverse_k_group_head, 2);
     cout << "After Reversing in k-Group: ";
-    while (reverseKGroupHead) {
-        cout << reverseKGroupHead->val << " ";
-        reverseKGroupHead = reverseKGroupHead->next;
+    while (reverse_k_group_head) {
+        cout << reverse_k_group_head->val << " ";
+        reverse_k_group_head = reverse_k_group_head->next;
     }
     cout << endl;
 
     // Test Problem 9: Sort List
-    ListNode* sortListHead = new ListNode(4, new ListNode(2, new ListNode(1, new ListNode(3))));
-    sortListHead = sortList(sortListHead);
+    ListNode* sort_list_head = new ListNode(4, new ListNode(2, new ListNode(1, new ListNode(3))));
+    sort_list_head = SortList(sort_list_head);
     cout << "Sorted List: ";
-    while (sortListHead) {
-        cout << sortListHead->val << " ";
-        sortListHead = sortListHead->next;
+    while (sort_list_head) {
+        cout << sort_list_head->val << " ";
+        sort_list_head = sort_list_head->next;
     }
     cout << endl;
 
     // Test Problem 10: Rotate List
-    ListNode* rotateHead = new ListNode(1, new ListNode(2, new ListNode(3, new ListNode(4, new ListNode(5)))));
-    rotateHead = rotateRight(rotateHead, 2);
+    ListNode* rotate_head = new ListNode(1, new ListNode(2, new ListNode(3, new ListNode(4, new ListNode(5)))));
+    rotate_head = RotateRight(rotate_head, 2);
     cout << "Rotated List: ";
-    while (rotateHead) {
-        cout << rotateHead->val << " ";
-        rotateHead = rotateHead->next;
+    while (rotate_head) {
+        cout << rotate_head->val << " ";
+        rotate_head = rotate_head->next;
     }
     cout << endl;
 
     // Test Problem 11: Partition List
-    ListNode* partitionHead = new ListNode(1, new ListNode(4, new ListNode(3, new ListNode(2, new ListNode(5, new ListNode(2))))));
-    partitionHead = partition(partitionHead, 3);
+    ListNode* partition_head = new ListNode(1, new ListNode(4, new ListNode(3, new ListNode(2, new ListNode(5, new ListNode(2))))));
+    partition_head = Partition(partition_head, 3);
     cout << "Partitioned List: ";
-    while (partitionHead) {
-        cout << partitionHead->val << " ";
-        partitionHead = partitionHead->next;
+    while (partition_head) {
+        cout << partition_head->val << " ";
+        partition_head = partition_head->next;
     }
     cout << endl;
 
     // Test Problem 12: Copy List with Random Pointer
-    Node* randomList = new Node(7);
-    randomList->next = new Node(13);
-    randomList->next->next = new Node(11);
-    randomList->next->next->next = new Node(10);
-    randomList->next->next->next->next = new Node(1);
-    randomList->random = nullptr;
-    randomList->next->random = randomList;
-    randomList->next->next->random = randomList->next->next->next->next;
-    randomList->next->next->next->random = randomList->next->next;
-    randomList->next->next->next->next->random = randomList;
-    Node* copiedList = copyRandomList(randomList);
+    Node* random_list = new Node(7);
+    random_list->next = new Node(13);
+    random_list->next->next = new Node(11);
+    random_list->next->next->next = new Node(10);
+    random_list->next->next->next->next = new Node(1);
+    random_list->random = nullptr;
+    random_list->next->random = random_list;
+    random_list->next->next->random = random_list->next->next->next->next;
+    random_list->next->next->next->random = random_list->next->next;
+    random_list->next->next->next->next->random = random_list;
+    Node* copied_list = CopyRandomList(random_list);
     cout << "Copied List: ";
-    while (copiedList) {
-        cout << "[" << copiedList->val << ", Random: " << (copiedList->random ? to_string(copiedList->random->val) : "null") << "] ";
-        copiedList = copiedList->next;
+    while (copied_list) {
+        cout << "[" << copied_list->val << ", Random: " << (copied_list->random ? to_string(copied_list->random->val) : "null") << "] ";
+        copied_list = copied_list->next;
     }
     cout << endl;
 
     // Test Problem 13: Add Two Numbers
     ListNode* l1_13 = new ListNode(2, new ListNode(4, new ListNode(3)));
     ListNode* l2_13 = new ListNode(5, new ListNode(6, new ListNode(4)));
-    ListNode* sumList = addTwoNumbers(l1_13, l2_13);
+    ListNode* sum_list = AddTwoNumbers(l1_13, l2_13);
     cout << "Sum List: ";
-    while (sumList) {
-        cout << sumList->val << " ";
-        sumList = sumList->next;
+    while (sum_list) {
+        cout << sum_list->val << " ";
+        sum_list = sum_list->next;
     }
     cout << endl;
 
     // Test Problem 14: Swap Nodes in Pairs
-    ListNode* swapHead = new ListNode(1, new ListNode(2, new ListNode(3, new ListNode(4))));
-    swapHead = swapPairs(swapHead);
+    ListNode* swap_head = new ListNode(1, new ListNode(2, new ListNode(3, new ListNode(4))));
+    swap_head = SwapPairs(swap_head);
     cout << "Swapped Pairs: ";
-    while (swapHead) {
-        cout << swapHead->val << " ";
-        swapHead = swapHead->next;
+    while (swap_head) {
+        cout << swap_head->val << " ";
+        swap_head = swap_head->next;
     }
     cout << endl;
 
     // Test Problem 15: Remove Duplicates from Sorted List
-    ListNode* dupHead = new ListNode(1, new ListNode(1, new ListNode(2)));
-    dupHead = deleteDuplicates(dupHead);
+    ListNode* dup_head = new ListNode(1, new ListNode(1, new ListNode(2)));
+    dup_head = DeleteDuplicates(dup_head);
     cout << "Duplicates Removed: ";
-    while (dupHead) {
-        cout << dupHead->val << " ";
-        dupHead = dupHead->next;
+    while (dup_head) {
+        cout << dup_head->val << " ";
+        dup_head = dup_head->next;
     }
     cout << endl;
 
     // Test Problem 16: Odd Even Linked List
-    ListNode* oddEvenHead = new ListNode(1, new ListNode(2, new ListNode(3, new ListNode(4, new ListNode(5)))));
-    oddEvenHead = oddEvenList(oddEvenHead);
+    ListNode* odd_even_head = new ListNode(1, new ListNode(2, new ListNode(3, new ListNode(4, new ListNode(5)))));
+    odd_even_head = OddEvenList(odd_even_head);
     cout << "Odd Even List: ";
-    while (oddEvenHead) {
-        cout << oddEvenHead->val << " ";
-        oddEvenHead = oddEvenHead->next;
+    while (odd_even_head) {
+        cout << odd_even_head->val << " ";
+        odd_even_head = odd_even_head->next;
     }
     cout << endl;
 
     // Test Problem 17: Detect Cycle in Linked List
-    ListNode* cycleHead_17 = new ListNode(3, new ListNode(2, new ListNode(0, new ListNode(-4))));
-    cycleHead_17->next->next->next->next = cycleHead_17->next; // Create cycle
-    ListNode* cycleNode = detectCycle(cycleHead_17);
-    cout << "Cycle Detected at Node: " << (cycleNode ? to_string(cycleNode->val) : "None") << endl;
+    ListNode* cycle_head_17 = new ListNode(3, new ListNode(2, new ListNode(0, new ListNode(-4))));
+    cycle_head_17->next->next->next->next = cycle_head_17->next; // Create cycle
+    ListNode* cycle_node = DetectCycle(cycle_head_17);
+    cout << "Cycle Detected at Node: " << (cycle_node ? to_string(cycle_node->val) : "None") << endl;
 
     // Test Problem 18: Flatten a Multilevel Doubly Linked List
     DoublyListNode* node1 = new DoublyListNode(1);
@@ -888,9 +888,9 @@ int main() {
     node10->prev = node9;
 
     // Flatten the list
-    DoublyListNode* flattenedHead = flatten(node1);
+    DoublyListNode* flattened_head = Flatten(node1);
     cout << "Flattened List: ";
-    DoublyListNode* curr = flattenedHead;
+    DoublyListNode* curr = flattened_head;
     while (curr) {
         cout << curr->val << " ";
         curr = curr->next;
@@ -899,7 +899,7 @@ int main() {
 
     ListNode* head_19 = new ListNode(1, new ListNode(2, new ListNode(3, new ListNode(3, new ListNode(4, new ListNode(4, new ListNode(5)))))));
     // Remove duplicates
-    ListNode* cur_19 = deleteAllDuplicates(head_19);
+    ListNode* cur_19 = DeleteAllDuplicates(head_19);
     while (cur_19) {
         cout << cur_19->val << " ";
         cur_19 = cur_19->next;
@@ -911,16 +911,16 @@ int main() {
         new ListNode(1, new ListNode(3, new ListNode(4))),
         new ListNode(2, new ListNode(6))
     };
-    ListNode* mergedList = mergeKLists(lists_20);
+    ListNode* merged_list = MergeKLists(lists_20);
     cout << "Merged k Sorted Lists: ";
-    while (mergedList) {
-        cout << mergedList->val << " ";
-        mergedList = mergedList->next;
+    while (merged_list) {
+        cout << merged_list->val << " ";
+        merged_list = merged_list->next;
     }
     cout << endl;
 
     ListNode* head_21 = new ListNode(1, new ListNode(2, new ListNode(3, new ListNode(4))));
-    vector<ListNode*> parts = splitListToParts(head_21, 5);
+    vector<ListNode*> parts = SplitListToParts(head_21, 5);
     cout << "Split Linked List into Parts: \n";
     for (auto part : parts) {
         ListNode* curr = part;
@@ -932,15 +932,15 @@ int main() {
     }
 
     ListNode* head_22 = new ListNode(-10, new ListNode(-3, new ListNode(0, new ListNode(5, new ListNode(9)))));
-    TreeNode* bst = sortedListToBST(head_22);
+    TreeNode* bst = SortedListToBST(head_22);
     cout << "Converted Sorted List to BST (pre-order traversal): ";
-    function<void(TreeNode*)> printPreOrder = [&](TreeNode* node) {
+    function<void(TreeNode*)> PrintPreOrder = [&](TreeNode* node) {
         if (!node) return;
         cout << node->val << " ";
-        printPreOrder(node->left);
-        printPreOrder(node->right);
+        PrintPreOrder(node->left);
+        PrintPreOrder(node->right);
     };
-    printPreOrder(bst);
+    PrintPreOrder(bst);
     cout << endl;
 
     return 0;

@@ -1,9 +1,9 @@
 CC = g++
 CFLAGS = -std=c++20 -Wall -g
 
-SRCS = main.cpp
+SRCS = sliding_window.cpp
 OBJS = $(SRCS:.cpp=.o)
-EXEC = PrefixSum_program
+EXEC = sliding_window
 
 all: $(EXEC)
 

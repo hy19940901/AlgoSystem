@@ -18,7 +18,7 @@ using namespace std;
  * Input: nums = [2, 1, 2, 4, 3]
  * Output: [4, 2, 4, -1, -1]
  */
-vector<int> nextGreaterElement(vector<int>& nums) {
+vector<int> NextGreaterElement(vector<int>& nums) {
     vector<int> result(nums.size(), -1);
     stack<int> st;
     for (int i = nums.size() - 1; i >= 0; i--) {
@@ -43,7 +43,7 @@ vector<int> nextGreaterElement(vector<int>& nums) {
  * Input: nums = [1, 2, 1]
  * Output: [2, -1, 2]
  */
-vector<int> nextGreaterElements(vector<int>& nums) {
+vector<int> NextGreaterElements(vector<int>& nums) {
     int n = nums.size();
     vector<int> result(n, -1);
     stack<int> st;
@@ -68,20 +68,20 @@ vector<int> nextGreaterElements(vector<int>& nums) {
  * Input: heights = [2,1,5,6,2,3]
  * Output: 10
  */
-int largestRectangleArea(vector<int>& heights) {
+int LargestRectangleArea(vector<int>& heights) {
     stack<int> st;
     heights.push_back(0); // Sentinel to clear stack
-    int maxArea = 0;
+    int max_area = 0;
     for (size_t i = 0; i < heights.size(); i++) {
         while (!st.empty() && heights[i] < heights[st.top()]) {
             int h = heights[st.top()];
             st.pop();
             int width = st.empty() ? i : i - st.top() - 1;
-            maxArea = max(maxArea, h * width);
+            max_area = max(max_area, h * width);
         }
         st.push(i);
     }
-    return maxArea;
+    return max_area;
 }
 
 /**
@@ -100,17 +100,17 @@ int largestRectangleArea(vector<int>& heights) {
  * ]
  * Output: 6
  */
-int maximalRectangle(vector<vector<char>>& matrix) {
+int MaximalRectangle(vector<vector<char>>& matrix) {
     if (matrix.empty()) return 0;
-    int maxArea = 0, cols = matrix[0].size();
+    int max_area = 0, cols = matrix[0].size();
     vector<int> heights(cols, 0);
     for (const auto& row : matrix) {
         for (int j = 0; j < cols; j++) {
             heights[j] = (row[j] == '1') ? heights[j] + 1 : 0;
         }
-        maxArea = max(maxArea, largestRectangleArea(heights));
+        max_area = max(max_area, LargestRectangleArea(heights));
     }
-    return maxArea;
+    return max_area;
 }
 
 /**
@@ -122,7 +122,7 @@ int maximalRectangle(vector<vector<char>>& matrix) {
  * Input: nums = [1,3,-1,-3,5,3,6,7], k = 3
  * Output: [3,3,5,5,6,7]
  */
-vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+vector<int> MaxSlidingWindow(vector<int>& nums, int k) {
     deque<int> dq;
     vector<int> result;
     for (size_t i = 0; i < nums.size(); i++) {
@@ -151,7 +151,7 @@ vector<int> maxSlidingWindow(vector<int>& nums, int k) {
  * Input: temperatures = [73, 74, 75, 71, 69, 72, 76, 73]
  * Output: [1, 1, 4, 2, 1, 1, 0, 0]
  */
-vector<int> dailyTemperatures(vector<int>& temperatures) {
+vector<int> DailyTemperatures(vector<int>& temperatures) {
     vector<int> result(temperatures.size(), 0);
     stack<int> st;
     for (size_t i = 0; i < temperatures.size(); i++) {
@@ -175,7 +175,7 @@ vector<int> dailyTemperatures(vector<int>& temperatures) {
  * Input: arr = [3,1,2,4]
  * Output: 17
  */
-int sumSubarrayMins(vector<int>& arr) {
+int SumSubarrayMins(vector<int>& arr) {
     const int MOD = 1e9 + 7;
     stack<int> st;
     int n = arr.size();
@@ -219,7 +219,7 @@ int sumSubarrayMins(vector<int>& arr) {
  * Input: nums = [3,1,4,2]
  * Output: true
  */
-bool find132pattern(vector<int>& nums) {
+bool Find132pattern(vector<int>& nums) {
     stack<int> st;
     int third = INT_MIN;
     for (int i = nums.size() - 1; i >= 0; i--) {
@@ -243,7 +243,7 @@ bool find132pattern(vector<int>& nums) {
  * Input: num = "1432219", k = 3
  * Output: "1219"
  */
-string removeKdigits(string num, int k) {
+string RemoveKdigits(string num, int k) {
     string result;
     for (char c : num) {
         while (!result.empty() && result.back() > c && k > 0) {
@@ -269,7 +269,7 @@ string removeKdigits(string num, int k) {
  * Input: target = 12, position = [10,8,0,5,3], speed = [2,4,1,1,3]
  * Output: 3
  */
-int carFleet(int target, vector<int>& position, vector<int>& speed) {
+int CarFleet(int target, vector<int>& position, vector<int>& speed) {
     int n = position.size();
     vector<pair<int, double>> cars;
     for (int i = 0; i < n; i++) {
@@ -295,7 +295,7 @@ int main() {
     // Test Problem 1: Next Greater Element
     cout << "Test Problem 1: Next Greater Element (LC 496) \n";
     vector<int> nums1 = {2, 1, 2, 4, 3};
-    vector<int> res1 = nextGreaterElement(nums1);
+    vector<int> res1 = NextGreaterElement(nums1);
     cout << "Output: ";
     for (int num : res1) cout << num << " ";
     cout << "\nExpected: 4 2 4 -1 -1\n";
@@ -303,7 +303,7 @@ int main() {
     // Test Problem 2: Next Greater Element II
     cout << "\nTest Problem 2: Next Greater Element II (LC 503) \n";
     vector<int> nums2 = {1, 2, 1};
-    vector<int> res2 = nextGreaterElements(nums2);
+    vector<int> res2 = NextGreaterElements(nums2);
     cout << "Output: ";
     for (int num : res2) cout << num << " ";
     cout << "\nExpected: 2 -1 2\n";
@@ -311,7 +311,7 @@ int main() {
     // Test Problem 3: Largest Rectangle in Histogram
     cout << "\nTest Problem 3: Largest Rectangle in Histogram (LC 84) \n";
     vector<int> heights = {2, 1, 5, 6, 2, 3};
-    cout << "Output: " << largestRectangleArea(heights) << "\nExpected: 10\n";
+    cout << "Output: " << LargestRectangleArea(heights) << "\nExpected: 10\n";
 
     // Test Problem 4: Maximal Rectangle
     cout << "\nTest Problem 4: Maximal Rectangle (LC 85) \n";
@@ -320,12 +320,12 @@ int main() {
         {'1', '0', '1', '1', '1'},
         {'1', '1', '1', '1', '1'},
         {'1', '0', '0', '1', '0'}};
-    cout << "Output: " << maximalRectangle(matrix) << "\nExpected: 6\n";
+    cout << "Output: " << MaximalRectangle(matrix) << "\nExpected: 6\n";
 
     // Test Problem 5: Sliding Window Maximum
     cout << "\nTest Problem 5: Sliding Window Maximum (LC 239) \n";
     vector<int> nums5 = {1, 3, -1, -3, 5, 3, 6, 7};
-    vector<int> res5 = maxSlidingWindow(nums5, 3);
+    vector<int> res5 = MaxSlidingWindow(nums5, 3);
     cout << "Output: ";
     for (int num : res5) cout << num << " ";
     cout << "\nExpected: 3 3 5 5 6 7\n";
@@ -333,7 +333,7 @@ int main() {
     // Test Problem 6: Daily Temperatures
     cout << "Test Problem 6: Daily Temperatures (LC 739) \n";
     vector<int> temperatures = {73, 74, 75, 71, 69, 72, 76, 73};
-    vector<int> res6 = dailyTemperatures(temperatures);
+    vector<int> res6 = DailyTemperatures(temperatures);
     cout << "Output: ";
     for (int num : res6) cout << num << " ";
     cout << "\nExpected: 1 1 4 2 1 1 0 0\n";
@@ -341,22 +341,22 @@ int main() {
     // Test Problem 7: Sum of Subarray Minimums
     cout << "\nTest Problem 7: Sum of Subarray Minimums (LC 907) \n";
     vector<int> arr7 = {3,1,2,4};
-    cout << "Output: " << sumSubarrayMins(arr7) << "\nExpected: 17\n";
+    cout << "Output: " << SumSubarrayMins(arr7) << "\nExpected: 17\n";
 
     // Test Problem 8: Find 132 Pattern
     cout << "\nTest Problem 8: Find 132 Pattern (LC 456) \n";
     vector<int> nums8 = {3, 1, 4, 2};
-    cout << "Output: " << (find132pattern(nums8) ? "true" : "false") << "\nExpected: true\n";
+    cout << "Output: " << (Find132pattern(nums8) ? "true" : "false") << "\nExpected: true\n";
 
     // Test Problem 9: Removing K Digits
     cout << "\nTest Problem 9: Removing K Digits (LC 402) \n";
-    cout << "Output: " << removeKdigits("1432219", 3) << "\nExpected: 1219\n";
-    cout << "Output: " << removeKdigits("10200", 1) << "\nExpected: 200\n";
+    cout << "Output: " << RemoveKdigits("1432219", 3) << "\nExpected: 1219\n";
+    cout << "Output: " << RemoveKdigits("10200", 1) << "\nExpected: 200\n";
 
     // Test Problem 10: Car Fleet
     cout << "\nTest Problem 10: Car Fleet (LC 853) \n";
     vector<int> position = {10,8,0,5,3}, speed = {2,4,1,1,3};
-    cout << "Output: " << carFleet(12, position, speed) << "\nExpected: 3\n";
+    cout << "Output: " << CarFleet(12, position, speed) << "\nExpected: 3\n";
 
     return 0;
 }

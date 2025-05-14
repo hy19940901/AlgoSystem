@@ -1,9 +1,9 @@
 CC = g++
 CFLAGS = -std=c++20 -Wall -g
 
-SRCS = Maze.cpp
+SRCS = knapsack.cpp
 OBJS = $(SRCS:.cpp=.o)
-EXEC = Maze_program
+EXEC = knapsack
 
 all: $(EXEC)
 

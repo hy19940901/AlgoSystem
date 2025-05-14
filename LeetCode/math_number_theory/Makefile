@@ -1,9 +1,9 @@
 CC = g++
 CFLAGS = -std=c++20 -Wall -g
 
-SRCS = main.cpp
+SRCS = math_number_theory.cpp
 OBJS = $(SRCS:.cpp=.o)
-EXEC = DP_program
+EXEC = math_number_theory
 
 all: $(EXEC)
 

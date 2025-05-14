@@ -15,7 +15,7 @@ using namespace std;
  * Input: n = 5
  * Output: 8
  */
-int climbStairs(int n) {
+int ClimbStairs(int n) {
     vector<int> dp(n + 1, 0); // dp[i] represents the ways to reach step i
     dp[0] = 1; // 1 way to stay at the ground
     dp[1] = 1; // 1 way to reach the first step
@@ -35,15 +35,15 @@ int climbStairs(int n) {
  * Explanation: The subarray [4,-1,2,1] has the largest sum = 6.
  */
 // greedy is better, but this is the DP solution
-int maxSubArray(vector<int>& nums) {
+int MaxSubArray(vector<int>& nums) {
     vector<int> dp(nums.size(), 0); // dp[i] represents the maximum subarray sum ending at index i
     dp[0] = nums[0];
-    int maxSum = dp[0];
+    int max_sum = dp[0];
     for (size_t i = 1; i < nums.size(); ++i) {
         dp[i] = max(nums[i], dp[i - 1] + nums[i]);
-        maxSum = max(maxSum, dp[i]);
+        max_sum = max(max_sum, dp[i]);
     }
-    return maxSum;
+    return max_sum;
 }
 /*
 Problem: Maximum Subarray (LC 53)
@@ -72,7 +72,7 @@ Time: O(n), Space: O(n)
  * Input: m = 3, n = 7
  * Output: 28
  */
-int uniquePaths(int m, int n) {
+int UniquePaths(int m, int n) {
     vector<vector<int>> dp(m, vector<int>(n, 0)); // dp[i][j] represents the number of unique paths to cell (i, j)
     for (int i = 0; i < m; ++i) dp[i][0] = 1; // Initialize the first column
     for (int j = 0; j < n; ++j) dp[0][j] = 1; // Initialize the first row
@@ -116,7 +116,7 @@ Time: O(m * n), Space: O(m * n)
  * Output: 3
  * Explanation: 11 = 5 + 5 + 1
  */
-int coinChange(vector<int>& coins, int amount) {
+int CoinChange(vector<int>& coins, int amount) {
     vector<int> dp(amount + 1, INT_MAX); // dp[i] represents the fewest coins needed to make up amount i
     dp[0] = 0; // Base case: 0 coins are needed to make amount 0
     for (int coin : coins) {
@@ -164,18 +164,18 @@ Space: O(amount)
  * Output: 4
  * Explanation: The LIS is [2,3,7,101], therefore the length is 4.
  */
-int lengthOfLIS(vector<int>& nums) {
+int LengthOfLIS(vector<int>& nums) {
     vector<int> dp(nums.size(), 1); // dp[i] represents the length of the LIS ending at index i
-    int maxLen = 1;
+    int max_len = 1;
     for (size_t i = 1; i < nums.size(); ++i) {
         for (size_t j = 0; j < i; ++j) {
             if (nums[i] > nums[j]) {
                 dp[i] = max(dp[i], dp[j] + 1);
             }
         }
-        maxLen = max(maxLen, dp[i]);
+        max_len = max(max_len, dp[i]);
     }
-    return maxLen;
+    return max_len;
 }
 /*
 Problem: Longest Increasing Subsequence (LC 300)
@@ -199,7 +199,7 @@ Time: O(n^2), Space: O(n)
 */
 
 // Custom binary search to find the first element >= target
-int binarySearch(const vector<int>& arr, int target) {
+int BinarySearch(const vector<int>& arr, int target) {
     int left = 0, right = arr.size() - 1;
     while (left <= right) {
         int mid = left + (right - left) / 2; // Avoid overflow
@@ -213,14 +213,14 @@ int binarySearch(const vector<int>& arr, int target) {
 }
 
 // Function to find the length of the LIS using custom binary search
-int lengthOfLISWithBinarySearch(vector<int>& nums) {
+int LengthOfLISWithBinarySearch(vector<int>& nums) {
     vector<int> res; // Auxiliary array to maintain the LIS
     for (int num : nums) {
         if (res.empty() || res.back() < num) {
             res.push_back(num);
         }
         else {
-            int idx = binarySearch(res, num);
+            int idx = BinarySearch(res, num);
             res[idx] = num;
         }
     }
@@ -261,7 +261,7 @@ Time: O(n log n), Space: O(n)
  * 2. rorse -> rose (remove 'r')
  * 3. rose -> ros (remove 'e')
  */
-int minDistance(string word1, string word2) {
+int MinDistance(string word1, string word2) {
     int m = word1.size(), n = word2.size();
     vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0)); // dp[i][j] represents the edit distance between word1[0..i-1] and word2[0..j-1]
     for (int i = 0; i <= m; ++i) dp[i][0] = i; // Base case: converting word1[0..i-1] to empty string
@@ -313,7 +313,7 @@ Time: O(m * n), Space: O(m * n)
  * dp[i] represents whether a subset with sum i is achievable.
  * Transition: dp[j] = dp[j] || dp[j - num]
  */
-bool canPartition(vector<int>& nums) {
+bool CanPartition(vector<int>& nums) {
     int sum = accumulate(nums.begin(), nums.end(), 0);
     if (sum % 2 != 0) return false;
     int target = sum / 2;
@@ -346,7 +346,7 @@ bool canPartition(vector<int>& nums) {
  * dp[i] represents the maximum money that can be robbed up to house i.
  * Transition: dp[i] = max(dp[i-1], dp[i-2] + nums[i])
  */
-int rob(vector<int>& nums) {
+int Rob(vector<int>& nums) {
     if (nums.empty()) return 0;
     if (nums.size() == 1) return nums[0];
     int prev1 = 0, prev2 = 0;
@@ -397,7 +397,7 @@ Time: O(n * sum), Space: O(sum)
  * - If s[i-1] != '0': dp[i] += dp[i-1]
  * - If s[i-2..i-1] is valid (10 <= x <= 26): dp[i] += dp[i-2]
  */
-int numDecodings(string s) {
+int NumDecodings(string s) {
     if (s.empty() || s[0] == '0') return 0;
     int n = s.size();
     vector<int> dp(n + 1, 0);
@@ -406,8 +406,8 @@ int numDecodings(string s) {
 
     for (int i = 2; i <= n; ++i) {
         if (s[i - 1] != '0') dp[i] += dp[i - 1];
-        int twoDigit = stoi(s.substr(i - 2, 2));
-        if (twoDigit >= 10 && twoDigit <= 26) dp[i] += dp[i - 2];
+        int two_digit = stoi(s.substr(i - 2, 2));
+        if (two_digit >= 10 && two_digit <= 26) dp[i] += dp[i - 2];
     }
     return dp[n];
 }
@@ -449,7 +449,7 @@ Time: O(n), Space: O(1)
  * dp[i][j] represents the minimum path sum to reach triangle[i][j].
  * Transition: dp[i][j] = min(dp[i+1][j], dp[i+1][j+1]) + triangle[i][j]
  */
-int minimumTotal(vector<vector<int>>& triangle) {
+int MinimumTotal(vector<vector<int>>& triangle) {
     int n = triangle.size();
     vector<int> dp = triangle.back();
 
@@ -494,7 +494,7 @@ Time: O(n^2), Space: O(n)
  * - If s[i] == s[j]: dp[i][j] = dp[i+1][j-1] + 2
  * - Else: dp[i][j] = max(dp[i+1][j], dp[i][j-1])
  */
-int longestPalindromeSubseq(string s) {
+int LongestPalindromeSubseq(string s) {
     int n = s.size();
     vector<vector<int>> dp(n, vector<int>(n, 0));
 
@@ -549,7 +549,7 @@ Time: O(n^2), Space: O(n^2)
  * dp[i][j] represents the maximum coins you can collect by bursting all balloons in range [i, j].
  * Transition: dp[i][j] = max(dp[i][k-1] + dp[k+1][j] + nums[i-1]*nums[k]*nums[j+1]) for i <= k <= j
  */
-int maxCoins(vector<int>& nums) {
+int MaxCoins(vector<int>& nums) {
     int n = nums.size();
     vector<vector<int>> dp(n + 2, vector<int>(n + 2, 0));
     vector<int> balloons = {1};
@@ -608,34 +608,34 @@ Time: O(n^3), Space: O(n^2)
  * Transition: Reset length when nums[i] <= nums[i-1].
  */
 // Greedy is better
-int findLengthOfLCIS(vector<int>& nums) {
+int FindLengthOfLCIS(vector<int>& nums) {
     if (nums.empty()) return 0;
 
-    int maxLen = 1; // To track the maximum length of LCIS
-    int currentLen = 1; // To track the length of the current LCIS
+    int max_len = 1; // To track the maximum length of LCIS
+    int current_len = 1; // To track the length of the current LCIS
 
     for (size_t i = 1; i < nums.size(); ++i) {
         if (nums[i] > nums[i - 1]) {
-            currentLen++; // Extend the current LCIS
+            current_len++; // Extend the current LCIS
         } else {
-            currentLen = 1; // Reset the length when the sequence breaks
+            current_len = 1; // Reset the length when the sequence breaks
         }
-        maxLen = max(maxLen, currentLen); // Update the maximum length
+        max_len = max(max_len, current_len); // Update the maximum length
     }
 
-    return maxLen;
+    return max_len;
 }
 // dp is easy understanding
-int findLengthOfLCIS_DP(vector<int>& nums) {
+int FindLengthOfLCIS_DP(vector<int>& nums) {
     if (nums.empty()) return 0;
 
-    int maxLen = 1;
+    int max_len = 1;
     vector<int> dp(nums.size(), 1);
     for (size_t i = 1; i < nums.size(); i++) {
         if (nums[i] > nums[i - 1]) dp[i] = dp[i - 1] + 1;
-        maxLen = max(maxLen, dp[i]);
+        max_len = max(max_len, dp[i]);
     }
-    return maxLen;
+    return max_len;
 }
 /*
 Problem: Longest Continuous Increasing Subsequence (LC 674)
@@ -670,20 +670,20 @@ Time: O(n), Space: O(n)
  */
 
 /* Dynamic Programming Solution */
-int findLengthDP(vector<int>& nums1, vector<int>& nums2) {
+int FindLengthDP(vector<int>& nums1, vector<int>& nums2) {
     int m = nums1.size(), n = nums2.size();
     vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0)); // DP table
-    int maxLen = 0;
+    int max_len = 0;
 
     for (int i = 1; i <= m; ++i) {
         for (int j = 1; j <= n; ++j) {
             if (nums1[i - 1] == nums2[j - 1]) {
                 dp[i][j] = dp[i - 1][j - 1] + 1; // Extend the subarray
-                maxLen = max(maxLen, dp[i][j]); // Update maximum length
+                max_len = max(max_len, dp[i][j]); // Update maximum length
             }
         }
     }
-    return maxLen;
+    return max_len;
 }
 /*
 Problem: Maximum Length of Repeated Subarray (LC 718)
@@ -722,7 +722,7 @@ Time: O(m * n), Space: O(m * n)
  */
 
 /* Dynamic Programming Solution */
-int numDistinctDP(string s, string t) {
+int NumDistinctDP(string s, string t) {
     vector<vector<uint64_t>> dp(s.size() + 1, vector<uint64_t>(t.size() + 1, 0));
     // Initialize base cases
     for (size_t i = 0; i <= s.size(); i++) dp[i][0] = 1; // Empty t is a subsequence of any s
@@ -762,7 +762,7 @@ Time: O(m * n), Space: O(m * n)
 */
 
 /* Optimized Dynamic Programming Solution (1D Array) */
-int numDistinctOptimized(string s, string t) {
+int NumDistinctOptimized(string s, string t) {
     int m = s.size(), n = t.size();
     vector<uint64_t> dp(n + 1, 0); // Rolling array
     dp[0] = 1; // Empty t is a subsequence of any s
@@ -816,7 +816,7 @@ Time: O(m * n), Space: O(n)
  */
 
 /* Dynamic Programming Solution */
-int longestCommonSubsequenceDP(string text1, string text2) {
+int LongestCommonSubsequenceDP(string text1, string text2) {
     int m = text1.size(), n = text2.size();
     vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0)); // DP table
 
@@ -848,7 +848,7 @@ Time: O(m * n), Space: O(m * n)
 */
 
 /* Optimized Dynamic Programming Solution (1D Rolling Array) */
-int longestCommonSubsequenceOptimized(string text1, string text2) {
+int LongestCommonSubsequenceOptimized(string text1, string text2) {
     int m = text1.size(), n = text2.size();
     vector<int> dp(n + 1, 0); // Rolling array
 
@@ -891,7 +891,7 @@ Time: O(m * n), Space: O(n)
  * 1. 1 <= s.length <= 1000
  * 2. s consist of only digits and English letters.
  */
-string longestPalindrome(string s) {
+string LongestPalindrome(string s) {
     if (s.length() <= 1) {
         return s;
     }
@@ -949,7 +949,7 @@ Time: O(n^2), Space: O(n^2)
  * 1. 1 <= s.length <= 1000
  * 2. s consists of lowercase English letters.
  */
-int countSubstrings(string s) {
+int CountSubstrings(string s) {
     int n = s.size(), count = 0;
     vector<vector<bool>> dp(n, vector<bool>(n, false));
 
@@ -997,7 +997,7 @@ Time: O(n^2), Space: O(n^2)
  * 2. 1 <= n <= 100
  * 3. -100 <= matrix[i][j] <= 100
  */
-int minFallingPathSum(vector<vector<int>>& matrix) {
+int MinFallingPathSum(vector<vector<int>>& matrix) {
     int n = matrix.size();
     vector<int> dp(matrix[0]); // Start with the first row
     for (int i = 1; i < n; ++i) {
@@ -1044,7 +1044,7 @@ Time: O(n^2), Space: O(n)
  * Constraints:
  * 1. 1 <= n <= 1690
  */
-int nthUglyNumber(int n) {
+int NthUglyNumber(int n) {
     vector<int> dp(n, 0);
     dp[0] = 1;
     int i2 = 0, i3 = 0, i5 = 0;
@@ -1088,13 +1088,13 @@ Space Complexity: O(n)
  * 1. 1 <= nums.length <= 2 * 10^4
  * 2. -10 <= nums[i] <= 10
  */
-int maxProduct(vector<int>& nums) {
-    int n = nums.size(), maxProd = nums[0], minProd = nums[0], result = nums[0];
+int MaxProduct(vector<int>& nums) {
+    int n = nums.size(), max_prod = nums[0], min_prod = nums[0], result = nums[0];
     for (int i = 1; i < n; ++i) {
-        if (nums[i] < 0) swap(maxProd, minProd);
-        maxProd = max(nums[i], maxProd * nums[i]);
-        minProd = min(nums[i], minProd * nums[i]);
-        result = max(result, maxProd);
+        if (nums[i] < 0) swap(max_prod, min_prod);
+        max_prod = max(nums[i], max_prod * nums[i]);
+        min_prod = min(nums[i], min_prod * nums[i]);
+        result = max(result, max_prod);
     }
     return result;
 }
@@ -1109,12 +1109,12 @@ Approach:
 - Swap max and min when current number is negative.
 
 State:
-- maxProd: max product ending at current index
-- minProd: min product ending at current index
+- max_prod: max product ending at current index
+- min_prod: min product ending at current index
 
 Transition:
-- maxProd = max(nums[i], maxProd * nums[i])
-- minProd = min(nums[i], minProd * nums[i])
+- max_prod = max(nums[i], max_prod * nums[i])
+- min_prod = min(nums[i], min_prod * nums[i])
 
 Time Complexity: O(n)
 Space Complexity: O(1)
@@ -1131,13 +1131,13 @@ Space Complexity: O(1)
  * Output: 5
  * Explanation: Buy on day 2 (price = 1) and sell on day 5 (price = 6), profit = 6 - 1 = 5.
  */
-int maxProfit(vector<int>& prices) {
-    int minPrice = INT_MAX, maxProfit = 0;
+int MaxProfit(vector<int>& prices) {
+    int min_price = INT_MAX, max_profit = 0;
     for (int price : prices) {
-        minPrice = min(minPrice, price);
-        maxProfit = max(maxProfit, price - minPrice);
+        min_price = min(min_price, price);
+        max_profit = max(max_profit, price - min_price);
     }
-    return maxProfit;
+    return max_profit;
 }
 /*
 Problem: Best Time to Buy and Sell Stock I (LC 121)
@@ -1147,7 +1147,7 @@ Return the maximum profit you can achieve from a single buy and sell.
 
 Approach:
 - Track the minimum price seen so far.
-- At each step, update the maximum profit as the difference between current price and minPrice.
+- At each step, update the maximum profit as the difference between current price and min_price.
 
 Time Complexity: O(n)
 Space Complexity: O(1)
@@ -1163,7 +1163,7 @@ Space Complexity: O(1)
  * Output: 7
  * Explanation: Buy on day 2 (1), sell on day 3 (5), buy on day 4 (3), sell on day 5 (6).
  */
-int maxProfitMultiple(vector<int>& prices) {
+int MaxProfitMultiple(vector<int>& prices) {
     int profit = 0;
     for (size_t i = 1; i < prices.size(); ++i) {
         if (prices[i] > prices[i - 1]) {
@@ -1194,7 +1194,7 @@ Space Complexity: O(1)
  * Output: 3
  * Explanation: You cannot rob both house 1 and house 3 because they are adjacent.
  */
-int robHelper(vector<int>& nums, int left, int right) {
+int RobHelper(vector<int>& nums, int left, int right) {
     int prev1 = 0, prev2 = 0;
     for (int i = left; i <= right; ++i) {
         int temp = prev1;
@@ -1203,9 +1203,9 @@ int robHelper(vector<int>& nums, int left, int right) {
     }
     return prev1;
 }
-int robCircular(vector<int>& nums) {
+int RobCircular(vector<int>& nums) {
     if (nums.size() == 1) return nums[0];
-    return max(robHelper(nums, 0, nums.size() - 2), robHelper(nums, 1, nums.size() - 1));
+    return max(RobHelper(nums, 0, nums.size() - 2), RobHelper(nums, 1, nums.size() - 1));
 }
 /*
 Problem: House Robber II (LC 213)
@@ -1231,7 +1231,7 @@ Space Complexity: O(1)
  * Input: s = "adceb", p = "*a*b"
  * Output: true
  */
-bool isMatch(string s, string p) {
+bool IsMatch(string s, string p) {
     int m = s.size(), n = p.size();
     vector<vector<bool>> dp(m + 1, vector<bool>(n + 1, false));
     dp[0][0] = true;
@@ -1280,7 +1280,7 @@ Space Complexity: O(m * n)
  * Input: s1 = "aab", s2 = "axy", s3 = "aaxaby"
  * Output: true
  */
-bool isInterleave(string s1, string s2, string s3) {
+bool IsInterleave(string s1, string s2, string s3) {
     size_t m = s1.size(), n = s2.size();
     if (m + n != s3.size()) return false;
     vector<vector<bool>> dp(m + 1, vector<bool>(n + 1, false));
@@ -1316,23 +1316,23 @@ Space Complexity: O(m * n)
 /**
  * Problem 27: Best Time to Buy and Sell Stock with Cooldown (LC 309)
  * Description:
- * You are given an array `stockPrices3` where `stockPrices3[i]` is the price of a stock on day `i`.
+ * You are given an array `stock_prices3` where `stock_prices3[i]` is the price of a stock on day `i`.
  * You may complete as many transactions as you like, but you must wait **one day cooldown** after selling.
  * 
  * Example:
- * Input: stockPrices3 = [1,2,3,0,2]
+ * Input: stock_prices3 = [1,2,3,0,2]
  * Output: 3
  * Explanation: Buy on day 1 (price = 1), sell on day 3 (price = 3), cooldown on day 4, buy on day 5 (price = 0), sell on day 6 (price = 2).
  */
-int maxProfitCooldown(vector<int>& stockPrices3) {
-    if (stockPrices3.empty()) return 0;
-    int n = stockPrices3.size();
+int MaxProfitCooldown(vector<int>& stock_prices3) {
+    if (stock_prices3.empty()) return 0;
+    int n = stock_prices3.size();
     vector<int> buy(n, 0), sell(n, 0), cooldown(n, 0);
     
-    buy[0] = -stockPrices3[0];  // First day buy
+    buy[0] = -stock_prices3[0];  // First day buy
     for (int i = 1; i < n; ++i) {
-        buy[i] = max(buy[i - 1], cooldown[i - 1] - stockPrices3[i]); // Buy or do nothing
-        sell[i] = max(sell[i - 1], buy[i - 1] + stockPrices3[i]); // Sell or do nothing
+        buy[i] = max(buy[i - 1], cooldown[i - 1] - stock_prices3[i]); // Buy or do nothing
+        sell[i] = max(sell[i - 1], buy[i - 1] + stock_prices3[i]); // Sell or do nothing
         cooldown[i] = max(cooldown[i - 1], sell[i - 1]); // Cooldown or do nothing
     }
     return sell[n - 1];
@@ -1364,19 +1364,19 @@ Space Complexity: O(n)
  * You have to **paint all houses** such that **no two adjacent houses have the same color**.
  * 
  * Example:
- * Input: costMatrix = [[17,2,17],[16,16,5],[14,3,19]]
+ * Input: cost_matrix = [[17,2,17],[16,16,5],[14,3,19]]
  * Output: 10
  * Explanation: Paint house 0 as blue, house 1 as green, house 2 as blue.
  */
-int minCost(vector<vector<int>>& costMatrix) {
-    int n = costMatrix.size();
+int MinCost(vector<vector<int>>& cost_matrix) {
+    int n = cost_matrix.size();
     vector<vector<int>> dp(n, vector<int>(3, 0));
-    dp[0] = costMatrix[0]; // First house same as input
+    dp[0] = cost_matrix[0]; // First house same as input
 
     for (int i = 1; i < n; ++i) {
-        dp[i][0] = costMatrix[i][0] + min(dp[i - 1][1], dp[i - 1][2]); // Paint Red
-        dp[i][1] = costMatrix[i][1] + min(dp[i - 1][0], dp[i - 1][2]); // Paint Blue
-        dp[i][2] = costMatrix[i][2] + min(dp[i - 1][0], dp[i - 1][1]); // Paint Green
+        dp[i][0] = cost_matrix[i][0] + min(dp[i - 1][1], dp[i - 1][2]); // Paint Red
+        dp[i][1] = cost_matrix[i][1] + min(dp[i - 1][0], dp[i - 1][2]); // Paint Blue
+        dp[i][2] = cost_matrix[i][2] + min(dp[i - 1][0], dp[i - 1][1]); // Paint Green
     }
     return min({dp[n - 1][0], dp[n - 1][1], dp[n - 1][2]});
 }
@@ -1401,18 +1401,18 @@ Space Complexity: O(n)
 /**
  * Problem 29: Jump Game (LC 55)
  * Description:
- * Given an array `jumpNums` where `jumpNums[i]` represents the **maximum** jump length at that position,
+ * Given an array `jump_nums` where `jump_nums[i]` represents the **maximum** jump length at that position,
  * return **true** if you can reach the last index.
  * 
  * Example:
- * Input: jumpNums = [2,3,1,1,4]
+ * Input: jump_nums = [2,3,1,1,4]
  * Output: true
  */
-bool canJump(vector<int>& jumpNums) {
+bool CanJump(vector<int>& jump_nums) {
     int farthest = 0;
-    for (size_t i = 0; i < jumpNums.size(); ++i) {
+    for (size_t i = 0; i < jump_nums.size(); ++i) {
         if (static_cast<int>(i) > farthest) return false; // Cannot reach this position
-        farthest = max(farthest, static_cast<int>(i) + jumpNums[i]);
+        farthest = max(farthest, static_cast<int>(i) + jump_nums[i]);
     }
     return true;
 }
@@ -1435,17 +1435,17 @@ Space Complexity: O(1)
 /**
  * Problem 30: Jump Game II (LC 45)
  * Description:
- * Given an array `jumpNums2`, return the **minimum number of jumps** required to reach the last index.
+ * Given an array `jump_nums2`, return the **minimum number of jumps** required to reach the last index.
  * 
  * Example:
- * Input: jumpNums2 = [2,3,1,1,4]
+ * Input: jump_nums2 = [2,3,1,1,4]
  * Output: 2
  * Explanation: Jump from index 0 to 1, then from 1 to 4.
  */
-int jumpMinSteps(vector<int>& jumpNums2) {
+int JumpMinSteps(vector<int>& jump_nums2) {
     int jumps = 0, end = 0, farthest = 0;
-    for (size_t i = 0; i < jumpNums2.size() - 1; ++i) {
-        farthest = max(farthest, static_cast<int>(i) + jumpNums2[i]);
+    for (size_t i = 0; i < jump_nums2.size() - 1; ++i) {
+        farthest = max(farthest, static_cast<int>(i) + jump_nums2[i]);
         if (static_cast<int>(i) == end) {
             jumps++;
             end = farthest;
@@ -1469,131 +1469,131 @@ Space Complexity: O(1)
 int main() {
     // Test Problem 1: Climbing Stairs (LC 70)
     int n = 5;
-    cout << "Climbing Stairs (n=" << n << "): " << climbStairs(n) << endl;
+    cout << "Climbing Stairs (n=" << n << "): " << ClimbStairs(n) << endl;
 
     // Test Problem 2: Maximum Subarray (LC 53)
-    vector<int> maxSubArrayInput = {-2, 1, -3, 4, -1, 2, 1, -5, 4};
-    cout << "Maximum Subarray: " << maxSubArray(maxSubArrayInput) << endl;
+    vector<int> max_sub_array_input = {-2, 1, -3, 4, -1, 2, 1, -5, 4};
+    cout << "Maximum Subarray: " << MaxSubArray(max_sub_array_input) << endl;
 
     // Test Problem 3: Unique Paths (LC 62)
-    int m = 3, gridN = 7;
-    cout << "Unique Paths (" << m << "x" << gridN << " grid): " << uniquePaths(m, gridN) << endl;
+    int m = 3, grid_n = 7;
+    cout << "Unique Paths (" << m << "x" << grid_n << " grid): " << UniquePaths(m, grid_n) << endl;
 
     // Test Problem 4: Coin Change (LC 322)
-    vector<int> coinDenominations = {1, 2, 5};
-    int coinAmount = 11;
-    cout << "Coin Change (amount=" << coinAmount << "): " << coinChange(coinDenominations, coinAmount) << endl;
+    vector<int> coin_denominations = {1, 2, 5};
+    int coin_amount = 11;
+    cout << "Coin Change (amount=" << coin_amount << "): " << CoinChange(coin_denominations, coin_amount) << endl;
 
     // Test Problem 5: Longest Increasing Subsequence (LC 300)
-    vector<int> lisInput = {10, 9, 2, 5, 3, 7, 101, 18};
-    cout << "Longest Increasing Subsequence: " << lengthOfLIS(lisInput) << endl;
-    cout << "Longest Increasing Subsequence: " << lengthOfLISWithBinarySearch(lisInput) << endl;
+    vector<int> lis_input = {10, 9, 2, 5, 3, 7, 101, 18};
+    cout << "Longest Increasing Subsequence: " << LengthOfLIS(lis_input) << endl;
+    cout << "Longest Increasing Subsequence: " << LengthOfLISWithBinarySearch(lis_input) << endl;
 
     // Test Problem 6: Edit Distance (LC 72)
-    string editWord1 = "horse", editWord2 = "ros";
-    cout << "Edit Distance (" << editWord1 << " -> " << editWord2 << "): " << minDistance(editWord1, editWord2) << endl;
+    string edit_word1 = "horse", edit_word2 = "ros";
+    cout << "Edit Distance (" << edit_word1 << " -> " << edit_word2 << "): " << MinDistance(edit_word1, edit_word2) << endl;
 
     // Test Problem 7: Partition Equal Subset Sum (LC 416)
-    vector<int> partitionInput = {1, 5, 11, 5};
-    cout << "Partition Equal Subset Sum: " << (canPartition(partitionInput) ? "True" : "False") << endl;
+    vector<int> partition_input = {1, 5, 11, 5};
+    cout << "Partition Equal Subset Sum: " << (CanPartition(partition_input) ? "True" : "False") << endl;
 
     // Test Problem 8: House Robber (LC 198)
-    vector<int> houseRobberInput = {2, 7, 9, 3, 1};
-    cout << "House Robber: " << rob(houseRobberInput) << endl;
+    vector<int> house_robber_input = {2, 7, 9, 3, 1};
+    cout << "House Robber: " << Rob(house_robber_input) << endl;
 
     // Test Problem 9: Decode Ways (LC 91)
-    string decodeInput = "226";
-    cout << "Decode Ways (" << decodeInput << "): " << numDecodings(decodeInput) << endl;
+    string decode_input = "226";
+    cout << "Decode Ways (" << decode_input << "): " << NumDecodings(decode_input) << endl;
 
     // Test Problem 10: Triangle Minimum Path Sum (LC 120)
-    vector<vector<int>> triangleInput = {{2}, {3, 4}, {6, 5, 7}, {4, 1, 8, 3}};
-    cout << "Triangle Minimum Path Sum: " << minimumTotal(triangleInput) << endl;
+    vector<vector<int>> triangle_input = {{2}, {3, 4}, {6, 5, 7}, {4, 1, 8, 3}};
+    cout << "Triangle Minimum Path Sum: " << MinimumTotal(triangle_input) << endl;
 
     // Test Problem 11: Longest Palindromic Subsequence (LC 516)
-    string palindromeInput = "bbbab";
-    cout << "Longest Palindromic Subsequence: " << longestPalindromeSubseq(palindromeInput) << endl;
+    string palindrome_input = "bbbab";
+    cout << "Longest Palindromic Subsequence: " << LongestPalindromeSubseq(palindrome_input) << endl;
 
     // Test Problem 12: Burst Balloons (LC 312)
-    vector<int> balloonsInput = {3, 1, 5, 8};
-    cout << "Burst Balloons: " << maxCoins(balloonsInput) << endl;
+    vector<int> balloons_input = {3, 1, 5, 8};
+    cout << "Burst Balloons: " << MaxCoins(balloons_input) << endl;
 
     // Test Problem 13: Longest Continuous Increasing Subsequence (LC 674)
-    vector<int> lcisInput = {1, 3, 5, 4, 7};
-    cout << "Longest Continuous Increasing Subsequence: " << findLengthOfLCIS(lcisInput) << endl;
-    cout << "Longest Continuous Increasing Subsequence: " << findLengthOfLCIS_DP(lcisInput) << endl;
+    vector<int> lcis_input = {1, 3, 5, 4, 7};
+    cout << "Longest Continuous Increasing Subsequence: " << FindLengthOfLCIS(lcis_input) << endl;
+    cout << "Longest Continuous Increasing Subsequence: " << FindLengthOfLCIS_DP(lcis_input) << endl;
 
     // Test Problem 14: Maximum Length of Repeated Subarray (LC 718)
-    vector<int> pro14Nums1 = {1, 2, 3, 2, 1};
-    vector<int> pro14Nums2 = {3, 2, 1, 4, 7};
-    cout << "Maximum Length of Repeated Subarray (DP): " << findLengthDP(pro14Nums1, pro14Nums2) << endl;
+    vector<int> pro14_nums1 = {1, 2, 3, 2, 1};
+    vector<int> pro14_nums2 = {3, 2, 1, 4, 7};
+    cout << "Maximum Length of Repeated Subarray (DP): " << FindLengthDP(pro14_nums1, pro14_nums2) << endl;
 
     // Test Problem 15: Distinct Subsequences(lc115)
     string s = "rabbbit", t = "rabbit";
-    cout << "Distinct Subsequences (DP 2D): " << numDistinctDP(s, t) << endl;
-    cout << "Distinct Subsequences (DP Optimized): " << numDistinctOptimized(s, t) << endl;
+    cout << "Distinct Subsequences (DP 2D): " << NumDistinctDP(s, t) << endl;
+    cout << "Distinct Subsequences (DP Optimized): " << NumDistinctOptimized(s, t) << endl;
 
     // Test Problem 16: Distinct Subsequences(lc1143)
     string text1 = "abcde", text2 = "ace";
     cout << "Longest Common Subsequence (DP 2D): "
-         << longestCommonSubsequenceDP(text1, text2) << endl;
+         << LongestCommonSubsequenceDP(text1, text2) << endl;
     cout << "Longest Common Subsequence (Optimized DP): "
-         << longestCommonSubsequenceOptimized(text1, text2) << endl;
+         << LongestCommonSubsequenceOptimized(text1, text2) << endl;
 
     // Test Problem 17: Longest Palindromic Substring (LC 5)
     string lc5_input = "babad";
-    cout << "Longest Palindromic Substring (LC 5): " << longestPalindrome(lc5_input) << endl; // Output: "bab" or "aba"
+    cout << "Longest Palindromic Substring (LC 5): " << LongestPalindrome(lc5_input) << endl; // Output: "bab" or "aba"
 
     // Test Problem 18: Palindromic Substrings (LC 647)
     string lc647_input = "aaa";
-    cout << "Number of Palindromic Substrings (LC 647): " << countSubstrings(lc647_input) << endl; // Output: 6
+    cout << "Number of Palindromic Substrings (LC 647): " << CountSubstrings(lc647_input) << endl; // Output: 6
 
     // Test Problem 19: Minimum Falling Path Sum (LC 931)
     vector<vector<int>> lc931_matrix = {{2, 1, 3}, {6, 5, 4}, {7, 8, 9}};
-    cout << "Minimum Falling Path Sum (LC 931): " << minFallingPathSum(lc931_matrix) << endl; // Output: 13
+    cout << "Minimum Falling Path Sum (LC 931): " << MinFallingPathSum(lc931_matrix) << endl; // Output: 13
 
     // Test Problem 20: Ugly Number II (LC 264)
     int lc264_n = 10;
-    cout << "10th Ugly Number (LC 264): " << nthUglyNumber(lc264_n) << endl; // Output: 12
+    cout << "10th Ugly Number (LC 264): " << NthUglyNumber(lc264_n) << endl; // Output: 12
 
     // Test Problem 21: Maximum Product Subarray (LC 152)
     vector<int> lc152_nums = {2, 3, -2, 4};
-    cout << "Maximum Product Subarray (LC 152): " << maxProduct(lc152_nums) << endl; // Output: 6
+    cout << "Maximum Product Subarray (LC 152): " << MaxProduct(lc152_nums) << endl; // Output: 6
 
     // Test Problem 22: Best Time to Buy and Sell Stock
-    vector<int> stockPrices1 = {7,1,5,3,6,4};
-    cout << "Max Profit (Single Transaction): " << maxProfit(stockPrices1) << endl;
+    vector<int> stock_prices1 = {7,1,5,3,6,4};
+    cout << "Max Profit (Single Transaction): " << MaxProfit(stock_prices1) << endl;
 
     // Test Problem 23: Best Time to Buy and Sell Stock II
-    vector<int> stockPrices2 = {7,1,5,3,6,4};
-    cout << "Max Profit (Multiple Transactions): " << maxProfitMultiple(stockPrices2) << endl;
+    vector<int> stock_prices2 = {7,1,5,3,6,4};
+    cout << "Max Profit (Multiple Transactions): " << MaxProfitMultiple(stock_prices2) << endl;
 
     // Test Problem 24: House Robber II
     vector<int> houses = {2,3,2};
-    cout << "Max Robbery Amount (Circular Street): " << robCircular(houses) << endl;
+    cout << "Max Robbery Amount (Circular Street): " << RobCircular(houses) << endl;
 
     // Test Problem 25: Wildcard Matching
-    string wildcardStr = "adceb", wildcardPattern = "*a*b";
-    cout << "Wildcard Matching: " << (isMatch(wildcardStr, wildcardPattern) ? "true" : "false") << endl;
+    string wildcard_str = "adceb", wildcard_pattern = "*a*b";
+    cout << "Wildcard Matching: " << (IsMatch(wildcard_str, wildcard_pattern) ? "true" : "false") << endl;
 
     // Test Problem 26: Interleaving String
-    string str1 = "aab", str2 = "axy", interleavedStr = "aaxaby";
-    cout << "Is Interleaving: " << (isInterleave(str1, str2, interleavedStr) ? "true" : "false") << endl;
+    string str1 = "aab", str2 = "axy", interleaved_str = "aaxaby";
+    cout << "Is Interleaving: " << (IsInterleave(str1, str2, interleaved_str) ? "true" : "false") << endl;
 
     // Test Problem 27: Best Time to Buy and Sell Stock with Cooldown
-    vector<int> stockPrices3 = {1,2,3,0,2};
-    cout << "Max Profit with Cooldown: " << maxProfitCooldown(stockPrices3) << endl;
+    vector<int> stock_prices3 = {1,2,3,0,2};
+    cout << "Max Profit with Cooldown: " << MaxProfitCooldown(stock_prices3) << endl;
 
     // Test Problem 28: Paint House
-    vector<vector<int>> costMatrix = {{17,2,17},{16,16,5},{14,3,19}};
-    cout << "Minimum Cost to Paint Houses: " << minCost(costMatrix) << endl;
+    vector<vector<int>> cost_matrix = {{17,2,17},{16,16,5},{14,3,19}};
+    cout << "Minimum Cost to Paint Houses: " << MinCost(cost_matrix) << endl;
 
     // Test Problem 29: Jump Game
-    vector<int> jumpNums = {2,3,1,1,4};
-    cout << "Can Jump to Last Index: " << (canJump(jumpNums) ? "true" : "false") << endl;
+    vector<int> jump_nums = {2,3,1,1,4};
+    cout << "Can Jump to Last Index: " << (CanJump(jump_nums) ? "true" : "false") << endl;
 
     // Test Problem 30: Jump Game II
-    vector<int> jumpNums2 = {2,3,1,1,4};
-    cout << "Minimum Jumps to Reach End: " << jumpMinSteps(jumpNums2) << endl;
+    vector<int> jump_nums2 = {2,3,1,1,4};
+    cout << "Minimum Jumps to Reach End: " << JumpMinSteps(jump_nums2) << endl;
 
     return 0;
 }

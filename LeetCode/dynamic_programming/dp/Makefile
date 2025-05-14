@@ -1,9 +1,9 @@
 CC = g++
 CFLAGS = -std=c++20 -Wall -g
 
-SRCS = main.cpp
+SRCS = dp.cpp
 OBJS = $(SRCS:.cpp=.o)
-EXEC = DoublePointer_program
+EXEC = dp
 
 all: $(EXEC)
 

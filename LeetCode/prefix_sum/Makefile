@@ -1,9 +1,9 @@
 CC = g++
 CFLAGS = -std=c++20 -Wall -g
 
-SRCS = main.cpp
+SRCS = prefix_sum.cpp
 OBJS = $(SRCS:.cpp=.o)
-EXEC = MonotonicStack_program
+EXEC = prefix_sum
 
 all: $(EXEC)
 

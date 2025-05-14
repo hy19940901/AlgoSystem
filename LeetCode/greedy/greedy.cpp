@@ -22,7 +22,7 @@ using namespace std;
  * Input: g = [1,2,3], s = [1,1]
  * Output: 1
  */
-int findContentChildren(vector<int>& g, vector<int>& s) {
+int FindContentChildren(vector<int>& g, vector<int>& s) {
     sort(g.begin(), g.end());
     sort(s.begin(), s.end());
     int i = 0, j = 0;
@@ -42,11 +42,11 @@ int findContentChildren(vector<int>& g, vector<int>& s) {
  * Input: nums = [2,3,1,1,4]
  * Output: true
  */
-bool canJump(vector<int>& nums) {
-    int maxReach = 0;
+bool CanJump(vector<int>& nums) {
+    int max_reach = 0;
     for (size_t i = 0; i < nums.size(); ++i) {
-        if (static_cast<int>(i) > maxReach) return false;
-        maxReach = max(maxReach, static_cast<int>(i) + nums[i]);
+        if (static_cast<int>(i) > max_reach) return false;
+        max_reach = max(max_reach, static_cast<int>(i) + nums[i]);
     }
     return true;
 }
@@ -60,7 +60,7 @@ bool canJump(vector<int>& nums) {
  * Input: nums = [2,3,1,1,4]
  * Output: 2
  */
-int jump(vector<int>& nums) {
+int Jump(vector<int>& nums) {
     int jumps = 0, end = 0, farthest = 0;
     for (size_t i = 0; i < nums.size() - 1; ++i) {
         farthest = max(farthest, static_cast<int>(i) + nums[i]);
@@ -81,7 +81,7 @@ int jump(vector<int>& nums) {
  * Input: points = [[10,16], [2,8], [1,6], [7,12]]
  * Output: 2
  */
-int findMinArrowShots(vector<vector<int>>& points) {
+int FindMinArrowShots(vector<vector<int>>& points) {
     if (points.empty()) return 0;
     sort(points.begin(), points.end(), [](const vector<int>& a, const vector<int>& b) {
         return a[1] < b[1];
@@ -106,20 +106,20 @@ int findMinArrowShots(vector<vector<int>>& points) {
  * Input: intervals = [[1,2], [2,3], [3,4], [1,3]]
  * Output: 1
  */
-int eraseOverlapIntervals(vector<vector<int>>& intervals) {
+int EraseOverlapIntervals(vector<vector<int>>& intervals) {
     if (intervals.empty()) return 0;
     sort(intervals.begin(), intervals.end(), [](const vector<int>& a, const vector<int>& b) {
         return a[1] < b[1];
     });
-    int nonOverlapCount = 1;
+    int non_overlap_count = 1;
     int end = intervals[0][1];
     for (size_t i = 1; i < intervals.size(); ++i) {
         if (intervals[i][0] >= end) {
-            nonOverlapCount++;
+            non_overlap_count++;
             end = intervals[i][1];
         }
     }
-    return intervals.size() - nonOverlapCount;
+    return intervals.size() - non_overlap_count;
 }
 
 /**
@@ -131,17 +131,17 @@ int eraseOverlapIntervals(vector<vector<int>>& intervals) {
  * Input: gas = [1,2,3,4,5], cost = [3,4,5,1,2]
  * Output: 3
  */
-int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {
-    int totalTank = 0, currTank = 0, start = 0;
+int CanCompleteCircuit(vector<int>& gas, vector<int>& cost) {
+    int total_tank = 0, curr_tank = 0, start = 0;
     for (size_t i = 0; i < gas.size(); ++i) {
-        totalTank += gas[i] - cost[i];
-        currTank += gas[i] - cost[i];
-        if (currTank < 0) {
+        total_tank += gas[i] - cost[i];
+        curr_tank += gas[i] - cost[i];
+        if (curr_tank < 0) {
             start = i + 1;
-            currTank = 0;
+            curr_tank = 0;
         }
     }
-    return totalTank >= 0 ? start : -1;
+    return total_tank >= 0 ? start : -1;
 }
 
 /**
@@ -153,16 +153,16 @@ int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {
  * Input: nums = [-2,1,-3,4,-1,2,1,-5,4]
  * Output: 6
  */
-int maxSubArray(vector<int>& nums) {
-    int maxSum = nums[0], currentSum = nums[0];
+int MaxSubArray(vector<int>& nums) {
+    int max_sum = nums[0], current_sum = nums[0];
     for (size_t i = 1; i < nums.size(); ++i) {
-        currentSum = max(nums[i], currentSum + nums[i]);
-        maxSum = max(maxSum, currentSum);
+        current_sum = max(nums[i], current_sum + nums[i]);
+        max_sum = max(max_sum, current_sum);
     }
-    return maxSum;
+    return max_sum;
 }
 // Greedy algorithm, kadane algorithm
-int maxSubArray_kadane(vector<int>& nums) {
+int MaxSubArray_kadane(vector<int>& nums) {
     int result = INT32_MIN;
     int count = 0;
     for (size_t i = 0; i < nums.size(); i++) {
@@ -187,7 +187,7 @@ int maxSubArray_kadane(vector<int>& nums) {
  * Input: ratings = [1,0,2]
  * Output: 5
  */
-int candy(vector<int>& ratings) {
+int Candy(vector<int>& ratings) {
     int n = ratings.size();
     vector<int> candies(n, 1); // Give each child at least one candy
     // Left-to-right pass
@@ -211,12 +211,12 @@ int candy(vector<int>& ratings) {
  * Input: tasks = ['A','A','A','B','B','B'], n = 2
  * Output: 8
  */
-int leastInterval(vector<char>& tasks, int n) {
+int LeastInterval(vector<char>& tasks, int n) {
     vector<int> counts(26, 0);
     for (char task : tasks) counts[task - 'A']++;
-    int maxCount = *max_element(counts.begin(), counts.end());
-    int maxFreqTasks = count(counts.begin(), counts.end(), maxCount);
-    return max((int)tasks.size(), (maxCount - 1) * (n + 1) + maxFreqTasks);
+    int max_count = *max_element(counts.begin(), counts.end());
+    int max_freq_tasks = count(counts.begin(), counts.end(), max_count);
+    return max((int)tasks.size(), (max_count - 1) * (n + 1) + max_freq_tasks);
 }
 
 /**
@@ -229,7 +229,7 @@ int leastInterval(vector<char>& tasks, int n) {
  * Input: people = [[7,0],[4,4],[7,1],[5,0],[6,1],[5,2]]
  * Output: [[5,0],[7,0],[5,2],[6,1],[4,4],[7,1]]
  */
-vector<vector<int>> reconstructQueue(vector<vector<int>>& people) {
+vector<vector<int>> ReconstructQueue(vector<vector<int>>& people) {
     sort(people.begin(), people.end(), [](vector<int>& a, vector<int>& b) {
         return a[0] == b[0] ? a[1] < b[1] : a[0] > b[0];
     });
@@ -249,15 +249,15 @@ vector<vector<int>> reconstructQueue(vector<vector<int>>& people) {
  * Input: s = "ababcbacadefegdehijhklij"
  * Output: [9,7,8]
  */
-vector<int> partitionLabels(string s) {
-    vector<int> lastIndex(26, 0);
+vector<int> PartitionLabels(string s) {
+    vector<int> last_index(26, 0);
     for (size_t i = 0; i < s.size(); ++i) {
-        lastIndex[s[i] - 'a'] = i;
+        last_index[s[i] - 'a'] = i;
     }
     vector<int> partitions;
     int start = 0, end = 0;
     for (size_t i = 0; i < s.size(); ++i) {
-        end = max(end, lastIndex[s[i] - 'a']);
+        end = max(end, last_index[s[i] - 'a']);
         if (static_cast<int>(i) == end) {
             partitions.push_back(end - start + 1);
             start = end + 1;
@@ -275,7 +275,7 @@ vector<int> partitionLabels(string s) {
  * Input: nums = [4,2,3], k = 1
  * Output: 5
  */
-int largestSumAfterKNegations(vector<int>& nums, int k) {
+int LargestSumAfterKNegations(vector<int>& nums, int k) {
     sort(nums.begin(), nums.end());
     for (size_t i = 0; i < nums.size() && k > 0 && nums[i] < 0; ++i, --k) {
         nums[i] = -nums[i];
@@ -292,7 +292,7 @@ int largestSumAfterKNegations(vector<int>& nums, int k) {
  * Input: sticks = [2,4,3]
  * Output: 14
  */
-int connectSticks(vector<int>& sticks) {
+int ConnectSticks(vector<int>& sticks) {
     priority_queue<int, vector<int>, greater<int>> pq(sticks.begin(), sticks.end());
     int cost = 0;
     while (pq.size() > 1) {
@@ -314,7 +314,7 @@ int connectSticks(vector<int>& sticks) {
  * Input: bills = [5,5,5,10,20]
  * Output: true
  */
-bool lemonadeChange(vector<int>& bills) {
+bool LemonadeChange(vector<int>& bills) {
     int five = 0, ten = 0;
     for (int bill : bills) {
         if (bill == 5) five++;
@@ -340,14 +340,14 @@ bool lemonadeChange(vector<int>& bills) {
  * Input: costs = [[10,20],[30,200],[50,10],[20,30]]
  * Output: 110
  */
-int twoCitySchedCost(vector<vector<int>>& costs) {
+int TwoCitySchedCost(vector<vector<int>>& costs) {
     sort(costs.begin(), costs.end(), [](vector<int>& a, vector<int>& b) {
         return (a[0] - a[1]) < (b[0] - b[1]);
     });
-    int totalCost = 0, n = costs.size() / 2;
-    for (int i = 0; i < n; i++) totalCost += costs[i][0];
-    for (int i = n; i < 2 * n; i++) totalCost += costs[i][1];
-    return totalCost;
+    int total_cost = 0, n = costs.size() / 2;
+    for (int i = 0; i < n; i++) total_cost += costs[i][0];
+    for (int i = n; i < 2 * n; i++) total_cost += costs[i][1];
+    return total_cost;
 }
 
 /**
@@ -359,7 +359,7 @@ int twoCitySchedCost(vector<vector<int>>& costs) {
  * Input: s = "aaabbbcc"
  * Output: 2
  */
-int minDeletions(string s) {
+int MinDeletions(string s) {
     vector<int> freq(26, 0);
     for (char c : s) freq[c - 'a']++;
     unordered_set<int> seen;
@@ -377,19 +377,19 @@ int minDeletions(string s) {
 /**
  * Problem 17: Hand of Straights (LC 846)
  * Description:
- * Given a list of integers representing a hand of cards, check if we can form groups of `groupSize` consecutive cards.
+ * Given a list of integers representing a hand of cards, check if we can form groups of `group_size` consecutive cards.
  *
  * Example:
- * Input: hand = [1,2,3,6,2,3,4,7,8], groupSize = 3
+ * Input: hand = [1,2,3,6,2,3,4,7,8], group_size = 3
  * Output: true
  */
-bool isNStraightHand(vector<int>& hand, int groupSize) {
-    if (hand.size() % groupSize != 0) return false;
+bool IsNStraightHand(vector<int>& hand, int group_size) {
+    if (hand.size() % group_size != 0) return false;
     map<int, int> count;
     for (int card : hand) count[card]++;
     for (auto& [card, freq] : count) {
         while (freq > 0) {
-            for (int i = 0; i < groupSize; i++) {
+            for (int i = 0; i < group_size; i++) {
                 if (count[card + i] == 0) return false;
                 count[card + i]--;
             }
@@ -408,7 +408,7 @@ bool isNStraightHand(vector<int>& hand, int groupSize) {
  * Input: position = [1,2,3]
  * Output: 1
  */
-int minCostToMoveChips(vector<int>& position) {
+int MinCostToMoveChips(vector<int>& position) {
     int odd = 0, even = 0;
     for (int pos : position) {
         if (pos % 2 == 0) even++;
@@ -427,7 +427,7 @@ int minCostToMoveChips(vector<int>& position) {
  * Input: events = [[1,2],[2,3],[3,4],[1,2]]
  * Output: 4
  */
-int maxEvents(vector<vector<int>>& events) {
+int MaxEvents(vector<vector<int>>& events) {
     sort(events.begin(), events.end());
     priority_queue<int, vector<int>, greater<int>> pq;
     int i = 0, days = 0, n = events.size(), count = 0;
@@ -450,7 +450,7 @@ int maxEvents(vector<vector<int>>& events) {
  * Input: people = [3,2,2,1], limit = 3
  * Output: 3
  */
-int numRescueBoats(vector<int>& people, int limit) {
+int NumRescueBoats(vector<int>& people, int limit) {
     sort(people.begin(), people.end());
     int left = 0, right = people.size() - 1, boats = 0;
     while (left <= right) {
@@ -464,45 +464,45 @@ int numRescueBoats(vector<int>& people, int limit) {
 int main() {
     // Test Problem 1: Assign Cookies
     vector<int> g = {1, 2, 3}, s = {1, 1};
-    cout << "Assign Cookies: " << findContentChildren(g, s) << endl;
+    cout << "Assign Cookies: " << FindContentChildren(g, s) << endl;
 
     // Test Problem 2: Jump Game
     vector<int> nums1 = {2, 3, 1, 1, 4};
-    cout << "Can Jump: " << (canJump(nums1) ? "True" : "False") << endl;
+    cout << "Can Jump: " << (CanJump(nums1) ? "True" : "False") << endl;
 
     // Test Problem 3: Jump Game II
     vector<int> nums2 = {2, 3, 1, 1, 4};
-    cout << "Minimum Jumps: " << jump(nums2) << endl;
+    cout << "Minimum Jumps: " << Jump(nums2) << endl;
 
     // Test Problem 4: Minimum Number of Arrows to Burst Balloons
     vector<vector<int>> points = {{10, 16}, {2, 8}, {1, 6}, {7, 12}};
-    cout << "Minimum Arrows: " << findMinArrowShots(points) << endl;
+    cout << "Minimum Arrows: " << FindMinArrowShots(points) << endl;
 
     // Test Problem 5: Non-overlapping Intervals
     vector<vector<int>> intervals = {{1, 2}, {2, 3}, {3, 4}, {1, 3}};
-    cout << "Erase Overlap Intervals: " << eraseOverlapIntervals(intervals) << endl;
+    cout << "Erase Overlap Intervals: " << EraseOverlapIntervals(intervals) << endl;
 
     // Test Problem 6: Gas Station
     vector<int> gas = {1, 2, 3, 4, 5}, cost = {3, 4, 5, 1, 2};
-    cout << "Gas Station Start Index: " << canCompleteCircuit(gas, cost) << endl;
+    cout << "Gas Station Start Index: " << CanCompleteCircuit(gas, cost) << endl;
 
     // Test Problem 7: Maximum Subarray
     vector<int> nums3 = {-2, 1, -3, 4, -1, 2, 1, -5, 4};
-    cout << "Maximum Subarray Sum: " << maxSubArray(nums3) << endl;
-    cout << "Maximum Subarray Sum: " << maxSubArray_kadane(nums3) << endl;
+    cout << "Maximum Subarray Sum: " << MaxSubArray(nums3) << endl;
+    cout << "Maximum Subarray Sum: " << MaxSubArray_kadane(nums3) << endl;
 
     // Test Problem 8: Candy Distribution
     vector<int> ratings = {1, 0, 2};
-    cout << "Candy Distribution: " << candy(ratings) << endl;
+    cout << "Candy Distribution: " << Candy(ratings) << endl;
 
     // Test Problem 9: Task Scheduler
     vector<char> tasks = {'A', 'A', 'A', 'B', 'B', 'B'};
     int n = 2;
-    cout << "Task Scheduler: " << leastInterval(tasks, n) << endl;
+    cout << "Task Scheduler: " << LeastInterval(tasks, n) << endl;
 
     // Test Problem 10: Queue Reconstruction by Height
     vector<vector<int>> people = {{7,0},{4,4},{7,1},{5,0},{6,1},{5,2}};
-    auto queue_result = reconstructQueue(people);
+    auto queue_result = ReconstructQueue(people);
     cout << "Reconstructed Queue: ";
     for (auto& p : queue_result) {
         cout << "[" << p[0] << "," << p[1] << "] ";
@@ -511,7 +511,7 @@ int main() {
 
     // Test Problem 11: Partition Labels
     string str_partition = "ababcbacadefegdehijhklij";
-    auto partition_result = partitionLabels(str_partition);
+    auto partition_result = PartitionLabels(str_partition);
     cout << "Partition Labels: ";
     for (int len : partition_result) {
         cout << len << " ";
@@ -521,39 +521,39 @@ int main() {
     // Test Problem 12: Maximize Sum After K Negations
     vector<int> nums = {4,2,3};
     int k = 1;
-    cout << "Max Sum After K Negations: " << largestSumAfterKNegations(nums, k) << endl;
+    cout << "Max Sum After K Negations: " << LargestSumAfterKNegations(nums, k) << endl;
 
     // Test Problem 13: Minimum Cost to Connect Sticks
     vector<int> sticks = {2,4,3};
-    cout << "Minimum Cost to Connect Sticks: " << connectSticks(sticks) << endl;
+    cout << "Minimum Cost to Connect Sticks: " << ConnectSticks(sticks) << endl;
 
     // Test Problem 14: Lemonade Change
     vector<int> bills = {5,5,5,10,20};
-    cout << "Lemonade Change: " << (lemonadeChange(bills) ? "True" : "False") << endl;
+    cout << "Lemonade Change: " << (LemonadeChange(bills) ? "True" : "False") << endl;
 
     // Test Problem 15: Two City Scheduling
     vector<vector<int>> costs = {{10,20},{30,200},{50,10},{20,30}};
-    cout << "Two City Scheduling Cost: " << twoCitySchedCost(costs) << endl;
+    cout << "Two City Scheduling Cost: " << TwoCitySchedCost(costs) << endl;
 
     // Test Problem 16: Minimum Deletions to Make Character Frequencies Unique
     string s_16 = "aaabbbcc";
-    cout << "Min Deletions: " << minDeletions(s_16) << endl;
+    cout << "Min Deletions: " << MinDeletions(s_16) << endl;
 
     // Test Problem 17: Hand of Straights
     vector<int> hand = {1,2,3,6,2,3,4,7,8};
-    cout << "Hand of Straights: " << (isNStraightHand(hand, 3) ? "True" : "False") << endl;
+    cout << "Hand of Straights: " << (IsNStraightHand(hand, 3) ? "True" : "False") << endl;
 
     // Test Problem 18: Minimum Cost to Move Chips
     vector<int> chips = {1,2,3};
-    cout << "Min Cost to Move Chips: " << minCostToMoveChips(chips) << endl;
+    cout << "Min Cost to Move Chips: " << MinCostToMoveChips(chips) << endl;
 
     // Test Problem 19: Maximum Number of Events That Can Be Attended
     vector<vector<int>> events = {{1,2},{2,3},{3,4},{1,2}};
-    cout << "Max Events Attended: " << maxEvents(events) << endl;
+    cout << "Max Events Attended: " << MaxEvents(events) << endl;
 
     // Test Problem 20: Boat to Save People
     vector<int> people_20 = {3,2,2,1};
-    cout << "Num Rescue Boats: " << numRescueBoats(people_20, 3) << endl;
+    cout << "Num Rescue Boats: " << NumRescueBoats(people_20, 3) << endl;
 
     return 0;
 }

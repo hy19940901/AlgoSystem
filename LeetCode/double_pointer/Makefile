@@ -1,9 +1,9 @@
 CC = g++
 CFLAGS = -std=c++20 -Wall -g
 
-SRCS = main.cpp
+SRCS = double_pointer.cpp
 OBJS = $(SRCS:.cpp=.o)
-EXEC = QuickSelect_program
+EXEC = double_pointer
 
 all: $(EXEC)
 

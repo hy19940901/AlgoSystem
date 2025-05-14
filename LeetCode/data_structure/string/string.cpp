@@ -14,7 +14,7 @@ using namespace std;
  * Input: s = "hello"
  * Output: "olleh"
  */
-string reverseString(string s) {
+string ReverseString(string s) {
     int left = 0, right = s.size() - 1;
     while (left < right) {
         char temp = s[left];
@@ -33,7 +33,7 @@ string reverseString(string s) {
  * Input: s = "A man, a plan, a canal: Panama"
  * Output: true
  */
-bool isPalindrome(string s) {
+bool IsPalindrome(string s) {
     string cleaned;
     for (char c : s) {
         if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))
@@ -55,7 +55,7 @@ bool isPalindrome(string s) {
  * Input: s = "Hello World"
  * Output: "hello world"
  */
-string toLowerCase(string s) {
+string ToLowerCase(string s) {
     for (size_t i = 0; i < s.size(); i++)
         if (s[i] >= 'A' && s[i] <= 'Z') s[i] = s[i] + 32;
     return s;
@@ -69,7 +69,7 @@ string toLowerCase(string s) {
  * Input: s = "leetcodeisacommunityforcoders"
  * Output: "ltcdscmmntyfrcdrs"
  */
-string removeVowels(string s) {
+string RemoveVowels(string s) {
     string result;
     for (char c : s)
         if (!(c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' ||
@@ -86,7 +86,7 @@ string removeVowels(string s) {
  * Input: s = "the sky is blue"
  * Output: "blue is sky the"
  */
-string reverseWords(string s) {
+string ReverseWords(string s) {
     vector<string> words;
     string word, result;
     int i = 0;
@@ -114,7 +114,7 @@ string reverseWords(string s) {
  * Input: s = "aabb"
  * Output: ' '
  */
-char firstUniqChar(string s) {
+char FirstUniqChar(string s) {
     int freq[26] = {0};
     for (char c : s) freq[c - 'a']++;
     for (char c : s)
@@ -132,7 +132,7 @@ char firstUniqChar(string s) {
  * Input: s = "rat", t = "car"
  * Output: false
  */
-bool isAnagram(string s, string t) {
+bool IsAnagram(string s, string t) {
     if (s.size() != t.size()) return false;
     int count[26] = {0};
     for (size_t i = 0; i < s.size(); i++) {
@@ -154,7 +154,7 @@ bool isAnagram(string s, string t) {
  * Input: strs = ["dog","racecar","car"]
  * Output: ""
  */
-string longestCommonPrefix(vector<string>& strs) {
+string LongestCommonPrefix(vector<string>& strs) {
     if (strs.empty()) return "";
     for (size_t i = 0; i < strs[0].size(); i++)
         for (size_t j = 1; j < strs.size(); j++)
@@ -175,9 +175,9 @@ string longestCommonPrefix(vector<string>& strs) {
  * - n = 3 -> "21"
  * - n = 4 -> "1211"
  */
-string countAndSay(int n) {
+string CountAndSay(int n) {
     if (n == 1) return "1";
-    string prev = countAndSay(n - 1), result = "";
+    string prev = CountAndSay(n - 1), result = "";
     for (size_t i = 0; i < prev.size(); i++) {
         int count = 1;
         while (static_cast<size_t>(i) + 1 < prev.size() && prev[i] == prev[i + 1]) {
@@ -199,11 +199,11 @@ string countAndSay(int n) {
  * Input: s = "foo", t = "bar"
  * Output: false
  */
-bool isIsomorphic(string s, string t) {
-    unordered_map<char, int> mapS, mapT;
+bool IsIsomorphic(string s, string t) {
+    unordered_map<char, int> map_s, map_t;
     for (size_t i = 0; i < s.size(); i++) {
-        if (mapS[s[i]] != mapT[t[i]]) return false;
-        mapS[s[i]] = mapT[t[i]] = i + 1;
+        if (map_s[s[i]] != map_t[t[i]]) return false;
+        map_s[s[i]] = map_t[t[i]] = i + 1;
     }
     return true;
 }
@@ -219,7 +219,7 @@ bool isIsomorphic(string s, string t) {
  * Input: s = "(]"
  * Output: false
  */
-bool isValid(string s) {
+bool IsValid(string s) {
     vector<char> stack;
     for (char c : s) {
         if (c == '(' || c == '{' || c == '[') {
@@ -246,7 +246,7 @@ bool isValid(string s) {
  * Input: haystack = "aaaaa", needle = "bba"
  * Output: -1
  */
-int strStr(string haystack, string needle) {
+int StrStr(string haystack, string needle) {
     for (size_t i = 0; i <= haystack.size() - needle.size(); i++) {
         int j = 0;
         while (static_cast<size_t>(j) < needle.size() && haystack[i + j] == needle[j]) j++;
@@ -263,7 +263,7 @@ int strStr(string haystack, string needle) {
  * Input: s = "Hello World"
  * Output: 5
  */
-int lengthOfLastWord(string s) {
+int LengthOfLastWord(string s) {
     int length = 0, i = s.size() - 1;
     while (i >= 0 && s[i] == ' ') i--; // Trim trailing spaces
     while (i >= 0 && s[i] != ' ') {
@@ -281,7 +281,7 @@ int lengthOfLastWord(string s) {
  * Input: a = "11", b = "1"
  * Output: "100"
  */
-string addBinary(string a, string b) {
+string AddBinary(string a, string b) {
     string result = "";
     int carry = 0, i = a.size() - 1, j = b.size() - 1;
     while (i >= 0 || j >= 0 || carry) {
@@ -302,7 +302,7 @@ string addBinary(string a, string b) {
  * Input: num1 = "2", num2 = "3"
  * Output: "6"
  */
-string multiplyStrings(string num1, string num2) {
+string MultiplyStrings(string num1, string num2) {
     int n = num1.size(), m = num2.size();
     vector<int> result(n + m, 0);
     for (int i = n - 1; i >= 0; i--) {
@@ -328,15 +328,15 @@ string multiplyStrings(string num1, string num2) {
  * Input: s = "abcabcbb"
  * Output: 3
  */
-int lengthOfLongestSubstring(string s) {
-    unordered_map<char, int> lastIndex;
-    int maxLength = 0, start = 0;
+int LengthOfLongestSubstring(string s) {
+    unordered_map<char, int> last_index_map;
+    int max_length = 0, start = 0;
     for (size_t i = 0; i < s.size(); i++) {
-        if (lastIndex.count(s[i])) start = max(start, lastIndex[s[i]] + 1);
-        lastIndex[s[i]] = i;
-        maxLength = max(maxLength, static_cast<int>(i) - start + 1);
+        if (last_index_map.count(s[i])) start = max(start, last_index_map[s[i]] + 1);
+        last_index_map[s[i]] = i;
+        max_length = max(max_length, static_cast<int>(i) - start + 1);
     }
-    return maxLength;
+    return max_length;
 }
 
 /**
@@ -347,7 +347,7 @@ int lengthOfLongestSubstring(string s) {
  * Input: s = "abca"
  * Output: true
  */
-bool isValidPalindrome(string s, int left, int right) {
+bool IsValidPalindrome(string s, int left, int right) {
     while (left < right) {
         if (s[left] != s[right]) return false;
         left++, right--;
@@ -355,11 +355,11 @@ bool isValidPalindrome(string s, int left, int right) {
     return true;
 }
 
-bool validPalindrome(string s) {
+bool ValidPalindrome(string s) {
     int left = 0, right = s.size() - 1;
     while (left < right) {
         if (s[left] != s[right])
-            return isValidPalindrome(s, left + 1, right) || isValidPalindrome(s, left, right - 1);
+            return IsValidPalindrome(s, left + 1, right) || IsValidPalindrome(s, left, right - 1);
         left++, right--;
     }
     return true;
@@ -373,7 +373,7 @@ bool validPalindrome(string s) {
  * Input: s = "a-bC-dEf-ghIj"
  * Output: "j-Ih-gfE-dCba"
  */
-string reverseOnlyLetters(string s) {
+string ReverseOnlyLetters(string s) {
     int left = 0, right = s.size() - 1;
     while (left < right) {
         while (left < right && !isalpha(s[left])) left++;
@@ -391,7 +391,7 @@ string reverseOnlyLetters(string s) {
  * Input: s = "abc", t = "ahbgdc"
  * Output: true
  */
-bool isSubsequence(string s, string t) {
+bool IsSubsequence(string s, string t) {
     int i = 0, j = 0;
     while (static_cast<size_t>(i) < s.size() && static_cast<size_t>(j) < t.size()) {
         if (s[i] == t[j]) i++;
@@ -408,18 +408,18 @@ bool isSubsequence(string s, string t) {
  * Input: s = "00110011"
  * Output: 6
  */
-int countBinarySubstrings(string s) {
-    int prevGroup = 0, curGroup = 1, count = 0;
+int CountBinarySubstrings(string s) {
+    int prev_group = 0, cur_group = 1, count = 0;
     for (size_t i = 1; i < s.size(); i++) {
         if (s[i] == s[i - 1]) {
-            curGroup++;
+            cur_group++;
         } else {
-            count += min(prevGroup, curGroup);
-            prevGroup = curGroup;
-            curGroup = 1;
+            count += min(prev_group, cur_group);
+            prev_group = cur_group;
+            cur_group = 1;
         }
     }
-    return count + min(prevGroup, curGroup);
+    return count + min(prev_group, cur_group);
 }
 
 /**
@@ -428,105 +428,105 @@ int countBinarySubstrings(string s) {
 int main() {
     // Test Problem 1: Reverse a String
     cout << "Test Problem 1: Reverse a String (LC 344) \n";
-    cout << reverseString("hello") << " (Expected: olleh)" << endl;
-    cout << reverseString("world") << " (Expected: dlrow)" << endl;
+    cout << ReverseString("hello") << " (Expected: olleh)" << endl;
+    cout << ReverseString("world") << " (Expected: dlrow)" << endl;
 
     // Test Problem 2: Check if a String is a Palindrome
     cout << "\nTest Problem 2: Check if a String is a Palindrome (LC 125) \n";
-    cout << (isPalindrome("A man, a plan, a canal: Panama") ? "true" : "false") << " (Expected: true)" << endl;
-    cout << (isPalindrome("race a car") ? "true" : "false") << " (Expected: false)" << endl;
+    cout << (IsPalindrome("A man, a plan, a canal: Panama") ? "true" : "false") << " (Expected: true)" << endl;
+    cout << (IsPalindrome("race a car") ? "true" : "false") << " (Expected: false)" << endl;
 
     // Test Problem 3: Convert String to Lowercase
     cout << "\nTest Problem 3: Convert String to Lowercase (LC 709) \n";
-    cout << toLowerCase("Hello World") << " (Expected: hello world)" << endl;
-    cout << toLowerCase("LeetCode") << " (Expected: leetcode)" << endl;
+    cout << ToLowerCase("Hello World") << " (Expected: hello world)" << endl;
+    cout << ToLowerCase("LeetCode") << " (Expected: leetcode)" << endl;
 
     // Test Problem 4: Remove Vowels from a String
     cout << "\nTest Problem 4: Remove Vowels from a String (LC 1119) \n";
-    cout << removeVowels("leetcodeisacommunityforcoders") << " (Expected: ltcdscmmntyfrcdrs)" << endl;
-    cout << removeVowels("hello") << " (Expected: hll)" << endl;
+    cout << RemoveVowels("leetcodeisacommunityforcoders") << " (Expected: ltcdscmmntyfrcdrs)" << endl;
+    cout << RemoveVowels("hello") << " (Expected: hll)" << endl;
 
     // Test Problem 5: Reverse Words in a String
     cout << "\nTest Problem 5: Reverse Words in a String (LC 151) \n";
-    cout << reverseWords("the sky is blue") << " (Expected: blue is sky the)" << endl;
-    cout << reverseWords("  hello world  ") << " (Expected: world hello)" << endl;
+    cout << ReverseWords("the sky is blue") << " (Expected: blue is sky the)" << endl;
+    cout << ReverseWords("  hello world  ") << " (Expected: world hello)" << endl;
 
     // Test Problem 6: Find the First Non-Repeating Character
     cout << "Test Problem 6: Find the First Non-Repeating Character (LC 387) \n";
-    cout << firstUniqChar("leetcode") << " (Expected: l)" << endl;
-    cout << firstUniqChar("aabb") << " (Expected: ' ')" << endl;
+    cout << FirstUniqChar("leetcode") << " (Expected: l)" << endl;
+    cout << FirstUniqChar("aabb") << " (Expected: ' ')" << endl;
 
     // Test Problem 7: Check if Two Strings Are Anagrams
     cout << "\nTest Problem 7: Check if Two Strings Are Anagrams (LC 242) \n";
-    cout << (isAnagram("anagram", "nagaram") ? "true" : "false") << " (Expected: true)" << endl;
-    cout << (isAnagram("rat", "car") ? "true" : "false") << " (Expected: false)" << endl;
+    cout << (IsAnagram("anagram", "nagaram") ? "true" : "false") << " (Expected: true)" << endl;
+    cout << (IsAnagram("rat", "car") ? "true" : "false") << " (Expected: false)" << endl;
 
     // Test Problem 8: Longest Common Prefix
     cout << "\nTest Problem 8: Longest Common Prefix (LC 14) \n";
     vector<string> strs1 = {"flower", "flow", "flight"};
     vector<string> strs2 = {"dog", "racecar", "car"};
-    cout << longestCommonPrefix(strs1) << " (Expected: fl)" << endl;
-    cout << longestCommonPrefix(strs2) << " (Expected: '')" << endl;
+    cout << LongestCommonPrefix(strs1) << " (Expected: fl)" << endl;
+    cout << LongestCommonPrefix(strs2) << " (Expected: '')" << endl;
 
     // Test Problem 9: Count and Say
     cout << "\nTest Problem 9: Count and Say (LC 38) \n";
-    cout << countAndSay(4) << " (Expected: 1211)" << endl;
-    cout << countAndSay(5) << " (Expected: 111221)" << endl;
+    cout << CountAndSay(4) << " (Expected: 1211)" << endl;
+    cout << CountAndSay(5) << " (Expected: 111221)" << endl;
 
     // Test Problem 10: Isomorphic Strings
     cout << "\nTest Problem 10: Isomorphic Strings (LC 205) \n";
-    cout << (isIsomorphic("egg", "add") ? "true" : "false") << " (Expected: true)" << endl;
-    cout << (isIsomorphic("foo", "bar") ? "true" : "false") << " (Expected: false)" << endl;
+    cout << (IsIsomorphic("egg", "add") ? "true" : "false") << " (Expected: true)" << endl;
+    cout << (IsIsomorphic("foo", "bar") ? "true" : "false") << " (Expected: false)" << endl;
 
     // Test Problem 11: Valid Parentheses
     cout << "Test Problem 11: Valid Parentheses (LC 20) \n";
-    cout << (isValid("()[]{}") ? "true" : "false") << " (Expected: true)" << endl;
-    cout << (isValid("(]") ? "true" : "false") << " (Expected: false)" << endl;
+    cout << (IsValid("()[]{}") ? "true" : "false") << " (Expected: true)" << endl;
+    cout << (IsValid("(]") ? "true" : "false") << " (Expected: false)" << endl;
 
     // Test Problem 12: Implement strStr()
     cout << "\nTest Problem 12: Implement strStr() (LC 28) \n";
-    cout << strStr("hello", "ll") << " (Expected: 2)" << endl;
-    cout << strStr("aaaaa", "bba") << " (Expected: -1)" << endl;
+    cout << StrStr("hello", "ll") << " (Expected: 2)" << endl;
+    cout << StrStr("aaaaa", "bba") << " (Expected: -1)" << endl;
 
     // Test Problem 13: Length of Last Word
     cout << "\nTest Problem 13: Length of Last Word (LC 58) \n";
-    cout << lengthOfLastWord("Hello World") << " (Expected: 5)" << endl;
-    cout << lengthOfLastWord("   fly me   to   the moon  ") << " (Expected: 4)" << endl;
+    cout << LengthOfLastWord("Hello World") << " (Expected: 5)" << endl;
+    cout << LengthOfLastWord("   fly me   to   the moon  ") << " (Expected: 4)" << endl;
 
     // Test Problem 14: Add Binary
     cout << "\nTest Problem 14: Add Binary (LC 67) \n";
-    cout << addBinary("11", "1") << " (Expected: 100)" << endl;
-    cout << addBinary("1010", "1011") << " (Expected: 10101)" << endl;
+    cout << AddBinary("11", "1") << " (Expected: 100)" << endl;
+    cout << AddBinary("1010", "1011") << " (Expected: 10101)" << endl;
 
     // Test Problem 15: Multiply Strings
     cout << "\nTest Problem 15: Multiply Strings (LC 43) \n";
-    cout << multiplyStrings("2", "3") << " (Expected: 6)" << endl;
-    cout << multiplyStrings("123", "456") << " (Expected: 56088)" << endl;
+    cout << MultiplyStrings("2", "3") << " (Expected: 6)" << endl;
+    cout << MultiplyStrings("123", "456") << " (Expected: 56088)" << endl;
 
     // Test Problem 16: Longest Substring Without Repeating Characters
     cout << "\nTest Problem 16: Longest Substring Without Repeating Characters (LC 3) \n";
-    cout << lengthOfLongestSubstring("abcabcbb") << " (Expected: 3)" << endl;
-    cout << lengthOfLongestSubstring("bbbbb") << " (Expected: 1)" << endl;
+    cout << LengthOfLongestSubstring("abcabcbb") << " (Expected: 3)" << endl;
+    cout << LengthOfLongestSubstring("bbbbb") << " (Expected: 1)" << endl;
 
     // Test Problem 17: Valid Palindrome II
     cout << "\nTest Problem 17: Valid Palindrome II (LC 680) \n";
-    cout << (validPalindrome("abca") ? "true" : "false") << " (Expected: true)" << endl;
-    cout << (validPalindrome("racecar") ? "true" : "false") << " (Expected: true)" << endl;
+    cout << (ValidPalindrome("abca") ? "true" : "false") << " (Expected: true)" << endl;
+    cout << (ValidPalindrome("racecar") ? "true" : "false") << " (Expected: true)" << endl;
 
     // Test Problem 18: Reverse Only Letters
     cout << "\nTest Problem 18: Reverse Only Letters (LC 917) \n";
-    cout << reverseOnlyLetters("a-bC-dEf-ghIj") << " (Expected: j-Ih-gfE-dCba)" << endl;
-    cout << reverseOnlyLetters("Test1ng-Leet=code-Q!") << " (Expected: Qedo1ct-eeLg=ntse-T!)" << endl;
+    cout << ReverseOnlyLetters("a-bC-dEf-ghIj") << " (Expected: j-Ih-gfE-dCba)" << endl;
+    cout << ReverseOnlyLetters("Test1ng-Leet=code-Q!") << " (Expected: Qedo1ct-eeLg=ntse-T!)" << endl;
 
     // Test Problem 19: Check If a String Is a Subsequence
     cout << "\nTest Problem 19: Check If a String Is a Subsequence (LC 392) \n";
-    cout << (isSubsequence("abc", "ahbgdc") ? "true" : "false") << " (Expected: true)" << endl;
-    cout << (isSubsequence("axc", "ahbgdc") ? "true" : "false") << " (Expected: false)" << endl;
+    cout << (IsSubsequence("abc", "ahbgdc") ? "true" : "false") << " (Expected: true)" << endl;
+    cout << (IsSubsequence("axc", "ahbgdc") ? "true" : "false") << " (Expected: false)" << endl;
 
     // Test Problem 20: Count Binary Substrings
     cout << "\nTest Problem 20: Count Binary Substrings (LC 696) \n";
-    cout << countBinarySubstrings("00110011") << " (Expected: 6)" << endl;
-    cout << countBinarySubstrings("10101") << " (Expected: 4)" << endl;
+    cout << CountBinarySubstrings("00110011") << " (Expected: 6)" << endl;
+    cout << CountBinarySubstrings("10101") << " (Expected: 4)" << endl;
 
     return 0;
 }

@@ -1,9 +1,9 @@
 CC = g++
 CFLAGS = -std=c++20 -Wall -g
 
-SRCS = main.cpp
+SRCS = maze.cpp
 OBJS = $(SRCS:.cpp=.o)
-EXEC = Greedy_program
+EXEC = maze
 
 all: $(EXEC)
 

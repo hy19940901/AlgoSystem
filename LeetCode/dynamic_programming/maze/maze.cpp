@@ -16,7 +16,7 @@ using namespace std;
 /**
  * PART 1: DFS (Count Paths, No Path Tracking)
  */
-void dfsCountPaths(vector<vector<int>>& maze, int x, int y, int& totalPaths) {
+void DfsCountPaths(vector<vector<int>>& maze, int x, int y, int& total_paths) {
     int rows = maze.size();
     int cols = maze[0].size();
 
@@ -27,7 +27,7 @@ void dfsCountPaths(vector<vector<int>>& maze, int x, int y, int& totalPaths) {
 
     // If the bottom-right corner is reached, increment total paths
     if (x == rows - 1 && y == cols - 1) {
-        totalPaths++;
+        total_paths++;
         return;
     }
 
@@ -35,10 +35,10 @@ void dfsCountPaths(vector<vector<int>>& maze, int x, int y, int& totalPaths) {
     maze[x][y] = 0;
 
     // Explore all four directions
-    dfsCountPaths(maze, x - 1, y, totalPaths); // Up
-    dfsCountPaths(maze, x + 1, y, totalPaths); // Down
-    dfsCountPaths(maze, x, y - 1, totalPaths); // Left
-    dfsCountPaths(maze, x, y + 1, totalPaths); // Right
+    DfsCountPaths(maze, x - 1, y, total_paths); // Up
+    DfsCountPaths(maze, x + 1, y, total_paths); // Down
+    DfsCountPaths(maze, x, y - 1, total_paths); // Left
+    DfsCountPaths(maze, x, y + 1, total_paths); // Right
 
     // Unmark the current cell for backtracking
     maze[x][y] = 1;
@@ -47,7 +47,7 @@ void dfsCountPaths(vector<vector<int>>& maze, int x, int y, int& totalPaths) {
 /**
  * PART 2: DP (Count Paths, No Path Tracking)
  */
-int dpCountPaths(vector<vector<int>>& maze) {
+int DpCountPaths(vector<vector<int>>& maze) {
     int rows = maze.size();
     int cols = maze[0].size();
 
@@ -90,7 +90,7 @@ int dpCountPaths(vector<vector<int>>& maze) {
 /**
  * PART 3: DFS (Track All Paths)
  */
-void dfsTrackPaths(vector<vector<int>>& maze, int x, int y, string path, vector<string>& allPaths) {
+void DfsTrackPaths(vector<vector<int>>& maze, int x, int y, string path, vector<string>& all_paths) {
     int rows = maze.size();
     int cols = maze[0].size();
 
@@ -107,7 +107,7 @@ void dfsTrackPaths(vector<vector<int>>& maze, int x, int y, string path, vector<
 
     // If the bottom-right corner is reached, store the path
     if (x == rows - 1 && y == cols - 1) {
-        allPaths.push_back(path);
+        all_paths.push_back(path);
         return;
     }
 
@@ -115,10 +115,10 @@ void dfsTrackPaths(vector<vector<int>>& maze, int x, int y, string path, vector<
     maze[x][y] = 0;
 
     // Explore all four directions
-    dfsTrackPaths(maze, x - 1, y, path, allPaths); // Up
-    dfsTrackPaths(maze, x + 1, y, path, allPaths); // Down
-    dfsTrackPaths(maze, x, y - 1, path, allPaths); // Left
-    dfsTrackPaths(maze, x, y + 1, path, allPaths); // Right
+    DfsTrackPaths(maze, x - 1, y, path, all_paths); // Up
+    DfsTrackPaths(maze, x + 1, y, path, all_paths); // Down
+    DfsTrackPaths(maze, x, y - 1, path, all_paths); // Left
+    DfsTrackPaths(maze, x, y + 1, path, all_paths); // Right
 
     // Unmark the current cell for backtracking
     maze[x][y] = 1;
@@ -127,7 +127,7 @@ void dfsTrackPaths(vector<vector<int>>& maze, int x, int y, string path, vector<
 /**
  * PART 4: DP (Track All Paths)
  */
-vector<string> dpTrackPaths(vector<vector<int>>& maze) {
+vector<string> DpTrackPaths(vector<vector<int>>& maze) {
     int rows = maze.size();
     int cols = maze[0].size();
 
@@ -191,26 +191,26 @@ int main() {
     };
 
     // PART 1: DFS to count paths (no tracking)
-    int totalPathsDFS = 0;
-    dfsCountPaths(maze, 0, 0, totalPathsDFS);
-    cout << "Total number of unique paths (DFS, no tracking): " << totalPathsDFS << endl;
+    int total_paths_dfs = 0;
+    DfsCountPaths(maze, 0, 0, total_paths_dfs);
+    cout << "Total number of unique paths (DFS, no tracking): " << total_paths_dfs << endl;
 
     // PART 2: DP to count paths (no tracking)
-    int totalPathsDP = dpCountPaths(maze);
-    cout << "Total number of unique paths (DP, no tracking): " << totalPathsDP << endl;
+    int total_paths_dp = DpCountPaths(maze);
+    cout << "Total number of unique paths (DP, no tracking): " << total_paths_dp << endl;
 
     // PART 3: DFS to track all paths
-    vector<string> dfsPaths;
-    dfsTrackPaths(maze, 0, 0, "", dfsPaths);
+    vector<string> dfs_paths;
+    DfsTrackPaths(maze, 0, 0, "", dfs_paths);
     cout << "All possible paths (DFS with tracking):" << endl;
-    for (const auto& path : dfsPaths) {
+    for (const auto& path : dfs_paths) {
         cout << path << endl;
     }
 
     // PART 4: DP to track all paths
-    vector<string> dpPaths = dpTrackPaths(maze);
+    vector<string> dp_paths = DpTrackPaths(maze);
     cout << "All possible paths (DP with tracking):" << endl;
-    for (const auto& path : dpPaths) {
+    for (const auto& path : dp_paths) {
         cout << path << endl;
     }
 

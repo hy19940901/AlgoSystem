@@ -38,12 +38,12 @@ Backtracking:
 Time Complexity: O(n * W)
 Space Complexity: O(n * W)
 */
-int zeroOneKnapsack2DWithBacktrack(int maxCapacity, const vector<Item>& items, vector<int>& selectedItems) {
+int ZeroOneKnapsack2DWithBacktrack(int max_capacity, const vector<Item>& items, vector<int>& selected_items) {
     int n = items.size();
-    vector<vector<int>> dp(n + 1, vector<int>(maxCapacity + 1, 0));
+    vector<vector<int>> dp(n + 1, vector<int>(max_capacity + 1, 0));
 
     for (int i = 1; i <= n; ++i) {
-        for (int j = 1; j <= maxCapacity; ++j) {
+        for (int j = 1; j <= max_capacity; ++j) {
             if (items[i - 1].weight <= j) {
                 dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - items[i - 1].weight] + items[i - 1].value);
             } else {
@@ -53,16 +53,16 @@ int zeroOneKnapsack2DWithBacktrack(int maxCapacity, const vector<Item>& items, v
     }
 
     // Backtracking to find selected items
-    selectedItems.assign(n, 0);
-    int w = maxCapacity;
+    selected_items.assign(n, 0);
+    int w = max_capacity;
     for (int i = n; i > 0; --i) {
         if (dp[i][w] != dp[i - 1][w]) {
-            selectedItems[i - 1] = 1;
+            selected_items[i - 1] = 1;
             w -= items[i - 1].weight;
         }
     }
 
-    return dp[n][maxCapacity];
+    return dp[n][max_capacity];
 }
 
 // ===========================
@@ -76,12 +76,12 @@ Same logic as above, but no item tracking.
 Time Complexity: O(n * W)
 Space Complexity: O(n * W)
 */
-int zeroOneKnapsack2DWithoutBacktrack(int maxCapacity, const vector<Item>& items) {
+int ZeroOneKnapsack2DWithoutBacktrack(int max_capacity, const vector<Item>& items) {
     int n = items.size();
-    vector<vector<int>> dp(n + 1, vector<int>(maxCapacity + 1, 0));
+    vector<vector<int>> dp(n + 1, vector<int>(max_capacity + 1, 0));
 
     for (int i = 1; i <= n; ++i) {
-        for (int j = 1; j <= maxCapacity; ++j) {
+        for (int j = 1; j <= max_capacity; ++j) {
             if (items[i - 1].weight <= j) {
                 dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - items[i - 1].weight] + items[i - 1].value);
             } else {
@@ -90,7 +90,7 @@ int zeroOneKnapsack2DWithoutBacktrack(int maxCapacity, const vector<Item>& items
         }
     }
 
-    return dp[n][maxCapacity];
+    return dp[n][max_capacity];
 }
 
 // ============================
@@ -106,7 +106,7 @@ DP Definition:
 - last[j]: index of last item used to reach dp[j]
 
 Transition:
-- For each item i, traverse j from maxCapacity to weight[i] (reverse)
+- For each item i, traverse j from max_capacity to weight[i] (reverse)
 
 Backtracking:
 - Trace last[j] to reconstruct selected items
@@ -114,13 +114,13 @@ Backtracking:
 Time Complexity: O(n * W)
 Space Complexity: O(W)
 */
-int zeroOneKnapsack1DWithBacktrack(int maxCapacity, const vector<Item>& items, vector<int>& selectedItems) {
+int ZeroOneKnapsack1DWithBacktrack(int max_capacity, const vector<Item>& items, vector<int>& selected_items) {
     int n = items.size();
-    vector<int> dp(maxCapacity + 1, 0);
-    vector<int> last(maxCapacity + 1, -1); // Track path
+    vector<int> dp(max_capacity + 1, 0);
+    vector<int> last(max_capacity + 1, -1); // Track path
 
     for (int i = 0; i < n; ++i) {
-        for (int j = maxCapacity; j >= items[i].weight; --j) {
+        for (int j = max_capacity; j >= items[i].weight; --j) {
             if (dp[j] < dp[j - items[i].weight] + items[i].value) {
                 dp[j] = dp[j - items[i].weight] + items[i].value;
                 last[j] = i; // Record selected item index
@@ -129,15 +129,15 @@ int zeroOneKnapsack1DWithBacktrack(int maxCapacity, const vector<Item>& items, v
     }
 
     // Backtracking to find selected items
-    selectedItems.assign(n, 0);
-    int w = maxCapacity;
+    selected_items.assign(n, 0);
+    int w = max_capacity;
     while (w > 0 && last[w] != -1) {
         int idx = last[w];
-        selectedItems[idx] = 1;
+        selected_items[idx] = 1;
         w -= items[idx].weight;
     }
 
-    return dp[maxCapacity];
+    return dp[max_capacity];
 }
 
 // =============================
@@ -151,17 +151,17 @@ Space-optimized version of 0-1 knapsack without selection recovery.
 Time Complexity: O(n * W)
 Space Complexity: O(W)
 */
-int zeroOneKnapsack1DWithoutBacktrack(int maxCapacity, const vector<Item>& items) {
+int ZeroOneKnapsack1DWithoutBacktrack(int max_capacity, const vector<Item>& items) {
     int n = items.size();
-    vector<int> dp(maxCapacity + 1, 0);
+    vector<int> dp(max_capacity + 1, 0);
 
     for (int i = 0; i < n; ++i) {
-        for (int j = maxCapacity; j >= items[i].weight; --j) {
+        for (int j = max_capacity; j >= items[i].weight; --j) {
             dp[j] = max(dp[j], dp[j - items[i].weight] + items[i].value);
         }
     }
 
-    return dp[maxCapacity];
+    return dp[max_capacity];
 }
 
 // =====================
@@ -175,28 +175,28 @@ Try all subsets using DFS. Update selected items if new path gives better value.
 Time Complexity: O(2^n)
 Space Complexity: O(n)
 */
-int zeroOneKnapsackBruteForce(int idx, int remainingCapacity, const vector<Item>& items, vector<int>& selectedItems) {
-    if (static_cast<size_t>(idx) == items.size() || remainingCapacity == 0) {
+int ZeroOneKnapsackBruteForce(int idx, int remaining_capacity, const vector<Item>& items, vector<int>& selected_items) {
+    if (static_cast<size_t>(idx) == items.size() || remaining_capacity == 0) {
         return 0;
     }
 
     // Skip current item
-    int notPick = zeroOneKnapsackBruteForce(idx + 1, remainingCapacity, items, selectedItems);
+    int not_pick = ZeroOneKnapsackBruteForce(idx + 1, remaining_capacity, items, selected_items);
 
     // Pick current item (if capacity allows)
     int pick = 0;
-    if (items[idx].weight <= remainingCapacity) {
-        vector<int> tempSelected = selectedItems; // Copy current selection state
-        tempSelected[idx] = 1;
-        pick = items[idx].value + zeroOneKnapsackBruteForce(idx + 1, remainingCapacity - items[idx].weight, items, tempSelected);
+    if (items[idx].weight <= remaining_capacity) {
+        vector<int> temp_selected = selected_items; // Copy current selection state
+        temp_selected[idx] = 1;
+        pick = items[idx].value + ZeroOneKnapsackBruteForce(idx + 1, remaining_capacity - items[idx].weight, items, temp_selected);
 
         // Update selection state if picking gives better value
-        if (pick > notPick) {
-            selectedItems = tempSelected;
+        if (pick > not_pick) {
+            selected_items = temp_selected;
         }
     }
 
-    return max(pick, notPick);
+    return max(pick, not_pick);
 }
 
 // =====================
@@ -212,23 +212,23 @@ DP Definition:
 
 Transition:
 - For each item i:
-    for j from weight[i] to maxCapacity:
+    for j from weight[i] to max_capacity:
         dp[j] = max(dp[j], dp[j - weight[i]] + value[i])
 
 Time Complexity: O(n * W)
 Space Complexity: O(W)
 */
-int completeKnapsack1DWithoutBacktrack(int maxCapacity, const vector<Item>& items) {
+int CompleteKnapsack1DWithoutBacktrack(int max_capacity, const vector<Item>& items) {
     int n = items.size();
-    vector<int> dp(maxCapacity + 1, 0);
+    vector<int> dp(max_capacity + 1, 0);
 
     for (int i = 0; i < n; ++i) {
-        for (int j = items[i].weight; j <= maxCapacity; ++j) {
+        for (int j = items[i].weight; j <= max_capacity; ++j) {
             dp[j] = max(dp[j], dp[j - items[i].weight] + items[i].value);
         }
     }
 
-    return dp[maxCapacity];
+    return dp[max_capacity];
 }
 
 // =====================
@@ -243,26 +243,26 @@ Track item counts leading to optimal value.
 Time Complexity: Exponential
 Space Complexity: O(n)
 */
-int completeKnapsackBruteForce(int idx, int remainingCapacity, const vector<Item>& items, vector<int>& itemCounts) {
-    if (static_cast<size_t>(idx) == items.size() || remainingCapacity == 0) {
+int CompleteKnapsackBruteForce(int idx, int remaining_capacity, const vector<Item>& items, vector<int>& item_counts) {
+    if (static_cast<size_t>(idx) == items.size() || remaining_capacity == 0) {
         return 0;
     }
 
-    int maxVal = 0;
-    int maxItems = remainingCapacity / items[idx].weight;
+    int max_val = 0;
+    int max_items = remaining_capacity / items[idx].weight;
 
-    for (int count = 0; count <= maxItems; ++count) {
-        vector<int> tempCounts = itemCounts;
-        tempCounts[idx] = count;
-        int tempVal = count * items[idx].value + completeKnapsackBruteForce(idx + 1, remainingCapacity - count * items[idx].weight, items, tempCounts);
+    for (int count = 0; count <= max_items; ++count) {
+        vector<int> temp_counts = item_counts;
+        temp_counts[idx] = count;
+        int temp_val = count * items[idx].value + CompleteKnapsackBruteForce(idx + 1, remaining_capacity - count * items[idx].weight, items, temp_counts);
 
-        if (tempVal > maxVal) {
-            maxVal = tempVal;
-            itemCounts = tempCounts;
+        if (temp_val > max_val) {
+            max_val = temp_val;
+            item_counts = temp_counts;
         }
     }
 
-    return maxVal;
+    return max_val;
 }
 
 /*
@@ -275,15 +275,15 @@ int completeKnapsackBruteForce(int idx, int remainingCapacity, const vector<Item
  * Input: nums = [1,5,11,5]
  * Output: true
  */
-bool canPartition(vector<int>& numsPartition) {
-    int sum = accumulate(numsPartition.begin(), numsPartition.end(), 0);
+bool CanPartition(vector<int>& nums_partition) {
+    int sum = accumulate(nums_partition.begin(), nums_partition.end(), 0);
     if (sum % 2 != 0) return false;
     int target = sum / 2;
 
     vector<bool> dp(target + 1, false);
     dp[0] = true;
 
-    for (int num : numsPartition) {
+    for (int num : nums_partition) {
         for (int j = target; j >= num; --j) {
             dp[j] = dp[j] || dp[j - num];
         }
@@ -318,20 +318,20 @@ Space Complexity: O(sum/2)
  * Input: nums = [1,1,1,1,1], target = 3
  * Output: 5
  */
-int findTargetSumWays(vector<int>& numsTarget, int target) {
-    int sum = accumulate(numsTarget.begin(), numsTarget.end(), 0);
+int FindTargetSumWays(vector<int>& nums_target, int target) {
+    int sum = accumulate(nums_target.begin(), nums_target.end(), 0);
     if ((sum + target) % 2 != 0 || sum < abs(target)) return 0;
 
-    int newTarget = (sum + target) / 2;
-    vector<int> dp(newTarget + 1, 0);
+    int new_target = (sum + target) / 2;
+    vector<int> dp(new_target + 1, 0);
     dp[0] = 1;
 
-    for (int num : numsTarget) {
-        for (int j = newTarget; j >= num; --j) {
+    for (int num : nums_target) {
+        for (int j = new_target; j >= num; --j) {
             dp[j] += dp[j - num];
         }
     }
-    return dp[newTarget];
+    return dp[new_target];
 }
 /*
 Problem: Target Sum (LC 494)
@@ -339,7 +339,7 @@ Problem: Target Sum (LC 494)
 Assign '+' or '-' to each number to reach target sum.
 
 Transformation:
-- Subset sum with newTarget = (total + target) / 2
+- Subset sum with new_target = (total + target) / 2
 
 DP Definition:
 - dp[j]: number of ways to reach sum j
@@ -347,8 +347,8 @@ DP Definition:
 Transition:
 - dp[j] += dp[j - num]
 
-Time Complexity: O(n * newTarget)
-Space Complexity: O(newTarget)
+Time Complexity: O(n * new_target)
+Space Complexity: O(new_target)
 */
 
 /*
@@ -360,7 +360,7 @@ Space Complexity: O(newTarget)
  * Input: coins = [1,2,5], amount = 5
  * Output: 4
  */
-int change(int amount, vector<int>& coins) {
+int Change(int amount, vector<int>& coins) {
     vector<int> dp(amount + 1, 0);
     dp[0] = 1;
 
@@ -398,7 +398,7 @@ Space Complexity: O(amount)
  * Input: stones = [2,7,4,1,8,1]
  * Output: 1
  */
-int lastStoneWeightII(vector<int>& stones) {
+int LastStoneWeightII(vector<int>& stones) {
     int sum = accumulate(stones.begin(), stones.end(), 0);
     int target = sum / 2;
 
@@ -440,7 +440,7 @@ Space Complexity: O(sum/2)
  * Input: coins = [1,2,5], amount = 11
  * Output: 3
  */
-int coinChange(vector<int>& coins, int amount) {
+int CoinChange(vector<int>& coins, int amount) {
     vector<int> dp(amount + 1, INT_MAX);
     dp[0] = 0;
 
@@ -487,7 +487,7 @@ Space Complexity: O(amount)
  * Time: O(n * sqrt(n))
  * Space: O(n)
  */
-int numSquares(int n) {
+int NumSquares(int n) {
     vector<int> dp(n + 1, INT_MAX);
     dp[0] = 0;
 
@@ -524,88 +524,88 @@ int main() {
         {"Bronze Medallion", 1, 2}
     };
 
-    int maxCapacity = 8;
+    int max_capacity = 8;
 
     // 2D Array with Backtracking
-    vector<int> selectedItems2D;
-    int maxValue2DWithBacktrack = zeroOneKnapsack2DWithBacktrack(maxCapacity, items, selectedItems2D);
-    cout << "2D Array (With Backtracking): Maximum Value = " << maxValue2DWithBacktrack << endl;
+    vector<int> selected_items_2d;
+    int max_value_2d_with_backtrack = ZeroOneKnapsack2DWithBacktrack(max_capacity, items, selected_items_2d);
+    cout << "2D Array (With Backtracking): Maximum Value = " << max_value_2d_with_backtrack << endl;
     cout << "Selected Items: ";
-    for (size_t i = 0; i < selectedItems2D.size(); ++i) {
-        if (selectedItems2D[i]) cout << items[i].name << " ";
+    for (size_t i = 0; i < selected_items_2d.size(); ++i) {
+        if (selected_items_2d[i]) cout << items[i].name << " ";
     }
     cout << endl;
 
     // 2D Array without Backtracking
-    int maxValue2DWithoutBacktrack = zeroOneKnapsack2DWithoutBacktrack(maxCapacity, items);
-    cout << "2D Array (Without Backtracking): Maximum Value = " << maxValue2DWithoutBacktrack << endl;
+    int max_value_2d_without_backtrack = ZeroOneKnapsack2DWithoutBacktrack(max_capacity, items);
+    cout << "2D Array (Without Backtracking): Maximum Value = " << max_value_2d_without_backtrack << endl;
 
     // 1D Array with Backtracking
-    vector<int> selectedItems1D;
-    int maxValue1DWithBacktrack = zeroOneKnapsack1DWithBacktrack(maxCapacity, items, selectedItems1D);
-    cout << "1D Array (Rolling Array, With Backtracking): Maximum Value = " << maxValue1DWithBacktrack << endl;
+    vector<int> selected_items_1d;
+    int max_value_1d_with_backtrack = ZeroOneKnapsack1DWithBacktrack(max_capacity, items, selected_items_1d);
+    cout << "1D Array (Rolling Array, With Backtracking): Maximum Value = " << max_value_1d_with_backtrack << endl;
     cout << "Selected Items: ";
-    for (size_t i = 0; i < selectedItems1D.size(); ++i) {
-        if (selectedItems1D[i]) cout << items[i].name << " ";
+    for (size_t i = 0; i < selected_items_1d.size(); ++i) {
+        if (selected_items_1d[i]) cout << items[i].name << " ";
     }
     cout << endl;
 
     // 1D Array without Backtracking
-    int maxValue1DWithoutBacktrack = zeroOneKnapsack1DWithoutBacktrack(maxCapacity, items);
-    cout << "1D Array (Rolling Array, Without Backtracking): Maximum Value = " << maxValue1DWithoutBacktrack << endl;
+    int max_value_1d_without_backtrack = ZeroOneKnapsack1DWithoutBacktrack(max_capacity, items);
+    cout << "1D Array (Rolling Array, Without Backtracking): Maximum Value = " << max_value_1d_without_backtrack << endl;
 
     // Brute Force with Backtracking
-    vector<int> selectedItemsBruteForce(items.size(), 0);
-    int maxValueBruteForce = zeroOneKnapsackBruteForce(0, maxCapacity, items, selectedItemsBruteForce);
-    cout << "Brute Force (With Backtracking): Maximum Value = " << maxValueBruteForce << endl;
+    vector<int> selected_items_brute_force(items.size(), 0);
+    int max_value_brute_force = ZeroOneKnapsackBruteForce(0, max_capacity, items, selected_items_brute_force);
+    cout << "Brute Force (With Backtracking): Maximum Value = " << max_value_brute_force << endl;
     cout << "Selected Items: ";
-    for (size_t i = 0; i < selectedItemsBruteForce.size(); ++i) {
-        if (selectedItemsBruteForce[i]) cout << items[i].name << " ";
+    for (size_t i = 0; i < selected_items_brute_force.size(); ++i) {
+        if (selected_items_brute_force[i]) cout << items[i].name << " ";
     }
     cout << endl;
 
     // Complete Knapsack (Rolling Array, Without Backtracking)
-    int maxValueComplete1D = completeKnapsack1DWithoutBacktrack(maxCapacity, items);
-    cout << "Complete Knapsack (Rolling Array, Without Backtracking): Maximum Value = " << maxValueComplete1D << endl;
+    int max_value_complete_1d = CompleteKnapsack1DWithoutBacktrack(max_capacity, items);
+    cout << "Complete Knapsack (Rolling Array, Without Backtracking): Maximum Value = " << max_value_complete_1d << endl;
 
     // Complete Knapsack (Brute Force with Backtracking)
-    vector<int> itemCountsCompleteBruteForce(items.size(), 0);
-    int maxValueCompleteBruteForce = completeKnapsackBruteForce(0, maxCapacity, items, itemCountsCompleteBruteForce);
-    cout << "Complete Knapsack (Brute Force with Backtracking): Maximum Value = " << maxValueCompleteBruteForce << endl;
+    vector<int> item_counts_complete_brute_force(items.size(), 0);
+    int max_value_complete_brute_force = CompleteKnapsackBruteForce(0, max_capacity, items, item_counts_complete_brute_force);
+    cout << "Complete Knapsack (Brute Force with Backtracking): Maximum Value = " << max_value_complete_brute_force << endl;
     cout << "Selected Item Counts: ";
-    for (size_t i = 0; i < itemCountsCompleteBruteForce.size(); ++i) {
-        if (itemCountsCompleteBruteForce[i] > 0) {
-            cout << items[i].name << " x" << itemCountsCompleteBruteForce[i] << " ";
+    for (size_t i = 0; i < item_counts_complete_brute_force.size(); ++i) {
+        if (item_counts_complete_brute_force[i] > 0) {
+            cout << items[i].name << " x" << item_counts_complete_brute_force[i] << " ";
         }
     }
     cout << endl;
 
     // Problem 1: Partition Equal Subset Sum
-    vector<int> numsPartition = {1, 5, 11, 5};
-    cout << "Problem 1: Can Partition Equal Subset Sum: " << (canPartition(numsPartition) ? "true" : "false") << endl;
+    vector<int> nums_partition = {1, 5, 11, 5};
+    cout << "Problem 1: Can Partition Equal Subset Sum: " << (CanPartition(nums_partition) ? "true" : "false") << endl;
 
     // Problem 2: Target Sum
-    vector<int> numsTarget = {1, 1, 1, 1, 1};
+    vector<int> nums_target = {1, 1, 1, 1, 1};
     int target = 3;
-    cout << "Problem 2: Target Sum Ways: " << findTargetSumWays(numsTarget, target) << endl;
+    cout << "Problem 2: Target Sum Ways: " << FindTargetSumWays(nums_target, target) << endl;
 
     // Problem 3: Coin Change II
     vector<int> coins1 = {1, 2, 5};
     int amount1 = 5;
-    cout << "Problem 3: Ways to Make Change: " << change(amount1, coins1) << endl;
+    cout << "Problem 3: Ways to Make Change: " << Change(amount1, coins1) << endl;
 
     // Problem 4: Last Stone Weight II
     vector<int> stones = {2, 7, 4, 1, 8, 1};
-    cout << "Problem 4: Last Stone Weight II: " << lastStoneWeightII(stones) << endl;
+    cout << "Problem 4: Last Stone Weight II: " << LastStoneWeightII(stones) << endl;
 
     // Problem 5: Coin Change
     vector<int> coins2 = {1, 2, 5};
     int amount2 = 11;
-    cout << "Problem 5: Fewest Coins Needed: " << coinChange(coins2, amount2) << endl;
+    cout << "Problem 5: Fewest Coins Needed: " << CoinChange(coins2, amount2) << endl;
 
     // Problem 6: Perfect Squares
     int n = 12;
-    cout << "Problem 6: Minimum Perfect Squares Needed: " << numSquares(n) << endl;
+    cout << "Problem 6: Minimum Perfect Squares Needed: " << NumSquares(n) << endl;
 
     return 0;
 }

@@ -17,7 +17,7 @@ using namespace std;
  * Input: nums = [1,2,3,1], k = 3, t = 0
  * Output: true
  */
-bool containsNearbyAlmostDuplicate(vector<int>& nums, int k, int t) {
+bool ContainsNearbyAlmostDuplicate(vector<int>& nums, int k, int t) {
     set<long> window;
     for (size_t i = 0; i < nums.size(); ++i) {
         auto pos = window.lower_bound((long)nums[i] - t);
@@ -41,14 +41,14 @@ bool containsNearbyAlmostDuplicate(vector<int>& nums, int k, int t) {
  * Input: nums = [2,7,11,15], target = 9
  * Output: [0,1]
  */
-vector<int> twoSum(vector<int>& nums, int target) {
-    map<int, int> numMap;
+vector<int> TwoSum(vector<int>& nums, int target) {
+    map<int, int> num_map;
     for (size_t i = 0; i < nums.size(); ++i) {
         int complement = target - nums[i];
-        if (numMap.find(complement) != numMap.end()) {
-            return {numMap[complement], static_cast<int>(i)};
+        if (num_map.find(complement) != num_map.end()) {
+            return {num_map[complement], static_cast<int>(i)};
         }
-        numMap[nums[i]] = i;
+        num_map[nums[i]] = i;
     }
     return {};
 }
@@ -63,11 +63,11 @@ vector<int> twoSum(vector<int>& nums, int target) {
  * Input: nums = [4,3,2,7,8,2,3,1]
  * Output: [5,6]
  */
-vector<int> findDisappearedNumbers(vector<int>& nums) {
-    set<int> numSet(nums.begin(), nums.end());
+vector<int> FindDisappearedNumbers(vector<int>& nums) {
+    set<int> num_set(nums.begin(), nums.end());
     vector<int> result;
     for (size_t i = 1; i <= nums.size(); ++i) {
-        if (numSet.find(i) == numSet.end()) {
+        if (num_set.find(i) == num_set.end()) {
             result.push_back(i);
         }
     }
@@ -84,7 +84,7 @@ vector<int> findDisappearedNumbers(vector<int>& nums) {
  * Input: nums = [1,3,-1,-3,5,3,6,7], k = 3
  * Output: [3,3,5,5,6,7]
  */
-vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+vector<int> MaxSlidingWindow(vector<int>& nums, int k) {
     multiset<int> window;
     vector<int> result;
     for (size_t i = 0; i < nums.size(); ++i) {
@@ -116,11 +116,11 @@ public:
     KthLargest(int k, vector<int>& nums) {
         capacity = k;
         for (int num : nums) {
-            add(num);
+            Add(num);
         }
     }
 
-    int add(int val) {
+    int Add(int val) {
         elements.insert(val);
         if (elements.size() > static_cast<size_t>(capacity)) {
             elements.erase(elements.begin());
@@ -143,7 +143,7 @@ class MyCalendar {
 public:
     MyCalendar() {}
 
-    bool book(int start, int end) {
+    bool Book(int start, int end) {
         auto next = calendar.lower_bound(start);
         if (next != calendar.end() && next->first < end) {
             return false;
@@ -165,7 +165,7 @@ public:
  * Input: nums = [5,2,6,1]
  * Output: [2,1,1,0]
  */
-vector<int> countSmaller(vector<int>& nums) {
+vector<int> CountSmaller(vector<int>& nums) {
     map<int, int> counts;
     vector<int> result(nums.size());
     for (int i = nums.size() - 1; i >= 0; --i) {
@@ -188,7 +188,7 @@ vector<int> countSmaller(vector<int>& nums) {
  * Input: nums1 = [1,2,2,1], nums2 = [2,2]
  * Output: [2]
  */
-vector<int> findCommonElements(vector<int>& nums1, vector<int>& nums2) {
+vector<int> FindCommonElements(vector<int>& nums1, vector<int>& nums2) {
     set<int> set1(nums1.begin(), nums1.end());
     set<int> set2(nums2.begin(), nums2.end());
     vector<int> result;
@@ -209,19 +209,19 @@ vector<int> findCommonElements(vector<int>& nums1, vector<int>& nums2) {
  * Input: words = ["i", "love", "leetcode", "i", "love", "coding"], k = 2
  * Output: ["i", "love"]
  */
-vector<string> topKFrequentWords(vector<string>& words, int k) {
-    map<string, int> wordCount;
+vector<string> TopKFrequentWords(vector<string>& words, int k) {
+    map<string, int> word_count;
     for (string& word : words) {
-        wordCount[word]++;
+        word_count[word]++;
     }
-    vector<pair<int, string>> freqList;
-    for (auto& [word, freq] : wordCount) {
-        freqList.push_back({-freq, word}); // Use negative frequency for reverse sorting
+    vector<pair<int, string>> freq_list;
+    for (auto& [word, freq] : word_count) {
+        freq_list.push_back({-freq, word}); // Use negative frequency for reverse sorting
     }
-    sort(freqList.begin(), freqList.end());
+    sort(freq_list.begin(), freq_list.end());
     vector<string> result;
     for (int i = 0; i < k; ++i) {
-        result.push_back(freqList[i].second);
+        result.push_back(freq_list[i].second);
     }
     return result;
 }
@@ -235,17 +235,17 @@ vector<string> topKFrequentWords(vector<string>& words, int k) {
  * Input: s = "abcabcbb"
  * Output: 3
  */
-int lengthOfLongestSubstring(string s) {
-    map<char, int> charIndex;
-    int maxLength = 0, start = 0;
+int LengthOfLongestSubstring(string s) {
+    map<char, int> char_index;
+    int max_length = 0, start = 0;
     for (size_t i = 0; i < s.size(); ++i) {
-        if (charIndex.count(s[i]) && charIndex[s[i]] >= start) {
-            start = charIndex[s[i]] + 1;
+        if (char_index.count(s[i]) && char_index[s[i]] >= start) {
+            start = char_index[s[i]] + 1;
         }
-        charIndex[s[i]] = i;
-        maxLength = max(maxLength, static_cast<int>(i) - start + 1);
+        char_index[s[i]] = i;
+        max_length = max(max_length, static_cast<int>(i) - start + 1);
     }
-    return maxLength;
+    return max_length;
 }
 
 /**
@@ -260,7 +260,7 @@ int lengthOfLongestSubstring(string s) {
  *  ...]
  * Output: true
  */
-bool isValidSudoku(vector<vector<char>>& board) {
+bool IsValidSudoku(vector<vector<char>>& board) {
     map<int, set<char>> rows, cols, boxes;
     for (int i = 0; i < 9; ++i) {
         for (int j = 0; j < 9; ++j) {
@@ -285,15 +285,15 @@ bool isValidSudoku(vector<vector<char>>& board) {
  * Input: strs = ["eat", "tea", "tan", "ate", "nat", "bat"]
  * Output: [["eat", "tea", "ate"], ["tan", "nat"], ["bat"]]
  */
-vector<vector<string>> groupAnagrams(vector<string>& strs) {
-    map<string, vector<string>> anagramGroups;
+vector<vector<string>> GroupAnagrams(vector<string>& strs) {
+    map<string, vector<string>> anagram_groups;
     for (string str : strs) {
-        string sortedStr = str;
-        sort(sortedStr.begin(), sortedStr.end());
-        anagramGroups[sortedStr].push_back(str);
+        string sorted_str = str;
+        sort(sorted_str.begin(), sorted_str.end());
+        anagram_groups[sorted_str].push_back(str);
     }
     vector<vector<string>> result;
-    for (auto& pair : anagramGroups) {
+    for (auto& pair : anagram_groups) {
         result.push_back(pair.second);
     }
     return result;
@@ -308,16 +308,16 @@ vector<vector<string>> groupAnagrams(vector<string>& strs) {
  * Input: nums = [1,1,1], k = 2
  * Output: 2
  */
-int subarraySum(vector<int>& nums, int k) {
-    map<int, int> prefixSum;
-    prefixSum[0] = 1;
+int SubarraySum(vector<int>& nums, int k) {
+    map<int, int> prefix_sum;
+    prefix_sum[0] = 1;
     int sum = 0, count = 0;
     for (int num : nums) {
         sum += num;
-        if (prefixSum.count(sum - k)) {
-            count += prefixSum[sum - k];
+        if (prefix_sum.count(sum - k)) {
+            count += prefix_sum[sum - k];
         }
-        prefixSum[sum]++;
+        prefix_sum[sum]++;
     }
     return count;
 }
@@ -331,21 +331,21 @@ int subarraySum(vector<int>& nums, int k) {
  * Input: nums = [100, 4, 200, 1, 3, 2]
  * Output: 4
  */
-int longestConsecutive(vector<int>& nums) {
-    set<int> numSet(nums.begin(), nums.end());
-    int maxLength = 0;
-    for (int num : numSet) {
-        if (!numSet.count(num - 1)) {
-            int currentNum = num;
-            int currentStreak = 1;
-            while (numSet.count(currentNum + 1)) {
-                currentNum++;
-                currentStreak++;
+int LongestConsecutive(vector<int>& nums) {
+    set<int> num_set(nums.begin(), nums.end());
+    int max_length = 0;
+    for (int num : num_set) {
+        if (!num_set.count(num - 1)) {
+            int current_num = num;
+            int current_streak = 1;
+            while (num_set.count(current_num + 1)) {
+                current_num++;
+                current_streak++;
             }
-            maxLength = max(maxLength, currentStreak);
+            max_length = max(max_length, current_streak);
         }
     }
-    return maxLength;
+    return max_length;
 }
 
 /**
@@ -358,7 +358,7 @@ int longestConsecutive(vector<int>& nums) {
  * Input: nums1 = [1,2,2,1], nums2 = [2,2]
  * Output: [2]
  */
-vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+vector<int> Intersection(vector<int>& nums1, vector<int>& nums2) {
     set<int> set1(nums1.begin(), nums1.end());
     set<int> result;
     for (int num : nums2) {
@@ -378,14 +378,14 @@ vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
  * Input: points = [[1,3],[-2,2]], k = 1
  * Output: [[-2,2]]
  */
-vector<vector<int>> kClosest(vector<vector<int>>& points, int k) {
-    multimap<int, vector<int>> distanceMap;
+vector<vector<int>> KClosest(vector<vector<int>>& points, int k) {
+    multimap<int, vector<int>> distance_map;
     for (auto& point : points) {
         int distance = point[0] * point[0] + point[1] * point[1];
-        distanceMap.insert({distance, point});
+        distance_map.insert({distance, point});
     }
     vector<vector<int>> result;
-    for (auto it = distanceMap.begin(); k > 0 && it != distanceMap.end(); ++it, --k) {
+    for (auto it = distance_map.begin(); k > 0 && it != distance_map.end(); ++it, --k) {
         result.push_back(it->second);
     }
     return result;
@@ -401,16 +401,16 @@ vector<vector<int>> kClosest(vector<vector<int>>& points, int k) {
  * Input: s = "aab"
  * Output: "aba"
  */
-string reorganizeString(string s) {
+string ReorganizeString(string s) {
     map<char, int> count;
     for (char c : s) count[c]++;
-    multimap<int, char, greater<int>> sortedCount;
+    multimap<int, char, greater<int>> sorted_count;
     for (auto& [ch, cnt] : count) {
-        sortedCount.insert({cnt, ch});
+        sorted_count.insert({cnt, ch});
     }
     string res(s.size(), ' ');
     int index = 0;
-    for (auto& [cnt, ch] : sortedCount) {
+    for (auto& [cnt, ch] : sorted_count) {
         for (int i = 0; i < cnt; ++i) {
             if (static_cast<size_t>(index) >= s.size()) index = 1;
             res[index] = ch;
@@ -434,16 +434,16 @@ string reorganizeString(string s) {
  */
 class MyHashMap {
 private:
-    map<int, int> hashMap;
+    map<int, int> hash_map_;
 public:
-    void put(int key, int value) {
-        hashMap[key] = value;
+    void Put(int key, int value) {
+        hash_map_[key] = value;
     }
-    int get(int key) {
-        return hashMap.count(key) ? hashMap[key] : -1;
+    int Get(int key) {
+        return hash_map_.count(key) ? hash_map_[key] : -1;
     }
-    void remove(int key) {
-        hashMap.erase(key);
+    void Remove(int key) {
+        hash_map_.erase(key);
     }
 };
 
@@ -463,17 +463,17 @@ struct TreeNode {
     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
 };
 
-vector<TreeNode*> findDuplicateSubtrees(TreeNode* root) {
-    map<string, vector<TreeNode*>> subtreeMap;
+vector<TreeNode*> FindDuplicateSubtrees(TreeNode* root) {
+    map<string, vector<TreeNode*>> subtree_map;
     vector<TreeNode*> result;
     function<string(TreeNode*)> serialize = [&](TreeNode* node) -> string {
         if (!node) return "#";
         string s = to_string(node->val) + "," + serialize(node->left) + "," + serialize(node->right);
-        subtreeMap[s].push_back(node);
+        subtree_map[s].push_back(node);
         return s;
     };
     serialize(root);
-    for (const auto& [key, nodes] : subtreeMap) {
+    for (const auto& [key, nodes] : subtree_map) {
         if (nodes.size() > 1) {
             result.push_back(nodes[0]);
         }
@@ -484,41 +484,41 @@ vector<TreeNode*> findDuplicateSubtrees(TreeNode* root) {
 int main() {
     // Test Problem 1
     vector<int> nums1 = {1, 2, 3, 1};
-    cout << "Contains Nearby Almost Duplicate: " << (containsNearbyAlmostDuplicate(nums1, 3, 0) ? "True" : "False") << endl;
+    cout << "Contains Nearby Almost Duplicate: " << (ContainsNearbyAlmostDuplicate(nums1, 3, 0) ? "True" : "False") << endl;
 
     // Test Problem 2
     vector<int> nums2 = {2, 7, 11, 15};
-    vector<int> result2 = twoSum(nums2, 9);
+    vector<int> result2 = TwoSum(nums2, 9);
     cout << "Two Sum Indices: [" << result2[0] << ", " << result2[1] << "]" << endl;
 
     // Test Problem 3
     vector<int> nums3 = {4, 3, 2, 7, 8, 2, 3, 1};
-    vector<int> result3 = findDisappearedNumbers(nums3);
+    vector<int> result3 = FindDisappearedNumbers(nums3);
     cout << "Disappeared Numbers: ";
     for (int num : result3) cout << num << " ";
     cout << endl;
 
     // Test Problem 4
     vector<int> nums4 = {1, 3, -1, -3, 5, 3, 6, 7};
-    vector<int> result4 = maxSlidingWindow(nums4, 3);
+    vector<int> result4 = MaxSlidingWindow(nums4, 3);
     cout << "Sliding Window Maximum: ";
     for (int num : result4) cout << num << " ";
     cout << endl;
 
     // Test Problem 5
     vector<int> nums5 = {4, 5, 8, 2};
-    KthLargest kthLargest(3, nums5);
-    cout << "Kth Largest after adding 3: " << kthLargest.add(3) << endl;
-    cout << "Kth Largest after adding 5: " << kthLargest.add(5) << endl;
+    KthLargest kth_largest(3, nums5);
+    cout << "Kth Largest after adding 3: " << kth_largest.Add(3) << endl;
+    cout << "Kth Largest after adding 5: " << kth_largest.Add(5) << endl;
 
     // Test Problem 6
-    MyCalendar myCalendar;
-    cout << "Book [10, 20]: " << (myCalendar.book(10, 20) ? "True" : "False") << endl;
-    cout << "Book [15, 25]: " << (myCalendar.book(15, 25) ? "True" : "False") << endl;
+    MyCalendar my_calendar;
+    cout << "Book [10, 20]: " << (my_calendar.Book(10, 20) ? "True" : "False") << endl;
+    cout << "Book [15, 25]: " << (my_calendar.Book(15, 25) ? "True" : "False") << endl;
 
     // Test Problem 7
     vector<int> nums7 = {5, 2, 6, 1};
-    vector<int> result7 = countSmaller(nums7);
+    vector<int> result7 = CountSmaller(nums7);
     cout << "Count of Smaller Numbers After Self: ";
     for (int num : result7) cout << num << " ";
     cout << endl;
@@ -526,20 +526,20 @@ int main() {
     // Test Problem 8
     vector<int> nums8a = {1, 2, 2, 1};
     vector<int> nums8b = {2, 2};
-    vector<int> result8 = findCommonElements(nums8a, nums8b);
+    vector<int> result8 = FindCommonElements(nums8a, nums8b);
     cout << "Common Elements: ";
     for (int num : result8) cout << num << " ";
     cout << endl;
 
     // Test Problem 9
     vector<string> words = {"i", "love", "leetcode", "i", "love", "coding"};
-    vector<string> result9 = topKFrequentWords(words, 2);
+    vector<string> result9 = TopKFrequentWords(words, 2);
     cout << "Top K Frequent Words: ";
     for (string& word : result9) cout << word << " ";
     cout << endl;
 
     // Test Problem 10
-    cout << "Problem 10 - Longest Substring Without Repeating Characters: " << lengthOfLongestSubstring("abcabcbb") << endl;
+    cout << "Problem 10 - Longest Substring Without Repeating Characters: " << LengthOfLongestSubstring("abcabcbb") << endl;
 
     // Test Problem 11
     vector<vector<char>> board_11 = {
@@ -552,41 +552,41 @@ int main() {
         {'.','6','.','.','.','.','2','8','.'},
         {'.','.','.','4','1','9','.','.','5'},
         {'.','.','.','.','8','.','.','7','9'}};
-    cout << "Problem 11 - Valid Sudoku: " << (isValidSudoku(board_11) ? "true" : "false") << endl;
+    cout << "Problem 11 - Valid Sudoku: " << (IsValidSudoku(board_11) ? "true" : "false") << endl;
 
     // Test Problem 12
     vector<string> strs = {"eat", "tea", "tan", "ate", "nat", "bat"};
-    vector<vector<string>> groupedAnagrams = groupAnagrams(strs);
-    cout << "Problem 12 - Group Anagrams: " << groupedAnagrams.size() << " groups" << endl;
+    vector<vector<string>> grouped_anagrams = GroupAnagrams(strs);
+    cout << "Problem 12 - Group Anagrams: " << grouped_anagrams.size() << " groups" << endl;
 
     // Test Problem 13
     vector<int> nums13 = {1,1,1};
-    cout << "Problem 13 - Subarray Sum Equals K: " << subarraySum(nums13, 2) << endl;
+    cout << "Problem 13 - Subarray Sum Equals K: " << SubarraySum(nums13, 2) << endl;
 
     // Test Problem 14
     vector<int> nums14 = {100,4,200,1,3,2};
-    cout << "Problem 14 - Longest Consecutive Sequence: " << longestConsecutive(nums14) << endl;
+    cout << "Problem 14 - Longest Consecutive Sequence: " << LongestConsecutive(nums14) << endl;
 
     // Test Problem 15
     vector<int> nums15_1 = {1,2,2,1};
     vector<int> nums15_2 = {2,2};
-    vector<int> result15 = intersection(nums15_1, nums15_2);
+    vector<int> result15 = Intersection(nums15_1, nums15_2);
     cout << "Problem 15 - Intersection: ";
     for (int num : result15) cout << num << " ";
     cout << endl;
 
     // Test Problem 16
     vector<vector<int>> points = {{1,3},{-2,2}};
-    vector<vector<int>> result16 = kClosest(points, 1);
+    vector<vector<int>> result16 = KClosest(points, 1);
     cout << "Problem 16 - K Closest Points: " << result16.size() << " points" << endl;
 
     // Test Problem 17
-    cout << "Problem 17 - Reorganized String: " << reorganizeString("aab") << endl;
+    cout << "Problem 17 - Reorganized String: " << ReorganizeString("aab") << endl;
 
     // Test Problem 18
-    MyHashMap myHashMap;
-    myHashMap.put(1, 1);
-    cout << "Problem 18 - MyHashMap Get: " << myHashMap.get(1) << endl;
+    MyHashMap my_hashmap;
+    my_hashmap.Put(1, 1);
+    cout << "Problem 18 - MyHashMap Get: " << my_hashmap.Get(1) << endl;
 
     // Test Problem 19
     TreeNode* root = new TreeNode(1);
@@ -596,7 +596,7 @@ int main() {
     root->right->left = new TreeNode(2);
     root->right->right = new TreeNode(4);
     root->right->left->left = new TreeNode(4);
-    vector<TreeNode*> result19 = findDuplicateSubtrees(root);
+    vector<TreeNode*> result19 = FindDuplicateSubtrees(root);
     cout << "Problem 19 - Find Duplicate Subtrees: " << result19.size() << " duplicates" << endl;
 
     return 0;

@@ -28,7 +28,7 @@ struct TreeNode {
  * Input: root = [1,null,2,3]
  * Output: [1,2,3]
  */
-vector<int> preorderTraversal(TreeNode* root) {
+vector<int> PreorderTraversal(TreeNode* root) {
     vector<int> result;
     if (!root) return result;
     stack<TreeNode*> stk;
@@ -51,7 +51,7 @@ vector<int> preorderTraversal(TreeNode* root) {
  * Input: root = [1,null,2,3]
  * Output: [1,3,2]
  */
-vector<int> inorderTraversal(TreeNode* root) {
+vector<int> InorderTraversal(TreeNode* root) {
     vector<int> result;
     stack<TreeNode*> stk;
     TreeNode* curr = root;
@@ -76,7 +76,7 @@ vector<int> inorderTraversal(TreeNode* root) {
  * Input: root = [1,null,2,3]
  * Output: [3,2,1]
  */
-vector<int> postorderTraversal(TreeNode* root) {
+vector<int> PostorderTraversal(TreeNode* root) {
     vector<int> result;
     if (!root) return result;
     stack<TreeNode*> stk1, stk2;
@@ -103,7 +103,7 @@ vector<int> postorderTraversal(TreeNode* root) {
  * Input: root = [3,9,20,null,null,15,7]
  * Output: [[3],[9,20],[15,7]]
  */
-vector<vector<int>> levelOrder(TreeNode* root) {
+vector<vector<int>> LevelOrder(TreeNode* root) {
     vector<vector<int>> result;
     if (!root) return result;
     queue<TreeNode*> q;
@@ -132,7 +132,7 @@ vector<vector<int>> levelOrder(TreeNode* root) {
  * Output: 9
  * Explanation: ((2 + 1) * 3) = 9
  */
-int evalRPN(vector<string>& tokens) {
+int EvalRPN(vector<string>& tokens) {
     stack<int> stk;
     for (string& token : tokens) {
         if (token == "+" || token == "-" || token == "*" || token == "/") {
@@ -157,7 +157,7 @@ int evalRPN(vector<string>& tokens) {
  * Input: s = "3+2*2"
  * Output: 7
  */
-int calculate(string s) {
+int Calculate(string s) {
     stack<int> stk;
     int num = 0;
     char sign = '+';
@@ -196,23 +196,23 @@ int calculate(string s) {
  * Input: grid = [[2,1,1],[1,1,0],[0,1,1]]
  * Output: 4
  */
-int orangesRotting(vector<vector<int>>& grid) {
+int OrangesRotting(vector<vector<int>>& grid) {
     int rows = grid.size(), cols = grid[0].size();
     queue<pair<int, int>> q;
-    int freshCount = 0, minutes = 0;
+    int fresh_count = 0, minutes = 0;
 
     for (int r = 0; r < rows; ++r) {
         for (int c = 0; c < cols; ++c) {
             if (grid[r][c] == 2) {
                 q.push({r, c});
             } else if (grid[r][c] == 1) {
-                freshCount++;
+                fresh_count++;
             }
         }
     }
 
     vector<pair<int, int>> directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
-    while (!q.empty() && freshCount > 0) {
+    while (!q.empty() && fresh_count > 0) {
         int size = q.size();
         for (int i = 0; i < size; ++i) {
             auto [r, c] = q.front();
@@ -222,28 +222,28 @@ int orangesRotting(vector<vector<int>>& grid) {
                 if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && grid[nr][nc] == 1) {
                     grid[nr][nc] = 2;
                     q.push({nr, nc});
-                    freshCount--;
+                    fresh_count--;
                 }
             }
         }
         minutes++;
     }
-    return freshCount == 0 ? minutes : -1;
+    return fresh_count == 0 ? minutes : -1;
 }
 
 /**
  * Problem 8: Course Schedule II (LC 210)
  * Description:
- * There are a total of `numCourses` courses to take. Some courses may have prerequisites, where prerequisites[i] = [ai, bi] 
+ * There are a total of `num_courses` courses to take. Some courses may have prerequisites, where prerequisites[i] = [ai, bi] 
  * indicates that you must take course `bi` before course `ai`. Return a list of courses in a valid order to finish all.
  *
  * Example:
- * Input: numCourses = 4, prerequisites = [[1,0],[2,0],[3,1],[3,2]]
+ * Input: num_courses = 4, prerequisites = [[1,0],[2,0],[3,1],[3,2]]
  * Output: [0,2,1,3] or [0,1,2,3]
  */
-vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
-    vector<int> indegree(numCourses, 0);
-    vector<vector<int>> graph(numCourses);
+vector<int> FindOrder(int num_courses, vector<vector<int>>& prerequisites) {
+    vector<int> indegree(num_courses, 0);
+    vector<vector<int>> graph(num_courses);
     vector<int> result;
 
     for (const auto& p : prerequisites) {
@@ -252,7 +252,7 @@ vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
     }
 
     queue<int> q;
-    for (int i = 0; i < numCourses; ++i) {
+    for (int i = 0; i < num_courses; ++i) {
         if (indegree[i] == 0) q.push(i);
     }
 
@@ -268,7 +268,7 @@ vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
         }
     }
 
-    return result.size() == static_cast<size_t>(numCourses) ? result : vector<int>();
+    return result.size() == static_cast<size_t>(num_courses) ? result : vector<int>();
 }
 
 /**
@@ -281,7 +281,7 @@ vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
  * Input: deadends = ["0201","0101","0102","1212","2002"], target = "0202"
  * Output: 6
  */
-int openLock(vector<string>& deadends, string target) {
+int OpenLock(vector<string>& deadends, string target) {
     unordered_set<string> dead(deadends.begin(), deadends.end());
     unordered_set<string> visited;
     queue<pair<string, int>> q;
@@ -333,7 +333,7 @@ int openLock(vector<string>& deadends, string target) {
  * ]
  * Output: 1
  */
-int numIslands(vector<vector<char>>& grid) {
+int NumIslands(vector<vector<char>>& grid) {
     int rows = grid.size();
     int cols = grid[0].size();
     int count = 0;
@@ -381,10 +381,10 @@ int main() {
     root->left->left = new TreeNode(4);
     root->left->right = new TreeNode(5);
 
-    vector<int> pre = preorderTraversal(root);
-    vector<int> in = inorderTraversal(root);
-    vector<int> post = postorderTraversal(root);
-    vector<vector<int>> level = levelOrder(root);
+    vector<int> pre = PreorderTraversal(root);
+    vector<int> in = InorderTraversal(root);
+    vector<int> post = PostorderTraversal(root);
+    vector<vector<int>> level = LevelOrder(root);
 
     cout << "Preorder Traversal: ";
     for (int val : pre) cout << val << " ";
@@ -406,20 +406,20 @@ int main() {
 
     // Test Evaluate Reverse Polish Notation
     vector<string> tokens = {"2", "1", "+", "3", "*"};
-    cout << "Evaluate RPN: " << evalRPN(tokens) << endl;
+    cout << "Evaluate RPN: " << EvalRPN(tokens) << endl;
 
     // Test Basic Calculator II
     string expr = "3+2*2";
-    cout << "Basic Calculator II Result: " << calculate(expr) << endl;
+    cout << "Basic Calculator II Result: " << Calculate(expr) << endl;
 
     // Test Rotten Oranges
     vector<vector<int>> grid = {{2,1,1},{1,1,0},{0,1,1}};
-    cout << "Rotten Oranges Minimum Time: " << orangesRotting(grid) << endl;
+    cout << "Rotten Oranges Minimum Time: " << OrangesRotting(grid) << endl;
 
     // Test Problem 8: Course Schedule II
     vector<vector<int>> prerequisites1 = {{1, 0}, {2, 0}, {3, 1}, {3, 2}};
-    int numCourses1 = 4;
-    vector<int> order = findOrder(numCourses1, prerequisites1);
+    int num_courses1 = 4;
+    vector<int> order = FindOrder(num_courses1, prerequisites1);
     cout << "Course Schedule II Order: ";
     for (int course : order) cout << course << " ";
     cout << endl;
@@ -427,7 +427,7 @@ int main() {
     // Test Problem 9: Open the Lock
     vector<string> deadends = {"0201", "0101", "0102", "1212", "2002"};
     string target = "0202";
-    cout << "Open Lock Minimum Turns: " << openLock(deadends, target) << endl;
+    cout << "Open Lock Minimum Turns: " << OpenLock(deadends, target) << endl;
 
     // Test Problem 10: Number of Islands
     vector<vector<char>> grid_10 = {
@@ -436,8 +436,7 @@ int main() {
         {'1', '1', '0', '0', '0'},
         {'0', '0', '0', '0', '0'}
     };
-    cout << "Number of Islands: " << numIslands(grid_10) << endl;
-
+    cout << "Number of Islands: " << NumIslands(grid_10) << endl;
 
     return 0;
 }

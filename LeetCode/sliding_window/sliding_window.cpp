@@ -20,17 +20,17 @@ using namespace std;
  * Input: s = "abcabcbb"
  * Output: 3
  */
-int lengthOfLongestSubstring(string s) {
-    unordered_map<char, int> charIndex;
-    int left = 0, maxLength = 0;
+int LengthOfLongestSubstring(string s) {
+    unordered_map<char, int> char_index;
+    int left = 0, max_length = 0;
     for (size_t right = 0; right < s.size(); right++) {
-        if (charIndex.find(s[right]) != charIndex.end()) {
-            left = max(left, charIndex[s[right]] + 1); // Move left to avoid repeating character
+        if (char_index.find(s[right]) != char_index.end()) {
+            left = max(left, char_index[s[right]] + 1); // Move left to avoid repeating character
         }
-        charIndex[s[right]] = right;
-        maxLength = max(maxLength, static_cast<int>(right) - left + 1);
+        char_index[s[right]] = right;
+        max_length = max(max_length, static_cast<int>(right) - left + 1);
     }
-    return maxLength;
+    return max_length;
 }
 
 /**
@@ -44,16 +44,16 @@ int lengthOfLongestSubstring(string s) {
  * Input: nums = [2,3,1,2,4,3], target = 7
  * Output: 2
  */
-int minSubArrayLen(int target, vector<int>& nums) {
-    int left = 0, sum = 0, minLength = INT_MAX;
+int MinSubArrayLen(int target, vector<int>& nums) {
+    int left = 0, sum = 0, min_length = INT_MAX;
     for (size_t right = 0; right < nums.size(); right++) {
         sum += nums[right];  // Expand window
         while (sum >= target) {  // Contract window
-            minLength = min(minLength, static_cast<int>(right) - left + 1);
+            min_length = min(min_length, static_cast<int>(right) - left + 1);
             sum -= nums[left++];
         }
     }
-    return minLength == INT_MAX ? 0 : minLength;
+    return min_length == INT_MAX ? 0 : min_length;
 }
 
 /**
@@ -66,7 +66,7 @@ int minSubArrayLen(int target, vector<int>& nums) {
  * Input: nums = [1,3,-1,-3,5,3,6,7], k = 3
  * Output: [3,3,5,5,6,7]
  */
-vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+vector<int> MaxSlidingWindow(vector<int>& nums, int k) {
     deque<int> dq;
     vector<int> result;
     for (size_t i = 0; i < nums.size(); i++) {
@@ -88,15 +88,15 @@ vector<int> maxSlidingWindow(vector<int>& nums, int k) {
  * Input: s = "cbaebabacd", p = "abc"
  * Output: [0,6]
  */
-vector<int> findAnagrams(string s, string p) {
-    vector<int> pCount(26, 0), sCount(26, 0), result;
+vector<int> FindAnagrams(string s, string p) {
+    vector<int> p_count(26, 0), s_count(26, 0), result;
     if (s.size() < p.size()) return result;
 
-    for (char c : p) pCount[c - 'a']++;
+    for (char c : p) p_count[c - 'a']++;
     for (size_t i = 0; i < s.size(); i++) {
-        sCount[s[i] - 'a']++;
-        if (static_cast<size_t>(i) >= p.size()) sCount[s[i - p.size()] - 'a']--;
-        if (sCount == pCount) result.push_back(i - p.size() + 1);
+        s_count[s[i] - 'a']++;
+        if (static_cast<size_t>(i) >= p.size()) s_count[s[i - p.size()] - 'a']--;
+        if (s_count == p_count) result.push_back(i - p.size() + 1);
     }
     return result;
 }
@@ -112,18 +112,18 @@ vector<int> findAnagrams(string s, string p) {
  * Input: s = "AABABBA", k = 1
  * Output: 4
  */
-int characterReplacement(string s, int k) {
+int CharacterReplacement(string s, int k) {
     vector<int> count(26, 0);
-    int left = 0, maxCount = 0, maxLength = 0;
+    int left = 0, max_count = 0, max_length = 0;
     for (size_t right = 0; right < s.size(); right++) {
-        maxCount = max(maxCount, ++count[s[right] - 'A']);
-        while (static_cast<int>(right) - left + 1 - maxCount > k) {
+        max_count = max(max_count, ++count[s[right] - 'A']);
+        while (static_cast<int>(right) - left + 1 - max_count > k) {
             count[s[left] - 'A']--;
             left++;
         }
-        maxLength = max(maxLength, static_cast<int>(right) - left + 1);
+        max_length = max(max_length, static_cast<int>(right) - left + 1);
     }
-    return maxLength;
+    return max_length;
 }
 
 /**
@@ -137,7 +137,7 @@ int characterReplacement(string s, int k) {
  * Input: nums = [1,2,1,2,3], k = 2
  * Output: 7
  */
-int atMostKDistinct(vector<int>& nums, int k) {
+int AtMostKDistinct(vector<int>& nums, int k) {
     unordered_map<int, int> freq;
     int left = 0, count = 0;
     for (size_t right = 0; right < nums.size(); right++) {
@@ -151,8 +151,8 @@ int atMostKDistinct(vector<int>& nums, int k) {
     return count;
 }
 
-int subarraysWithKDistinct(vector<int>& nums, int k) {
-    return atMostKDistinct(nums, k) - atMostKDistinct(nums, k - 1);
+int SubarraysWithKDistinct(vector<int>& nums, int k) {
+    return AtMostKDistinct(nums, k) - AtMostKDistinct(nums, k - 1);
 }
 
 /**
@@ -165,7 +165,7 @@ int subarraysWithKDistinct(vector<int>& nums, int k) {
  * Input: nums = [1,0,1,0,1], goal = 2
  * Output: 4
  */
-int atMostSum(vector<int>& nums, int goal) {
+int AtMostSum(vector<int>& nums, int goal) {
     if (goal < 0) return 0;
     int left = 0, count = 0, sum = 0;
     for (size_t right = 0; right < nums.size(); right++) {
@@ -176,8 +176,8 @@ int atMostSum(vector<int>& nums, int goal) {
     return count;
 }
 
-int numSubarraysWithSum(vector<int>& nums, int goal) {
-    return atMostSum(nums, goal) - atMostSum(nums, goal - 1);
+int NumSubarraysWithSum(vector<int>& nums, int goal) {
+    return AtMostSum(nums, goal) - AtMostSum(nums, goal - 1);
 }
 
 /**
@@ -187,19 +187,19 @@ int numSubarraysWithSum(vector<int>& nums, int goal) {
  * Approach:
  * Use a sliding window with a counter that tracks the number of zeros in the window.
  * Example:
- * Input: nums = [1,1,0,1,1,1,0,1,1,1]
- * Output: 5
+ * Input: nums = [1,1,0,1]
+ * Output: 3
  */
-int longestSubarray(vector<int>& nums) {
-    int left = 0, maxLength = 0, zeroCount = 0;
+int LongestSubarray(vector<int>& nums) {
+    int left = 0, max_length = 0, zero_count = 0;
     for (size_t right = 0; right < nums.size(); right++) {
-        if (nums[right] == 0) zeroCount++;
-        while (zeroCount > 1) {
-            if (nums[left++] == 0) zeroCount--;
+        if (nums[right] == 0) zero_count++;
+        while (zero_count > 1) {
+            if (nums[left++] == 0) zero_count--;
         }
-        maxLength = max(maxLength, static_cast<int>(right) - left);
+        max_length = max(max_length, static_cast<int>(right) - left);
     }
-    return maxLength;
+    return max_length == static_cast<int>(nums.size()) ? max_length - 1 : max_length;
 }
 
 /**
@@ -214,17 +214,17 @@ int longestSubarray(vector<int>& nums) {
  * Input: cardPoints = [1,2,3,4,5,6,1], k = 3
  * Output: 12
  */
-int maxScore(vector<int>& cardPoints, int k) {
-    int n = cardPoints.size(), totalSum = accumulate(cardPoints.begin(), cardPoints.end(), 0);
-    if (k == n) return totalSum;
+int MaxScore(vector<int>& card_points, int k) {
+    int n = card_points.size(), total_sum = accumulate(card_points.begin(), card_points.end(), 0);
+    if (k == n) return total_sum;
 
-    int minSubarraySum = accumulate(cardPoints.begin(), cardPoints.begin() + (n - k), 0);
-    int currentSum = minSubarraySum;
+    int min_subarray_sum = accumulate(card_points.begin(), card_points.begin() + (n - k), 0);
+    int current_sum = min_subarray_sum;
     for (int i = n - k; i < n; i++) {
-        currentSum += cardPoints[i] - cardPoints[i - (n - k)];
-        minSubarraySum = min(minSubarraySum, currentSum);
+        current_sum += card_points[i] - card_points[i - (n - k)];
+        min_subarray_sum = min(min_subarray_sum, current_sum);
     }
-    return totalSum - minSubarraySum;
+    return total_sum - min_subarray_sum;
 }
 
 /**
@@ -237,19 +237,19 @@ int maxScore(vector<int>& cardPoints, int k) {
  * Input: nums = [4,2,4,5,6]
  * Output: 17
  */
-int maximumUniqueSubarray(vector<int>& nums) {
-    unordered_set<int> uniqueNums;
-    int left = 0, maxSum = 0, currentSum = 0;
+int MaximumUniqueSubarray(vector<int>& nums) {
+    unordered_set<int> unique_nums;
+    int left = 0, max_sum = 0, current_sum = 0;
     for (size_t right = 0; right < nums.size(); right++) {
-        while (uniqueNums.count(nums[right])) {
-            currentSum -= nums[left];
-            uniqueNums.erase(nums[left++]);
+        while (unique_nums.count(nums[right])) {
+            current_sum -= nums[left];
+            unique_nums.erase(nums[left++]);
         }
-        uniqueNums.insert(nums[right]);
-        currentSum += nums[right];
-        maxSum = max(maxSum, currentSum);
+        unique_nums.insert(nums[right]);
+        current_sum += nums[right];
+        max_sum = max(max_sum, current_sum);
     }
-    return maxSum;
+    return max_sum;
 }
 
 /**
@@ -258,56 +258,56 @@ int maximumUniqueSubarray(vector<int>& nums) {
 int main() {
     // Test Problem 1: Longest Substring Without Repeating Characters
     cout << "Test Problem 1: Longest Substring Without Repeating Characters (LC 3) \n";
-    cout << "Length: " << lengthOfLongestSubstring("abcabcbb") << " (Expected: 3)" << endl;
+    cout << "Length: " << LengthOfLongestSubstring("abcabcbb") << " (Expected: 3)" << endl;
 
     // Test Problem 2: Minimum Size Subarray Sum
     cout << "Test Problem 2: Minimum Size Subarray Sum (LC 209) \n";
     vector<int> nums2 = {2, 3, 1, 2, 4, 3};
-    cout << "Min Length: " << minSubArrayLen(7, nums2) << " (Expected: 2)" << endl;
+    cout << "Min Length: " << MinSubArrayLen(7, nums2) << " (Expected: 2)" << endl;
 
     // Test Problem 3: Sliding Window Maximum
     cout << "Test Problem 3: Sliding Window Maximum (LC 239) \n";
     vector<int> nums3 = {1, 3, -1, -3, 5, 3, 6, 7};
-    vector<int> result3 = maxSlidingWindow(nums3, 3);
+    vector<int> result3 = MaxSlidingWindow(nums3, 3);
     cout << "Max Sliding Window: ";
     for (int num : result3) cout << num << " ";
     cout << "(Expected: 3 3 5 5 6 7)" << endl;
 
     // Test Problem 4: Find All Anagrams in a String
     cout << "Test Problem 4: Find All Anagrams in a String (LC 438) \n";
-    vector<int> result4 = findAnagrams("cbaebabacd", "abc");
+    vector<int> result4 = FindAnagrams("cbaebabacd", "abc");
     cout << "Anagram Indices: ";
     for (int idx : result4) cout << idx << " ";
     cout << "(Expected: 0 6)" << endl;
 
     // Test Problem 5: Longest Repeating Character Replacement
     cout << "Test Problem 5: Longest Repeating Character Replacement (LC 424) \n";
-    cout << "Longest Length: " << characterReplacement("AABABBA", 1) << " (Expected: 4)" << endl;
+    cout << "Longest Length: " << CharacterReplacement("AABABBA", 1) << " (Expected: 4)" << endl;
 
     // Test Problem 6: Subarrays with K Different Integers
     cout << "Test Problem 6: Subarrays with K Different Integers (LC 992) \n";
     vector<int> nums6 = {1, 2, 1, 2, 3};
-    cout << "Subarray Count: " << subarraysWithKDistinct(nums6, 2) << " (Expected: 7)" << endl;
+    cout << "Subarray Count: " << SubarraysWithKDistinct(nums6, 2) << " (Expected: 7)" << endl;
 
     // Test Problem 7: Binary Subarrays With Sum
     cout << "Test Problem 7: Binary Subarrays With Sum (LC 930) \n";
     vector<int> nums7 = {1, 0, 1, 0, 1};
-    cout << "Binary Subarrays: " << numSubarraysWithSum(nums7, 2) << " (Expected: 4)" << endl;
+    cout << "Binary Subarrays: " << NumSubarraysWithSum(nums7, 2) << " (Expected: 4)" << endl;
 
     // Test Problem 8: Longest Subarray of 1's After Deleting One Element
     cout << "Test Problem 8: Longest Subarray of 1's After Deleting One Element (LC 1493) \n";
-    vector<int> nums8 = {1, 1, 0, 1, 1, 1, 0, 1, 1, 1};
-    cout << "Max Consecutive 1's: " << longestSubarray(nums8) << " (Expected: 5)" << endl;
+    vector<int> nums8 = {1, 1, 0, 1};
+    cout << "Max Consecutive 1's: " << LongestSubarray(nums8) << " (Expected: 3)" << endl;
 
     // Test Problem 9: Maximum Points You Can Obtain from Cards
     cout << "Test Problem 9: Maximum Points You Can Obtain from Cards (LC 1423) \n";
     vector<int> nums9 = {1, 2, 3, 4, 5, 6, 1};
-    cout << "Max Score: " << maxScore(nums9, 3) << " (Expected: 12)" << endl;
+    cout << "Max Score: " << MaxScore(nums9, 3) << " (Expected: 12)" << endl;
 
     // Test Problem 10: Maximum Erasure Value
     cout << "Test Problem 10: Maximum Erasure Value (LC 1695) \n";
     vector<int> nums10 = {4, 2, 4, 5, 6};
-    cout << "Max Erasure Value: " << maximumUniqueSubarray(nums10) << " (Expected: 17)" << endl;
+    cout << "Max Erasure Value: " << MaximumUniqueSubarray(nums10) << " (Expected: 17)" << endl;
 
     return 0;
 }

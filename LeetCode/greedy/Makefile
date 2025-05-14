@@ -1,9 +1,9 @@
 CC = g++
 CFLAGS = -std=c++20 -Wall -g
 
-SRCS = main.cpp
+SRCS = greedy.cpp
 OBJS = $(SRCS:.cpp=.o)
-EXEC = MathNumberTheory_program
+EXEC = greedy
 
 all: $(EXEC)
 

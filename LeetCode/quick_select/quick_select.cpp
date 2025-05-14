@@ -30,12 +30,12 @@ using namespace std;
  * 4. Otherwise, recursively apply QuickSelect to the appropriate half of the array.
  */
 template <typename T>
-T quickSelect(vector<T>& nums, int left, int right, int k) {
+T QuickSelect(vector<T>& nums, int left, int right, int k) {
     srand(time(nullptr));  // Set a random seed to ensure different pivot choices in different runs.
 
     // **Randomly select a pivot and move it to the end**
-    int randomIndex = left + rand() % (right - left + 1);
-    swap(nums[randomIndex], nums[right]);  // Swap the randomly chosen pivot with the last element.
+    int random_index = left + rand() % (right - left + 1);
+    swap(nums[random_index], nums[right]);  // Swap the randomly chosen pivot with the last element.
     T pivot = nums[right];
 
     int p = left; // Pointer to place elements greater than or equal to pivot
@@ -48,12 +48,12 @@ T quickSelect(vector<T>& nums, int left, int right, int k) {
     // If pivot is at index k, return it
     if (p == k) return nums[p];
     // If pivot index is smaller than k, search in the right part of the array
-    return p < k ? quickSelect(nums, p + 1, right, k) : quickSelect(nums, left, p - 1, k);
+    return p < k ? QuickSelect(nums, p + 1, right, k) : QuickSelect(nums, left, p - 1, k);
 }
 
 
-int findKthLargest(vector<int>& nums, int k) {
-    return quickSelect(nums, 0, nums.size() - 1, k - 1);
+int FindKthLargest(vector<int>& nums, int k) {
+    return QuickSelect(nums, 0, nums.size() - 1, k - 1);
 }
 
 /**
@@ -65,8 +65,8 @@ int findKthLargest(vector<int>& nums, int k) {
  * Input: matrix = [[1,5,9],[10,11,13],[12,13,15]], k = 8
  * Output: 13
  */
-int kthSmallest(vector<int>& nums, int k) {
-    return quickSelect(nums, 0, nums.size() - 1, k - 1);
+int KthSmallest(vector<int>& nums, int k) {
+    return QuickSelect(nums, 0, nums.size() - 1, k - 1);
 }
 
 /**
@@ -77,22 +77,22 @@ int kthSmallest(vector<int>& nums, int k) {
  * Input: points = [[1,3],[-2,2]], k = 1
  * Output: [[-2,2]]
  */
-int distanceSquared(vector<int>& point) {
+int DistanceSquared(vector<int>& point) {
     return point[0] * point[0] + point[1] * point[1];
 }
 
-void quickSelectPoints(vector<vector<int>>& points, int left, int right, int k) {
-    int pivot = distanceSquared(points[right]), p = left;
+void QuickSelectPoints(vector<vector<int>>& points, int left, int right, int k) {
+    int pivot = DistanceSquared(points[right]), p = left;
     for (int i = left; i < right; ++i) {
-        if (distanceSquared(points[i]) < pivot) swap(points[i], points[p++]);
+        if (DistanceSquared(points[i]) < pivot) swap(points[i], points[p++]);
     }
     swap(points[p], points[right]);
     if (p == k) return;
-    p < k ? quickSelectPoints(points, p + 1, right, k) : quickSelectPoints(points, left, p - 1, k);
+    p < k ? QuickSelectPoints(points, p + 1, right, k) : QuickSelectPoints(points, left, p - 1, k);
 }
 
-vector<vector<int>> kClosest(vector<vector<int>>& points, int k) {
-    quickSelectPoints(points, 0, points.size() - 1, k);
+vector<vector<int>> KClosest(vector<vector<int>>& points, int k) {
+    QuickSelectPoints(points, 0, points.size() - 1, k);
     return vector<vector<int>>(points.begin(), points.begin() + k);
 }
 
@@ -104,10 +104,10 @@ vector<vector<int>> kClosest(vector<vector<int>>& points, int k) {
  * Input: nums = [3, 2, 1, 5, 4]
  * Output: 3
  */
-double findMedian(vector<int>& nums) {
+double FindMedian(vector<int>& nums) {
     int n = nums.size();
-    if (n % 2 == 1) return quickSelect(nums, 0, n - 1, n / 2);
-    return (quickSelect(nums, 0, n - 1, n / 2 - 1) + quickSelect(nums, 0, n - 1, n / 2)) / 2.0;
+    if (n % 2 == 1) return QuickSelect(nums, 0, n - 1, n / 2);
+    return (QuickSelect(nums, 0, n - 1, n / 2 - 1) + QuickSelect(nums, 0, n - 1, n / 2)) / 2.0;
 }
 
  /**
@@ -120,14 +120,15 @@ double findMedian(vector<int>& nums) {
  * Output: [4, 5, 5, 8, 8]
  */
 class KthLargest {
-    vector<int> nums;
-    int k;
+private:
+    vector<int> nums_;
+    int k_;
 public:
-    KthLargest(int k, vector<int>& nums) : nums(nums), k(k) {}
+    KthLargest(int k, vector<int>& nums) : nums_(nums), k_(k) {}
 
     int add(int val) {
-        nums.push_back(val);
-        return findKthLargest(nums, k);
+        nums_.push_back(val);
+        return FindKthLargest(nums_, k_);
     }
 };
 
@@ -140,7 +141,7 @@ public:
  * Input: arr = [2,3,4,7,11], k = 5
  * Output: 9
  */
-int findKthPositive(vector<int>& arr, int k) {
+int FindKthPositive(vector<int>& arr, int k) {
     int left = 0, right = arr.size();
     while (left < right) {
         int mid = left + (right - left) / 2;
@@ -159,12 +160,12 @@ int findKthPositive(vector<int>& arr, int k) {
  * Input: nums = [1,1,1,2,2,3], k = 2
  * Output: [1,2]
  */
-vector<int> topKFrequent(vector<int>& nums, int k) {
+vector<int> TopKFrequent(vector<int>& nums, int k) {
     unordered_map<int, int> count;
     for (int num : nums) count[num]++;
-    vector<int> uniqueNums;
-    for (auto& [num, freq] : count) uniqueNums.push_back(num);
-    return vector<int>(uniqueNums.begin(), uniqueNums.begin() + k);
+    vector<int> unique_nums;
+    for (auto& [num, freq] : count) unique_nums.push_back(num);
+    return vector<int>(unique_nums.begin(), unique_nums.begin() + k);
 }
 
 /**
@@ -176,10 +177,10 @@ vector<int> topKFrequent(vector<int>& nums, int k) {
  * Input: matrix = [[5,2],[1,6]], k = 1
  * Output: 7
  */
-int kthLargestValue(vector<vector<int>>& matrix, int k) {
-    vector<int> xorVals;
-    for (auto& row : matrix) xorVals.insert(xorVals.end(), row.begin(), row.end());
-    return findKthLargest(xorVals, k);
+int KthLargestValue(vector<vector<int>>& matrix, int k) {
+    vector<int> xor_vals;
+    for (auto& row : matrix) xor_vals.insert(xor_vals.end(), row.begin(), row.end());
+    return FindKthLargest(xor_vals, k);
 }
 
 /**
@@ -191,11 +192,11 @@ int kthLargestValue(vector<vector<int>>& matrix, int k) {
  * Input: quality = [10,20,5], wage = [70,50,30], k = 2
  * Output: 105.0
  */
-double mincostToHireWorkers(vector<int>& quality, vector<int>& wage, int k) {
+double MincostToHireWorkers(vector<int>& quality, vector<int>& wage, int k) {
     vector<double> ratio;
     for (size_t i = 0; i < quality.size(); i++)
         ratio.push_back((double)wage[i] / quality[i]);
-    return quickSelect(ratio, 0, ratio.size() - 1, k - 1);
+    return QuickSelect(ratio, 0, ratio.size() - 1, k - 1);
 }
 
 /**
@@ -207,60 +208,60 @@ double mincostToHireWorkers(vector<int>& quality, vector<int>& wage, int k) {
  * Input: mat = [[1,1,0,0],[1,1,1,0],[1,0,0,0]], k = 2
  * Output: [2,0]
  */
-vector<int> kWeakestRows(vector<vector<int>>& mat, int k) {
-    vector<pair<int, int>> rowStrength;
+vector<int> KWeakestRows(vector<vector<int>>& mat, int k) {
+    vector<pair<int, int>> row_strength;
     for (size_t i = 0; i < mat.size(); i++)
-        rowStrength.emplace_back(accumulate(mat[i].begin(), mat[i].end(), 0), i);
-    sort(rowStrength.begin(), rowStrength.end());
+        row_strength.emplace_back(accumulate(mat[i].begin(), mat[i].end(), 0), i);
+    sort(row_strength.begin(), row_strength.end());
     vector<int> result;
-    for (int i = 0; i < k; i++) result.push_back(rowStrength[i].second);
+    for (int i = 0; i < k; i++) result.push_back(row_strength[i].second);
     return result;
 }
 
 int main() {
     // Testing Problem 1
     vector<int> nums = {3,2,1,5,6,4};
-    cout << "Kth Largest Element: " << findKthLargest(nums, 2) << endl;
+    cout << "Kth Largest Element: " << FindKthLargest(nums, 2) << endl;
 
     // Testing Problem 3
     vector<vector<int>> points = {{1, 3}, {-2, 2}};
-    auto res = kClosest(points, 1);
+    auto res = KClosest(points, 1);
     cout << "Closest Point: [" << res[0][0] << "," << res[0][1] << "]" << endl;
 
     // Testing Problem 4
     vector<int> nums2 = {3, 2, 1, 5, 4};
-    cout << "Median: " << findMedian(nums2) << endl;
+    cout << "Median: " << FindMedian(nums2) << endl;
 
     // Testing Problem 5: Kth Largest Element in a Stream
     vector<int> stream = {4,5,8,2};
-    KthLargest kthLargest(3, stream);
-    cout << "Kth Largest in Stream: " << kthLargest.add(3) << " " << kthLargest.add(5) << " " << kthLargest.add(10) << " " << kthLargest.add(9) << " " << kthLargest.add(4) << endl;
+    KthLargest kth_largest(3, stream);
+    cout << "Kth Largest in Stream: " << kth_largest.add(3) << " " << kth_largest.add(5) << " " << kth_largest.add(10) << " " << kth_largest.add(9) << " " << kth_largest.add(4) << endl;
 
     // Testing Problem 6: Kth Missing Positive Number
     vector<int> arr = {2,3,4,7,11};
-    cout << "Kth Missing Positive Number: " << findKthPositive(arr, 5) << endl;
+    cout << "Kth Missing Positive Number: " << FindKthPositive(arr, 5) << endl;
 
     // Testing Problem 7: Top K Frequent Elements
     vector<int> nums7 = {1,1,1,2,2,3};
-    vector<int> topK = topKFrequent(nums7, 2);
+    vector<int> top_k = TopKFrequent(nums7, 2);
     cout << "Top K Frequent Elements: ";
-    for (int num : topK) cout << num << " ";
+    for (int num : top_k) cout << num << " ";
     cout << endl;
 
     // Testing Problem 8: Kth Largest XOR Coordinate Value
     vector<vector<int>> matrix = {{5,2},{1,6}};
-    cout << "Kth Largest XOR Coordinate Value: " << kthLargestValue(matrix, 1) << endl;
+    cout << "Kth Largest XOR Coordinate Value: " << KthLargestValue(matrix, 1) << endl;
 
     // Testing Problem 9: Minimum Cost to Hire K Workers
     vector<int> quality = {10,20,5};
     vector<int> wage = {70,50,30};
-    cout << "Minimum Cost to Hire K Workers: " << mincostToHireWorkers(quality, wage, 2) << endl;
+    cout << "Minimum Cost to Hire K Workers: " << MincostToHireWorkers(quality, wage, 2) << endl;
 
     // Testing Problem 10: K Weakest Rows in a Matrix
     vector<vector<int>> mat = {{1,1,0,0},{1,1,1,0},{1,0,0,0}};
-    vector<int> weakestRows = kWeakestRows(mat, 2);
+    vector<int> weakest_rows = KWeakestRows(mat, 2);
     cout << "K Weakest Rows: ";
-    for (int row : weakestRows) cout << row << " ";
+    for (int row : weakest_rows) cout << row << " ";
     cout << endl;
 
     return 0;

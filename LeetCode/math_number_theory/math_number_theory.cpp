@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <stack>
 #include <unordered_map>
 #include <cmath>
 #include <climits>
@@ -26,7 +27,7 @@ using namespace std;
  * Input: num = 1994
  * Output: "MCMXCIV"
  */
-string intToRoman(int num) {
+string IntToRoman(int num) {
     vector<pair<int, string>> values = {
         {1000, "M"}, {900, "CM"}, {500, "D"}, {400, "CD"},
         {100, "C"}, {90, "XC"}, {50, "L"}, {40, "XL"},
@@ -57,13 +58,13 @@ string intToRoman(int num) {
  * Input: s = "MCMXCIV"
  * Output: 1994
  */
-int romanToInt(string s) {
+int RomanToInt(string s) {
     unordered_map<char, int> val = {
         {'I', 1}, {'V', 5}, {'X', 10}, {'L', 50},
         {'C', 100}, {'D', 500}, {'M', 1000}
     };
     int res = 0;
-    for (int i = 0; i < s.length(); i++) {
+    for (size_t i = 0; i < s.length(); i++) {
         int curr = val[s[i]];
         int next = (i + 1 < s.length()) ? val[s[i + 1]] : 0;
         if (curr < next) res -= curr;  // subtractive
@@ -86,7 +87,7 @@ int romanToInt(string s) {
  * Input: n = 28
  * Output: "AB"
  */
-string convertToTitle(int n) {
+string ConvertToTitle(int n) {
     string res;
     while (n > 0) {
         n--;  // shift for 0-based index
@@ -109,7 +110,7 @@ string convertToTitle(int n) {
  * Input: s = "AB"
  * Output: 28
  */
-int titleToNumber(string s) {
+int TitleToNumber(string s) {
     int res = 0;
     for (char c : s) {
         res = res * 26 + (c - 'A' + 1);
@@ -132,7 +133,7 @@ int titleToNumber(string s) {
  * Input: a = "11", b = "1"
  * Output: "100"
  */
-string addBinary(string a, string b) {
+string AddBinary(string a, string b) {
     int i = a.size() - 1, j = b.size() - 1, carry = 0;
     string res;
     while (i >= 0 || j >= 0 || carry) {
@@ -159,7 +160,7 @@ string addBinary(string a, string b) {
  * Input: "123", "456"
  * Output: "56088"
  */
-string multiply(string num1, string num2) {
+string Multiply(string num1, string num2) {
     int m = num1.size(), n = num2.size();
     vector<int> pos(m + n);
     for (int i = m - 1; i >= 0; --i)
@@ -189,7 +190,7 @@ string multiply(string num1, string num2) {
  * Input: n = 10
  * Output: 4 // primes are 2, 3, 5, 7
  */
-int countPrimes(int n) {
+int CountPrimes(int n) {
     if (n <= 2) return 0;
     vector<bool> prime(n, true);
     prime[0] = prime[1] = false;
@@ -213,7 +214,7 @@ int countPrimes(int n) {
  * Input: n = 100
  * Output: 24
  */
-int trailingZeroes(int n) {
+int TrailingZeroes(int n) {
     int count = 0;
     while (n) {
         n /= 5;
@@ -235,7 +236,7 @@ int trailingZeroes(int n) {
  * Input: n = 16
  * Output: true
  */
-bool isPowerOfTwo(int n) {
+bool IsPowerOfTwo(int n) {
     return n > 0 && (n & (n - 1)) == 0;
 }
 
@@ -252,7 +253,7 @@ bool isPowerOfTwo(int n) {
  * Input: n = 27
  * Output: true
  */
-bool isPowerOfThree(int n) {
+bool IsPowerOfThree(int n) {
     if (n <= 0) return false;
     while (n % 3 == 0) n /= 3;
     return n == 1;
@@ -270,7 +271,7 @@ bool isPowerOfThree(int n) {
  * Input: 38
  * Output: 2
  */
-int addDigits(int num) {
+int AddDigits(int num) {
     return num == 0 ? 0 : (num - 1) % 9 + 1;
 }
 
@@ -288,7 +289,7 @@ int addDigits(int num) {
  * Input: 123
  * Output: 321
  */
-int reverse(int x) {
+int Reverse(int x) {
     int res = 0;
     while (x) {
         int digit = x % 10;
@@ -312,7 +313,7 @@ int reverse(int x) {
  * Input: 10 / 3
  * Output: 3
  */
-int divide(int dividend, int divisor) {
+int Divide(int dividend, int divisor) {
     if (dividend == INT_MIN && divisor == -1) return INT_MAX;
     long a = abs((long)dividend), b = abs((long)divisor), res = 0;
     while (a >= b) {
@@ -337,7 +338,7 @@ int divide(int dividend, int divisor) {
  * Input: x = 2.0, n = 10
  * Output: 1024.0
  */
-double myPow(double x, int n) {
+double MyPow(double x, int n) {
     long long N = n;
     if (N < 0) x = 1 / x, N = -N;
     double res = 1;
@@ -362,7 +363,7 @@ double myPow(double x, int n) {
  * Input: 100
  * Output: "202"
  */
-string convertToBase7(int num) {
+string ConvertToBase7(int num) {
     if (num == 0) return "0";
     bool neg = num < 0;
     num = abs(num);
@@ -387,7 +388,7 @@ string convertToBase7(int num) {
  * Input: 26
  * Output: "1a"
  */
-string toHex(int num) {
+string ToHex(int num) {
     if (num == 0) return "0";
     unsigned int n = num;
     string res, hex = "0123456789abcdef";
@@ -410,7 +411,7 @@ string toHex(int num) {
  * Input: n = 4
  * Output: false
  */
-bool canWinNim(int n) {
+bool CanWinNim(int n) {
     return n % 4 != 0;
 }
 
@@ -426,7 +427,7 @@ bool canWinNim(int n) {
  * Input: n = 2
  * Output: true
  */
-bool divisorGame(int n) {
+bool DivisorGame(int n) {
     return n % 2 == 0;
 }
 
@@ -443,7 +444,7 @@ bool divisorGame(int n) {
  * Input: a = 1, b = 2
  * Output: 3
  */
-int getSum(int a, int b) {
+int GetSum(int a, int b) {
     while (b != 0) {
         unsigned carry = (unsigned)(a & b) << 1;
         a = a ^ b;
@@ -465,10 +466,10 @@ int getSum(int a, int b) {
  * Input: x = 1, y = 4
  * Output: 2
  */
-int hammingDistance(int x, int y) {
-    int xorVal = x ^ y, count = 0;
-    while (xorVal) {
-        xorVal &= xorVal - 1;
+int HammingDistance(int x, int y) {
+    int xor_val = x ^ y, count = 0;
+    while (xor_val) {
+        xor_val &= xor_val - 1;
         count++;
     }
     return count;
@@ -494,11 +495,11 @@ int hammingDistance(int x, int y) {
  * Input: s = "3+2*2"
  * Output: 7
  */
-int calculate227(string s) {
+int Calculate227(string s) {
     stack<int> stk;
     int num = 0;
     char op = '+';
-    for (int i = 0; i < s.size(); ++i) {
+    for (size_t i = 0; i < s.size(); ++i) {
         char c = s[i];
         if (isdigit(c)) {
             num = num * 10 + (c - '0');
@@ -544,7 +545,7 @@ int calculate227(string s) {
  * Input: s = "(1+(4+5+2)-3)+(6+8)"
  * Output: 23
  */
-int calculate224(string s) {
+int Calculate224(string s) {
     stack<int> stk;
     int result = 0, sign = 1, num = 0;
     for (char c : s) {
@@ -593,13 +594,13 @@ int calculate224(string s) {
  * Input: s = "2*(5+5*2)/3+(6/2+8)"
  * Output: 21
  */
-int precedence(char op) {
+int Precedence(char op) {
     if (op == '+' || op == '-') return 1;
     if (op == '*' || op == '/') return 2;
     return 0;
 }
 
-int apply(int a, int b, char op) {
+int Apply(int a, int b, char op) {
     if (op == '+') return a + b;
     if (op == '-') return a - b;
     if (op == '*') return a * b;
@@ -607,11 +608,11 @@ int apply(int a, int b, char op) {
     return 0;
 }
 
-int calculate772(string s) {
+int Calculate772(string s) {
     stack<int> nums;
     stack<char> ops;
     int num = 0;
-    for (int i = 0; i < s.size(); ++i) {
+    for (size_t i = 0; i < s.size(); ++i) {
         char c = s[i];
         if (isdigit(c)) {
             num = num * 10 + (c - '0');
@@ -629,15 +630,15 @@ int calculate772(string s) {
                     int b = nums.top(); nums.pop();
                     int a = nums.top(); nums.pop();
                     char op = ops.top(); ops.pop();
-                    nums.push(apply(a, b, op));
+                    nums.push(Apply(a, b, op));
                 }
                 ops.pop();
             } else {
-                while (!ops.empty() && precedence(ops.top()) >= precedence(c)) {
+                while (!ops.empty() && Precedence(ops.top()) >= Precedence(c)) {
                     int b = nums.top(); nums.pop();
                     int a = nums.top(); nums.pop();
                     char op = ops.top(); ops.pop();
-                    nums.push(apply(a, b, op));
+                    nums.push(Apply(a, b, op));
                 }
                 ops.push(c);
             }
@@ -648,7 +649,7 @@ int calculate772(string s) {
         int b = nums.top(); nums.pop();
         int a = nums.top(); nums.pop();
         char op = ops.top(); ops.pop();
-        nums.push(apply(a, b, op));
+        nums.push(Apply(a, b, op));
     }
     return nums.top();
 }
@@ -681,7 +682,7 @@ int calculate772(string s) {
  string digits64 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/";
 
  // Map a single character to its numeric value in base-X
- int charToVal(char c) {
+ int CharToVal(char c) {
      if ('0' <= c && c <= '9') return c - '0';             // 0–9 → 0–9
      if ('A' <= c && c <= 'Z') return c - 'A' + 10;        // A–Z → 10–35
      if ('a' <= c && c <= 'z') return c - 'a' + 36;        // a–z → 36–61
@@ -691,28 +692,28 @@ int calculate772(string s) {
  }
 
  // General base conversion function: convert string from base-X to base-Y
- string convertBase(string input, int fromBase, int toBase) {
+ string ConvertBase(string input, int from_base, int to_base) {
      // Step 1: Convert input string to decimal value
      long long num = 0;
      for (char c : input) {
-         int val = charToVal(c);
-         if (val < 0 || val >= fromBase) return "[error]"; // Error if char is invalid in fromBase
-         num = num * fromBase + val;  // Multiply then add
+         int val = CharToVal(c);
+         if (val < 0 || val >= from_base) return "[error]"; // Error if char is invalid in fromBase
+         num = num * from_base + val;  // Multiply then add
      }
 
      // Step 2: Convert decimal to target base string
      if (num == 0) return "0";
      string res;
      while (num > 0) {
-         res += digits64[num % toBase]; // Append lowest digit character
-         num /= toBase;                // Divide for next digit
+         res += digits64[num % to_base]; // Append lowest digit character
+         num /= to_base;                // Divide for next digit
      }
      reverse(res.begin(), res.end()); // Final string is in reverse order
      return res;
  }
 
  // Bitwise shortcut: convert integer to base-2 string
- string intToBase2(int num) {
+ string IntToBase2(int num) {
      if (num == 0) return "0";
      string res;
      while (num) {
@@ -724,7 +725,7 @@ int calculate772(string s) {
  }
 
  // Bitwise shortcut: convert integer to base-8 (octal) string
- string intToBase8(int num) {
+ string IntToBase8(int num) {
      if (num == 0) return "0";
      string res;
      while (num) {
@@ -736,7 +737,7 @@ int calculate772(string s) {
  }
 
  // Bitwise shortcut: convert integer to base-16 (hexadecimal) string
- string intToBase16(int num) {
+ string IntToBase16(int num) {
      if (num == 0) return "0";
      string res;
      while (num) {
@@ -748,16 +749,16 @@ int calculate772(string s) {
  }
 
  // Base conversion test driver
- void testBaseConversions() {
+ void TestBaseConversions() {
      cout << "Problem 24: Base Conversion Test" << endl;
-     cout << "[10 → 2]   2024 → " << intToBase2(2024) << endl;            // 11111101000
-     cout << "[10 → 8]   2024 → " << intToBase8(2024) << endl;            // 3740
-     cout << "[10 → 16]  2024 → " << intToBase16(2024) << endl;           // 7E8
-     cout << "[10 → 64]  2024 → " << convertBase("2024", 10, 64) << endl; // Ve
-     cout << "[16 → 64]  7E8 → " << convertBase("7E8", 16, 64) << endl;   // Ve
-     cout << "[64 → 16]  Ve → " << convertBase("Ve", 64, 16) << endl;     // 7E8
-     cout << "[8  → 2]   3740 → " << convertBase("3740", 8, 2) << endl;   // 11111101000
-     cout << "[2  → 16]  11111101000 → " << convertBase("11111101000", 2, 16) << endl; // 7E8
+     cout << "[10 → 2]   2024 → " << IntToBase2(2024) << endl;            // 11111101000
+     cout << "[10 → 8]   2024 → " << IntToBase8(2024) << endl;            // 3740
+     cout << "[10 → 16]  2024 → " << IntToBase16(2024) << endl;           // 7E8
+     cout << "[10 → 64]  2024 → " << ConvertBase("2024", 10, 64) << endl; // Ve
+     cout << "[16 → 64]  7E8 → " << ConvertBase("7E8", 16, 64) << endl;   // Ve
+     cout << "[64 → 16]  Ve → " << ConvertBase("Ve", 64, 16) << endl;     // 7E8
+     cout << "[8  → 2]   3740 → " << ConvertBase("3740", 8, 2) << endl;   // 11111101000
+     cout << "[2  → 16]  11111101000 → " << ConvertBase("11111101000", 2, 16) << endl; // 7E8
      cout << endl;
  }
 
@@ -772,7 +773,7 @@ int calculate772(string s) {
  * - Each division means one prime factor counted
  * - If n > 1 at the end, it itself is a remaining prime factor
  */
-int countPrimeFactors(int n) {
+int CountPrimeFactors(int n) {
     int count = 0;
     for (int i = 2; i * i <= n; ++i) {
         while (n % i == 0) {
@@ -800,7 +801,7 @@ int countPrimeFactors(int n) {
  * - After the loop, if n > 1, it means n is a prime number larger than sqrt(original n), append it.
  * - This is a brute-force but efficient approach for small/moderate n.
  */
-vector<int> getPrimeFactors(int n) {
+vector<int> GetPrimeFactors(int n) {
     vector<int> factors;
     for (int i = 2; i * i <= n; ++i) {
         while (n % i == 0) {
@@ -825,98 +826,101 @@ vector<int> getPrimeFactors(int n) {
  * - For each number, call countPrimeFactors() and check if it equals k
  * - If yes, add to result sum
  */
-int sumOfNumbersWithKPrimeFactors(int n, int k) {
+int SumOfNumbersWithKPrimeFactors(int n, int k) {
     int sum = 0;
     for (int i = 1; i <= n; ++i) {
-        if (countPrimeFactors(i) == k) sum += i;
+        if (CountPrimeFactors(i) == k) sum += i;
     }
     return sum;
 }
 
 int main() {
     // Test Problem 1: Integer to Roman
-    cout << "Problem 1: intToRoman(1994) = " << intToRoman(1994) << endl;
+    cout << "Problem 1: IntToRoman(1994) = " << IntToRoman(1994) << endl;
 
     // Test Problem 2: Roman to Integer
-    cout << "Problem 2: romanToInt(\"MCMXCIV\") = " << romanToInt("MCMXCIV") << endl;
+    cout << "Problem 2: RomanToInt(\"MCMXCIV\") = " << RomanToInt("MCMXCIV") << endl;
 
     // Test Problem 3: Excel Sheet Column Title
-    cout << "Problem 3: convertToTitle(28) = " << convertToTitle(28) << endl;
+    cout << "Problem 3: ConvertToTitle(28) = " << ConvertToTitle(28) << endl;
 
     // Test Problem 4: Excel Sheet Column Number
-    cout << "Problem 4: titleToNumber(\"AB\") = " << titleToNumber("AB") << endl;
+    cout << "Problem 4: TitleToNumber(\"AB\") = " << TitleToNumber("AB") << endl;
 
     // Test Problem 5: Add Binary
-    cout << "Problem 5: addBinary(\"11\", \"1\") = " << addBinary("11", "1") << endl;
+    cout << "Problem 5: AddBinary(\"11\", \"1\") = " << AddBinary("11", "1") << endl;
 
     // Test Problem 6: Multiply Strings
-    cout << "Problem 6: multiply(\"123\", \"456\") = " << multiply("123", "456") << endl;
+    cout << "Problem 6: Multiply(\"123\", \"456\") = " << Multiply("123", "456") << endl;
 
     // Test Problem 7: Count Primes
-    cout << "Problem 7: countPrimes(10) = " << countPrimes(10) << endl;
+    cout << "Problem 7: CountPrimes(10) = " << CountPrimes(10) << endl;
 
     // Test Problem 8: Trailing Zeroes in Factorial
-    cout << "Problem 8: trailingZeroes(100) = " << trailingZeroes(100) << endl;
+    cout << "Problem 8: TrailingZeroes(100) = " << TrailingZeroes(100) << endl;
 
     // Test Problem 9: Power of Two
-    cout << "Problem 9: isPowerOfTwo(16) = " << (isPowerOfTwo(16) ? "true" : "false") << endl;
+    cout << "Problem 9: IsPowerOfTwo(16) = " << (IsPowerOfTwo(16) ? "true" : "false") << endl;
 
     // Test Problem 10: Power of Three
-    cout << "Problem 10: isPowerOfThree(27) = " << (isPowerOfThree(27) ? "true" : "false") << endl;
+    cout << "Problem 10: IsPowerOfThree(27) = " << (IsPowerOfThree(27) ? "true" : "false") << endl;
 
     // Test Problem 11: Add Digits
-    cout << "Problem 11: addDigits(38) = " << addDigits(38) << endl;
+    cout << "Problem 11: AddDigits(38) = " << AddDigits(38) << endl;
 
     // Test Problem 12: Reverse Integer
-    cout << "Problem 12: reverse(123) = " << reverse(123) << endl;
+    cout << "Problem 12: Reverse(123) = " << Reverse(123) << endl;
 
     // Test Problem 13: Divide Two Integers
-    cout << "Problem 13: divide(10, 3) = " << divide(10, 3) << endl;
+    cout << "Problem 13: Divide(10, 3) = " << Divide(10, 3) << endl;
 
     // Test Problem 14: Power Function
-    cout << "Problem 14: myPow(2.0, 10) = " << myPow(2.0, 10) << endl;
+    cout << "Problem 14: MyPow(2.0, 10) = " << MyPow(2.0, 10) << endl;
 
     // Test Problem 15: Convert to Base 7
-    cout << "Problem 15: convertToBase7(100) = " << convertToBase7(100) << endl;
+    cout << "Problem 15: ConvertToBase7(100) = " << ConvertToBase7(100) << endl;
 
     // Test Problem 16: Convert to Hexadecimal
-    cout << "Problem 16: toHex(26) = " << toHex(26) << endl;
+    cout << "Problem 16: ToHex(26) = " << ToHex(26) << endl;
 
     // Test Problem 17: Nim Game
-    cout << "Problem 17: canWinNim(4) = " << (canWinNim(4) ? "true" : "false") << endl;
+    cout << "Problem 17: CanWinNim(4) = " << (CanWinNim(4) ? "true" : "false") << endl;
 
     // Test Problem 18: Divisor Game
-    cout << "Problem 18: divisorGame(2) = " << (divisorGame(2) ? "true" : "false") << endl;
+    cout << "Problem 18: DivisorGame(2) = " << (DivisorGame(2) ? "true" : "false") << endl;
 
     // Test Problem 19: Sum of Two Integers
-    cout << "Problem 19: getSum(1, 2) = " << getSum(1, 2) << endl;
+    cout << "Problem 19: GetSum(1, 2) = " << GetSum(1, 2) << endl;
 
     // Test Problem 20: Hamming Distance
-    cout << "Problem 20: hammingDistance(1, 4) = " << hammingDistance(1, 4) << endl;
+    cout << "Problem 20: HammingDistance(1, 4) = " << HammingDistance(1, 4) << endl;
 
     // Test Problem 21: Basic Calculator II (LC 227)
-    cout << "Problem 21: calculate227(\"3+2*2-4/2\") = " << calculate227("3+2*2-4/2") << endl;
+    cout << "Problem 21: Calculate227(\"3+2*2-4/2\") = " << Calculate227("3+2*2-4/2") << endl;
 
     // Test Problem 22: Basic Calculator I (LC 224)
-    cout << "Problem 22: calculate224(\"(1+(4+5+2)-3)+(6+8)\") = " << calculate224("(1+(4+5+2)-3)+(6+8)") << endl;
+    cout << "Problem 22: Calculate224(\"(1+(4+5+2)-3)+(6+8)\") = " << Calculate224("(1+(4+5+2)-3)+(6+8)") << endl;
 
     // Test Problem 23: Basic Calculator III (LC 772)
-    cout << "Problem 23: calculate772(\"2*(5+5*2)/3+(6/2+8)\") = " << calculate772("2*(5+5*2)/3+(6/2+8)") << endl;
+    cout << "Problem 23: Calculate772(\"2*(5+5*2)/3+(6/2+8)\") = " << Calculate772("2*(5+5*2)/3+(6/2+8)") << endl;
 
     // Test Problem 24: Base Conversion Module (Problem 24)
-    testBaseConversions();
+    TestBaseConversions();
 
     // Problem 25: Count Prime Factors
-    cout << "Problem 25: countPrimeFactors(60) = " << countPrimeFactors(60) << endl; // 4 (2,2,3,5)
-    cout << "Problem 25: countPrimeFactors(97) = " << countPrimeFactors(97) << endl; // 1 (97)
+    cout << "Problem 25: CountPrimeFactors(60) = " << CountPrimeFactors(60) << endl; // 4 (2,2,3,5)
+    cout << "Problem 25: CountPrimeFactors(97) = " << CountPrimeFactors(97) << endl; // 1 (97)
 
     // Problem 26: List Prime Factors
-    vector<int> pf = getPrimeFactors(84);
-    cout << "Problem 26: getPrimeFactors(84) = ";
-    for (int f : pf) cout << f << " "; cout << endl; // 2 2 3 7
+    vector<int> pf = GetPrimeFactors(84);
+    cout << "Problem 26: GetPrimeFactors(84) = ";
+    for (int f : pf) {
+        cout << f << " ";
+    }
+    cout << endl;
 
     // Problem 27: Sum of Numbers With K Prime Factors
-    cout << "Problem 27: sumOfNumbersWithKPrimeFactors(10, 2) = " << sumOfNumbersWithKPrimeFactors(10, 2) << endl; // 6+9+10 = 25
+    cout << "Problem 27: SumOfNumbersWithKPrimeFactors(10, 2) = " << SumOfNumbersWithKPrimeFactors(10, 2) << endl; // 6+9+10 = 25
 
     return 0;
 }

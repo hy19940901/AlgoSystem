@@ -1,9 +1,9 @@
 CC = g++
 CFLAGS = -std=c++20 -Wall -g
 
-SRCS = Knapsack.cpp
+SRCS = quick_select.cpp
 OBJS = $(SRCS:.cpp=.o)
-EXEC = Knapsack_program
+EXEC = quick_select
 
 all: $(EXEC)
 
