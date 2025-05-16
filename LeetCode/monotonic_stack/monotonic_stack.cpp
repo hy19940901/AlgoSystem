@@ -8,15 +8,93 @@
 using namespace std;
 
 /**
+ * 📚 Monotonic Stack Technique Overview
+ * =====================================
+ *
+ * 🧠 When to Use:
+ * --------------
+ * The monotonic stack is best suited for problems that require:
+ * - Finding "next greater/smaller" elements to the left or right.
+ * - Processing elements in order while maintaining a specific trend (increasing or decreasing).
+ * - Handling range-based conditions in a single pass.
+ *
+ * Look for these key phrases in problems:
+ * - "Next greater/smaller element"
+ * - "Previous greater/smaller"
+ * - "Span of elements", "Histogram", or "Temperatures"
+ * - "Find first element to the right/left that satisfies..."
+ *
+ * 🔁 Common Monotonic Stack Patterns:
+ * -----------------------------------
+ *
+ * 1. ✅ Next Greater Element (Right Side)
+ *    - Traverse from right to left.
+ *    - Maintain a decreasing stack (store potential greater values).
+ *
+ *    Template:
+ *    ----------
+ *    stack<int> st;
+ *    for (int i = n - 1; i >= 0; --i) {
+ *        while (!st.empty() && st.top() <= nums[i])
+ *            st.pop(); // remove smaller values
+ *
+ *        res[i] = st.empty() ? -1 : st.top(); // store result
+ *        st.push(nums[i]); // add current element to stack
+ *    }
+ *
+ * 2. ✅ Next Smaller Element (Right Side)
+ *    - Same idea, but maintain an increasing stack.
+ *
+ * 3. ✅ Previous Greater/Smaller Element (Left Side)
+ *    - Traverse from left to right.
+ *    - Stack order is the same: decreasing for "greater", increasing for "smaller".
+ *
+ * 4. ✅ Monotonic Stack with Indexes
+ *    - Use when needing distances, widths, or bounds (e.g., histogram area).
+ *
+ *    Template:
+ *    ----------
+ *    stack<int> st; // store indices
+ *    for (int i = 0; i < n; ++i) {
+ *        while (!st.empty() && nums[st.top()] < nums[i])
+ *            st.pop(); // adjust boundary
+ *        // st.top() is now the nearest valid element to the left
+ *        st.push(i);
+ *    }
+ *
+ * 🚨 Key Points:
+ * --------------
+ * - Stack is typically used to maintain monotonicity (increasing or decreasing).
+ * - Pop from stack when the invariant (monotonic order) is broken.
+ * - Elements in the stack are *candidates* for future comparisons.
+ * - Often used in a single-pass O(n) approach.
+ *
+ * ⏱️ Complexity:
+ * --------------
+ * - Time: O(n) — each element is pushed and popped at most once.
+ * - Space: O(n) — stack holds up to n elements in the worst case.
+ */
+
+/**
  * Problem 1: Next Greater Element I (LC 496)
- * Description:
+ * ------------------------------------------
+ * 📿 Description:
  * Given an array `nums`, find the next greater element for each index.
  * The next greater element is the first greater element found on the right.
  * If there is no greater element, return -1.
  *
- * Example:
+ * 🔍 Example:
  * Input: nums = [2, 1, 2, 4, 3]
  * Output: [4, 2, 4, -1, -1]
+ *
+ * 💡 Monotonic Stack Strategy:
+ * ------------------------------------------
+ * - Iterate from right to left and use a stack to store possible candidates.
+ * - Maintain a decreasing stack: pop smaller or equal elements.
+ * - If the stack is not empty, the top is the next greater.
+ * - Push current element to the stack.
+ *
+ * 🗓 Time: O(n), Space: O(n)
  */
 vector<int> NextGreaterElement(vector<int>& nums) {
     vector<int> result(nums.size(), -1);
@@ -35,13 +113,22 @@ vector<int> NextGreaterElement(vector<int>& nums) {
 
 /**
  * Problem 2: Next Greater Element II (LC 503)
- * Description:
+ * -------------------------------------------
+ * 📿 Description:
  * Given a circular array `nums`, find the next greater element for each index.
- * The next greater element is the first greater element found when traversing the array circularly.
+ * The next greater element is the first greater element found when traversing circularly.
  *
- * Example:
+ * 🔍 Example:
  * Input: nums = [1, 2, 1]
  * Output: [2, -1, 2]
+ *
+ * 💡 Monotonic Stack Strategy:
+ * -------------------------------------------
+ * - Traverse array twice (simulate circular array).
+ * - Use decreasing stack to track next greater elements.
+ * - Store answer for each index on first pass.
+ *
+ * 🗓 Time: O(n), Space: O(n)
  */
 vector<int> NextGreaterElements(vector<int>& nums) {
     int n = nums.size();
@@ -61,12 +148,22 @@ vector<int> NextGreaterElements(vector<int>& nums) {
 
 /**
  * Problem 3: Largest Rectangle in Histogram (LC 84)
- * Description:
- * Given an array of heights representing a histogram, find the area of the largest rectangle.
+ * --------------------------------------------------
+ * 📿 Description:
+ * Given histogram bar heights, find the area of the largest rectangle.
  *
- * Example:
+ * 🔍 Example:
  * Input: heights = [2,1,5,6,2,3]
  * Output: 10
+ *
+ * 💡 Monotonic Stack Strategy:
+ * --------------------------------------------------
+ * - Append a sentinel value (0) to flush stack at the end.
+ * - Use a stack to maintain increasing indices.
+ * - On pop, calculate area with popped bar as smallest.
+ * - Update maximum area accordingly.
+ *
+ * 🗓 Time: O(n), Space: O(n)
  */
 int LargestRectangleArea(vector<int>& heights) {
     stack<int> st;
@@ -86,20 +183,23 @@ int LargestRectangleArea(vector<int>& heights) {
 
 /**
  * Problem 4: Maximal Rectangle (LC 85)
- * Description:
- * Given a binary matrix, find the largest rectangle containing only 1s.
+ * -------------------------------------
+ * 📿 Description:
+ * Given a 2D binary matrix filled with '0' and '1', find the largest rectangle containing only 1s.
  *
- * Example:
- * Input:
- * matrix =
- * [
- *  ["1","0","1","0","0"],
- *  ["1","0","1","1","1"],
- *  ["1","1","1","1","1"],
- *  ["1","0","0","1","0"]
- * ]
+ * 🔍 Example:
+ * Input: matrix = [["1","0","1","0","0"],["1","0","1","1","1"],["1","1","1","1","1"],["1","0","0","1","0"]]
  * Output: 6
+ *
+ * 💡 Monotonic Stack Strategy:
+ * -------------------------------------
+ * - For each row, update histogram heights.
+ * - Use histogram largest rectangle logic row-by-row.
+ * - Track the max area over all rows.
+ *
+ * 🗓 Time: O(m * n), Space: O(n)
  */
+
 int MaximalRectangle(vector<vector<char>>& matrix) {
     if (matrix.empty()) return 0;
     int max_area = 0, cols = matrix[0].size();
@@ -115,12 +215,22 @@ int MaximalRectangle(vector<vector<char>>& matrix) {
 
 /**
  * Problem 5: Sliding Window Maximum (LC 239)
- * Description:
+ * -------------------------------------------
+ * 📿 Description:
  * Given an array and an integer `k`, return the maximum value in each window of size `k`.
  *
- * Example:
+ * 🔍 Example:
  * Input: nums = [1,3,-1,-3,5,3,6,7], k = 3
  * Output: [3,3,5,5,6,7]
+ *
+ * 💡 Monotonic Stack Strategy:
+ * -------------------------------------------
+ * - Use a deque to store indices of elements in decreasing order.
+ * - Remove indices out of the window range.
+ * - Remove from back if current value is greater than back.
+ * - Front always has max value index for current window.
+ *
+ * 🗓 Time: O(n), Space: O(k)
  */
 vector<int> MaxSlidingWindow(vector<int>& nums, int k) {
     deque<int> dq;
@@ -142,14 +252,22 @@ vector<int> MaxSlidingWindow(vector<int>& nums, int k) {
 
 /**
  * Problem 6: Daily Temperatures (LC 739)
- * Description:
- * Given a list of daily temperatures, return a list where each element tells 
- * you how many days you would have to wait until a warmer temperature.
- * If there is no future day with a warmer temperature, return 0.
+ * ---------------------------------------
+ * 📿 Description:
+ * Given a list of daily temperatures, return a list of how many days until a warmer temperature.
+ * If no future day is warmer, return 0.
  *
- * Example:
+ * 🔍 Example:
  * Input: temperatures = [73, 74, 75, 71, 69, 72, 76, 73]
  * Output: [1, 1, 4, 2, 1, 1, 0, 0]
+ *
+ * 💡 Monotonic Stack Strategy:
+ * ---------------------------------------
+ * - Use a stack to keep indices of decreasing temperatures.
+ * - If current temp > top of stack, compute the wait days.
+ * - Push current index onto the stack.
+ *
+ * 🗓 Time: O(n), Space: O(n)
  */
 vector<int> DailyTemperatures(vector<int>& temperatures) {
     vector<int> result(temperatures.size(), 0);
@@ -167,13 +285,22 @@ vector<int> DailyTemperatures(vector<int>& temperatures) {
 
 /**
  * Problem 7: Sum of Subarray Minimums (LC 907)
- * Description:
- * Given an array `arr`, find the sum of `min` values of all subarrays.
- * The answer may be large, so return it **modulo 10^9 + 7**.
+ * ---------------------------------------------
+ * 📿 Description:
+ * Given an array `arr`, find the sum of min values of all subarrays.
+ * Return result modulo 10^9 + 7.
  *
- * Example:
+ * 🔍 Example:
  * Input: arr = [3,1,2,4]
  * Output: 17
+ *
+ * 💡 Monotonic Stack Strategy:
+ * ---------------------------------------------
+ * - For each element, find how many subarrays where it's the minimum.
+ * - Use monotonic stack to find left and right boundaries.
+ * - Contribution = arr[i] * (# elements to left) * (# elements to right)
+ *
+ * 🗓 Time: O(n), Space: O(n)
  */
 int SumSubarrayMins(vector<int>& arr) {
     const int MOD = 1e9 + 7;
@@ -211,13 +338,22 @@ int SumSubarrayMins(vector<int>& arr) {
 
 /**
  * Problem 8: Find 132 Pattern (LC 456)
- * Description:
- * Given an array of numbers, find if there exists a 132 pattern:
- *  i < j < k  such that nums[i] < nums[k] < nums[j]
+ * -------------------------------------
+ * 📿 Description:
+ * Find if there exists a 132 pattern in array: i < j < k and nums[i] < nums[k] < nums[j].
  *
- * Example:
+ * 🔍 Example:
  * Input: nums = [3,1,4,2]
  * Output: true
+ *
+ * 💡 Monotonic Stack Strategy:
+ * -------------------------------------
+ * - Traverse from right to left.
+ * - Use stack to track potential 3rd element.
+ * - Update `third` when popping smaller values.
+ * - If current < third, pattern is found.
+ *
+ * 🗓 Time: O(n), Space: O(n)
  */
 bool Find132pattern(vector<int>& nums) {
     stack<int> st;
@@ -235,13 +371,21 @@ bool Find132pattern(vector<int>& nums) {
 
 /**
  * Problem 9: Removing K Digits (LC 402)
- * Description:
- * Given a string representing a number and an integer `k`, remove `k` digits
- * so that the remaining number is the smallest possible.
+ * --------------------------------------
+ * 📿 Description:
+ * Given a number string and integer k, remove k digits to form the smallest number.
  *
- * Example:
+ * 🔍 Example:
  * Input: num = "1432219", k = 3
  * Output: "1219"
+ *
+ * 💡 Monotonic Stack Strategy:
+ * --------------------------------------
+ * - Use a string as a monotonic increasing stack.
+ * - Remove elements from back if larger than current.
+ * - Maintain order, avoid leading zeros.
+ *
+ * 🗓 Time: O(n), Space: O(n)
  */
 string RemoveKdigits(string num, int k) {
     string result;
@@ -260,14 +404,22 @@ string RemoveKdigits(string num, int k) {
 
 /**
  * Problem 10: Car Fleet (LC 853)
- * Description:
- * There are `n` cars on a one-lane road heading towards the same destination.
- * Each car has a `position` and a `speed`. A **car fleet** is a group of cars
- * that travel together at the same speed. Return the number of car fleets.
+ * -------------------------------
+ * 📿 Description:
+ * n cars drive to the same target. Each car has position and speed.
+ * Return the number of car fleets that arrive at target.
  *
- * Example:
+ * 🔍 Example:
  * Input: target = 12, position = [10,8,0,5,3], speed = [2,4,1,1,3]
  * Output: 3
+ *
+ * 💡 Monotonic Stack Strategy:
+ * -------------------------------
+ * - Sort cars by position descending.
+ * - Use stack to track times to reach target.
+ * - If new car arrives later or same time, they form fleet.
+ *
+ * 🗓 Time: O(n log n), Space: O(n)
  */
 int CarFleet(int target, vector<int>& position, vector<int>& speed) {
     int n = position.size();

@@ -8,6 +8,50 @@
 using namespace std;
 
 /**
+ * 🧠 Dynamic Programming (DP) Overview
+ * ------------------------------------
+ * Dynamic Programming is a method for solving complex problems by breaking them down into simpler subproblems.
+ * It is applicable when the problem has overlapping subproblems and optimal substructure properties.
+ * 
+ * 🔍 When to Use:
+ * - Problem can be divided into subproblems
+ * - Subproblem results are reused (overlapping)
+ * - There is an optimal substructure (global optimum depends on local optimum)
+ *
+ * 💡 Common DP Patterns:
+ * 1. 0/1 Knapsack: choose or skip (e.g., max value with weight constraint)
+ * 2. Subsequence/Substring: longest common subsequence, longest increasing subsequence
+ * 3. Partition: equal sum, subset sum
+ * 4. DP on Grid: unique paths, minimum path sum
+ * 5. State Compression: bitmasking + DP
+ * 6. Interval DP: palindrome partitioning, burst balloons
+ *
+ * 🧱 DP Table Design:
+ * - Define state: dp[i], dp[i][j], dp[i][j][k]...
+ * - Recurrence relation: how current state depends on previous states
+ * - Base case(s): initial value(s)
+ * - Iteration direction: bottom-up or top-down (memoization)
+ *
+ * 🧪 Template (Bottom-Up):
+ * vector<vector<int>> dp(n+1, vector<int>(m+1, 0));
+ * for (int i = 0; i <= n; ++i) {
+ *     for (int j = 0; j <= m; ++j) {
+ *         // fill dp[i][j] based on recurrence
+ *     }
+ * }
+ * return dp[n][m];
+ *
+ * 🧪 Template (Top-Down):
+ * unordered_map<string, int> memo;
+ * int dfs(int i, int j) {
+ *     string key = to_string(i) + "," + to_string(j);
+ *     if (memo.count(key)) return memo[key];
+ *     ... // compute result
+ *     return memo[key] = result;
+ * }
+ */
+
+/**
  * Problem 1: Climbing Stairs (LC 70)
  * Description: You are climbing a staircase. It takes n steps to reach the top.
  * Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?

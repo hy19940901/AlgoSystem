@@ -11,15 +11,125 @@
 using namespace std;
 
 /**
+ * 📚 Sliding Window Technique Overview
+ * ====================================
+ *
+ * 🧠 When to Use:
+ * --------------
+ * The sliding window technique is ideal for problems involving:
+ * - Subarrays or substrings (continuous elements).
+ * - Finding max/min/sum/average over a window.
+ * - Longest/shortest contiguous sequence satisfying a constraint.
+ * - Counting patterns, distinct elements, or frequency comparisons.
+ *
+ * Look for these key phrases in problems:
+ * - "contiguous subarray"
+ * - "longest/shortest subarray with condition..."
+ * - "sliding window of size k"
+ * - "substring that contains..."
+ *
+ * 🔁 Common Sliding Window Patterns:
+ * ----------------------------------
+ *
+ * 1. ✅ Fixed-size Window (e.g., window of size k)
+ *    - Use when the window size is constant.
+ *    - Typical use: moving max/min/sum/average over the window.
+ *
+ *    Template:
+ *    ----------
+ *    for (int right = 0; right < nums.size(); ++right) {
+ *        // add nums[right] to window
+ *        if (right >= k - 1) {
+ *            // process window [right - k + 1, right]
+ *            // remove nums[right - k + 1] if needed
+ *        }
+ *    }
+ *
+ * 2. ✅ Variable-size Window (shrinkable window)
+ *    - Use when the window size depends on constraints.
+ *    - Typical use: longest/shortest subarray with sum or condition.
+ *
+ *    Template:
+ *    ----------
+ *    int left = 0;
+ *    for (int right = 0; right < nums.size(); ++right) {
+ *        // add nums[right] to window
+ *
+ *        while (window violates condition) {
+ *            // shrink from left
+ *            left++;
+ *        }
+ *
+ *        // update result based on window [left, right]
+ *    }
+ *
+ * 3. ✅ Character or Frequency Count Window (Strings/Maps)
+ *    - Use when comparing frequency patterns or checking anagrams.
+ *    - Typically use 2 hash maps or fixed-size arrays.
+ *
+ *    Template:
+ *    ----------
+ *    unordered_map<char, int> window, target;
+ *    int left = 0;
+ *    for (int right = 0; right < s.size(); ++right) {
+ *        // update window count
+ *
+ *        while (window meets criteria) {
+ *            // update result if needed
+ *            // shrink from left
+ *            left++;
+ *        }
+ *    }
+ *
+ * 🚨 Key Points:
+ * --------------
+ * - Keep track of what's in the window: sum, count, max, freq, etc.
+ * - Move `right` to expand, `left` to contract.
+ * - Only slide `left` when constraints are violated (for variable-size).
+ * - Use deque for monotonic window (for max/min tracking).
+ *
+ * ⏱️ Complexity:
+ * --------------
+ * - Time: O(n) — each element is added/removed at most once.
+ * - Space: O(k) or O(n) depending on auxiliary data (deque, map, set).
+ */
+
+/**
  * Problem 1: Longest Substring Without Repeating Characters (LC 3)
- * Description:
- * Given a string s, find the length of the longest substring without repeating characters.
- * Approach:
- * Use the sliding window technique with two pointers (left, right) to dynamically adjust the window size.
- * Example:
+ * ----------------------------------------------------------------
+ * 📿 Description:
+ * Given a string `s`, find the length of the longest substring without repeating characters.
+ * The substring must be contiguous and contain only unique characters.
+ *
+ * 🔍 Example:
  * Input: s = "abcabcbb"
  * Output: 3
+ * Explanation: The longest substring without repeating characters is "abc", length 3.
+ *
+ * 💡 Sliding Window + Hash Map Strategy:
+ * ----------------------------------------------------------------
+ * - This problem requires checking all possible substrings for uniqueness.
+ * - To avoid the brute-force O(n²) solution, we use the sliding window technique:
+ *   ➤ Use two pointers: `left` (start of window) and `right` (end of window).
+ *   ➤ Expand the window by moving `right` forward.
+ *   ➤ Use a hash map to record the last index of each character seen.
+ *   ➤ If a character repeats (i.e., exists in the map and its last index ≥ left), 
+ *     move `left` to the right of that index to avoid duplication.
+ *   ➤ At each step, compute window length as `right - left + 1`, and update the max length.
+ *
+ * 🧠 Edge Cases:
+ * - Empty string → return 0.
+ * - All characters the same → max length = 1.
+ *
+ * ✏️ Notes:
+ * - The window always contains unique characters.
+ * - `left` only moves forward, never backward, ensuring linear time complexity.
+ *
+ * 🗓 Time: O(n), Space: O(128) ~ O(n)
+ * - Each character is visited at most twice (once by `right`, once by `left`).
+ * - Hash map stores character indices (constant size for ASCII).
  */
+
 int LengthOfLongestSubstring(string s) {
     unordered_map<char, int> char_index;
     int left = 0, max_length = 0;
@@ -35,15 +145,34 @@ int LengthOfLongestSubstring(string s) {
 
 /**
  * Problem 2: Minimum Size Subarray Sum (LC 209)
- * Description:
- * Given an array of positive integers nums and a target sum, find the minimal length of a contiguous 
- * subarray where the sum is at least target. If none exists, return 0.
- * Approach:
- * Expand the window by moving right and contract it by moving left when the sum exceeds target.
- * Example:
+ * ---------------------------------------------
+ * 📿 Description:
+ * Given an array of positive integers `nums` and an integer `target`, find the minimal length 
+ * of a contiguous subarray of which the sum is greater than or equal to `target`.
+ * If no such subarray exists, return 0 instead.
+ *
+ * 🔍 Example:
  * Input: nums = [2,3,1,2,4,3], target = 7
  * Output: 2
+ * Explanation: The subarray [4,3] has the minimal length under the problem constraint.
+ *
+ * 💡 Sliding Window Strategy:
+ * ---------------------------------------------
+ * - Since all elements are positive, we can use a dynamic sliding window approach:
+ *   ➤ Use two pointers `left` and `right` to define the current window.
+ *   ➤ Move `right` to expand the window and include more elements in the sum.
+ *   ➤ When the current window sum is ≥ target, try to shrink the window from the left.
+ *   ➤ Each time we shrink, update the minimum length if the current window is valid.
+ *
+ * 🧠 Edge Cases:
+ * - No valid subarray → return 0.
+ * - Entire array sum < target → return 0.
+ * - Single element ≥ target → return 1.
+ *
+ * 🗓 Time: O(n), Space: O(1)
+ * - Each element is visited at most twice (once added, once removed from window).
  */
+
 int MinSubArrayLen(int target, vector<int>& nums) {
     int left = 0, sum = 0, min_length = INT_MAX;
     for (size_t right = 0; right < nums.size(); right++) {
@@ -58,14 +187,39 @@ int MinSubArrayLen(int target, vector<int>& nums) {
 
 /**
  * Problem 3: Sliding Window Maximum (LC 239)
- * Description:
- * Given an array nums and an integer k, return the maximum value in each sliding window of size k.
- * Approach:
- * Use a deque to store indices of useful elements and maintain a decreasing order in the deque.
- * Example:
+ * ------------------------------------------
+ * 📿 Description:
+ * Given an array `nums` and an integer `k`, return the maximum value in each sliding window of size `k`.
+ * The window slides one position at a time from left to right.
+ *
+ * 🔍 Example:
  * Input: nums = [1,3,-1,-3,5,3,6,7], k = 3
  * Output: [3,3,5,5,6,7]
+ * Explanation:
+ * - Window [1,3,-1] → max = 3
+ * - Window [3,-1,-3] → max = 3
+ * - Window [-1,-3,5] → max = 5
+ * - Window [-3,5,3] → max = 5
+ * - Window [5,3,6] → max = 6
+ * - Window [3,6,7] → max = 7
+ *
+ * 💡 Monotonic Deque Strategy:
+ * ------------------------------------------
+ * - Use a double-ended queue (deque) to maintain indices of useful elements.
+ * - Maintain decreasing order in the deque:
+ *   ➤ Before adding a new element, remove all indices whose values are smaller.
+ * - Always keep the front of the deque as the index of the current window maximum.
+ * - Remove the front if it is outside the current window.
+ * - After reaching window size k, record deque.front() as result.
+ *
+ * 🧠 Why Deque?
+ * - Deque helps in efficiently maintaining a decreasing order of potential max candidates.
+ * - Avoids scanning the entire window at each step.
+ *
+ * 🗓 Time: O(n), Space: O(k)
+ * - Each element is pushed and popped from the deque at most once.
  */
+
 vector<int> MaxSlidingWindow(vector<int>& nums, int k) {
     deque<int> dq;
     vector<int> result;
@@ -80,14 +234,35 @@ vector<int> MaxSlidingWindow(vector<int>& nums, int k) {
 
 /**
  * Problem 4: Find All Anagrams in a String (LC 438)
- * Description:
- * Given a string s and a string p, return all start indices of p's anagrams in s.
- * Approach:
- * Use a frequency count with a sliding window to check for anagram matches.
- * Example:
+ * -------------------------------------------------
+ * 📿 Description:
+ * Given two strings `s` and `p`, return a list of all start indices in `s` where the substring is 
+ * an anagram of `p`. You may return the answer in any order.
+ *
+ * 🔍 Example:
  * Input: s = "cbaebabacd", p = "abc"
  * Output: [0,6]
+ * Explanation:
+ * - Substring s[0:3] = "cba" is an anagram of "abc"
+ * - Substring s[6:9] = "bac" is an anagram of "abc"
+ *
+ * 💡 Sliding Window + Frequency Count Strategy:
+ * -------------------------------------------------
+ * - Use two fixed-length frequency arrays of size 26 (for lowercase letters only).
+ *   ➤ One for the target string `p` (p_count), and one for the current window in `s` (s_count).
+ * - Move a sliding window of size `p.length()` across `s`.
+ *   ➤ Add new character at the right, remove old character at the left.
+ * - If the two frequency arrays match, current window is an anagram → store index.
+ *
+ * 🧠 Edge Cases:
+ * - If `s.size()` < `p.size()`, return empty result.
+ * - Matching is case-sensitive, and only lowercase characters are expected.
+ *
+ * 🗓 Time: O(n), Space: O(1)
+ * - The frequency arrays are fixed size 26, regardless of input size.
+ * - Each character in `s` is visited once.
  */
+
 vector<int> FindAnagrams(string s, string p) {
     vector<int> p_count(26, 0), s_count(26, 0), result;
     if (s.size() < p.size()) return result;
@@ -103,15 +278,33 @@ vector<int> FindAnagrams(string s, string p) {
 
 /**
  * Problem 5: Longest Repeating Character Replacement (LC 424)
- * Description:
- * Given a string s and an integer k, find the length of the longest substring that contains the same letter 
- * after at most k modifications.
- * Approach:
- * Use a frequency map and adjust the window based on the most frequent character in the current window.
- * Example:
+ * -----------------------------------------------------------
+ * 📿 Description:
+ * Given a string `s` and an integer `k`, you can replace at most `k` characters in the string
+ * to make all characters in a substring the same. Return the length of the longest such substring.
+ *
+ * 🔍 Example:
  * Input: s = "AABABBA", k = 1
  * Output: 4
+ * Explanation:
+ * - Replace the one 'A' in "ABBA" to get "AAAA".
+ * - Longest same-character substring after at most 1 replacement is length 4.
+ *
+ * 💡 Sliding Window + Frequency Count Strategy:
+ * -----------------------------------------------------------
+ * - Use a window and a character count array of size 26 for uppercase letters.
+ * - Track the count of the most frequent character in the window (`max_count`).
+ * - If window size - max_count > k → too many changes needed → shrink window from left.
+ * - Always expand right side to include new characters.
+ * - The longest valid window found during traversal is the result.
+ *
+ * 🧠 Why "window size - max_count > k"?
+ * - Because only `max_count` characters need no change. The rest must be replaced (at most k).
+ *
+ * 🗓 Time: O(n), Space: O(1)
+ * - Fixed alphabet size (26), each character visited once by both left and right pointers.
  */
+
 int CharacterReplacement(string s, int k) {
     vector<int> count(26, 0);
     int left = 0, max_count = 0, max_length = 0;
@@ -128,15 +321,33 @@ int CharacterReplacement(string s, int k) {
 
 /**
  * Problem 6: Subarrays with K Different Integers (LC 992)
- * Description:
- * Given an integer array nums and an integer k, return the number of subarrays that contain exactly k different integers.
- * Approach:
- * Use the sliding window technique to count subarrays with at most k distinct numbers, and use the difference of
- * two counts to get the exact count.
- * Example:
+ * --------------------------------------------------------
+ * 📿 Description:
+ * Given an array `nums` and an integer `k`, return the number of subarrays that contain 
+ * exactly `k` different integers.
+ *
+ * 🔍 Example:
  * Input: nums = [1,2,1,2,3], k = 2
  * Output: 7
+ * Explanation:
+ * Subarrays with exactly 2 distinct integers: [1,2], [2,1], [1,2], [2,1,2], [1,2,3], [2,1,2,3], [2,3]
+ *
+ * 💡 Sliding Window with Inclusion-Exclusion Strategy:
+ * --------------------------------------------------------
+ * - Let `F(k)` be the number of subarrays with at most k distinct integers.
+ * - Then the result is: `F(k) - F(k - 1)` to get exactly k distinct.
+ * - Use two pointers and a frequency map to count subarrays with at most k distinct values.
+ *   ➤ Expand window by moving `right`, and shrink from `left` when count > k.
+ *   ➤ For each right-end, the number of valid subarrays is (right - left + 1).
+ *
+ * 🧠 Edge Cases:
+ * - k > number of unique values in nums → result is 0.
+ *
+ * 🗓 Time: O(n), Space: O(n)
+ * - Each element is visited at most twice.
+ * - Hash map can grow up to size of distinct numbers in nums.
  */
+
 int AtMostKDistinct(vector<int>& nums, int k) {
     unordered_map<int, int> freq;
     int left = 0, count = 0;
@@ -157,14 +368,35 @@ int SubarraysWithKDistinct(vector<int>& nums, int k) {
 
 /**
  * Problem 7: Binary Subarrays With Sum (LC 930)
- * Description:
- * Given a binary array nums and an integer goal, return the number of non-empty subarrays with a sum equal to goal.
- * Approach:
- * Use the sliding window to count subarrays with at most "goal" sum and at most "goal-1" sum.
- * Example:
+ * ---------------------------------------------
+ * 📿 Description:
+ * Given a binary array `nums` (only 0s and 1s) and an integer `goal`, return the number of
+ * non-empty subarrays whose sum is exactly equal to `goal`.
+ *
+ * 🔍 Example:
  * Input: nums = [1,0,1,0,1], goal = 2
  * Output: 4
+ * Explanation:
+ * Valid subarrays: [1,0,1], [0,1,0,1], [1,0,1], [1,0,1]
+ *
+ * 💡 Sliding Window + Inclusion-Exclusion Strategy:
+ * -------------------------------------------------------------
+ * - We define two helper functions: `countAtMost(goal)` and `countAtMost(goal - 1)`
+ * - The answer is `countAtMost(goal) - countAtMost(goal - 1)`:
+ *   ➤ `countAtMost(x)` returns the number of subarrays with sum ≤ x.
+ *   ➤ This is valid because binary elements (0 or 1) ensure monotonicity.
+ * - Use two pointers and a sum variable to maintain the current window.
+ *   ➤ Expand the window with `right`, shrink it from `left` when sum > goal.
+ *
+ * 🧠 Why Inclusion-Exclusion?
+ * - To isolate the exact count of subarrays with sum == goal, subtract all subarrays
+ *   with sum < goal from all subarrays with sum ≤ goal.
+ *
+ * 🗓 Time: O(n), Space: O(1)
+ * - Each element is visited at most twice by sliding window.
+ * - Constant space used for sum and counters.
  */
+
 int AtMostSum(vector<int>& nums, int goal) {
     if (goal < 0) return 0;
     int left = 0, count = 0, sum = 0;
@@ -182,14 +414,34 @@ int NumSubarraysWithSum(vector<int>& nums, int goal) {
 
 /**
  * Problem 8: Longest Subarray of 1's After Deleting One Element (LC 1493)
- * Description:
- * Given a binary array nums, return the maximum number of 1s in a row by deleting exactly one element.
- * Approach:
- * Use a sliding window with a counter that tracks the number of zeros in the window.
- * Example:
+ * -----------------------------------------------------------------------
+ * 📿 Description:
+ * Given a binary array `nums`, return the length of the longest subarray of 1's 
+ * you can get by deleting exactly one element (can be 0 or 1).
+ *
+ * 🔍 Example:
  * Input: nums = [1,1,0,1]
  * Output: 3
+ * Explanation:
+ * Delete the 0 to get [1,1,1], which is the longest subarray of 1's.
+ *
+ * 💡 Sliding Window with Zero Counter:
+ * -----------------------------------------------------------------------
+ * - The core idea is to maintain a window that contains at most one 0.
+ *   ➤ Whenever the number of 0s exceeds 1, shrink the window from the left.
+ * - The window always contains valid candidates (≤1 zero).
+ * - Track the maximum window length observed.
+ * - Since one element must be deleted, the final result is (window length - 1) if no 0 was removed.
+ *
+ * 🧠 Edge Cases:
+ * - All 1s → we must still delete one → answer is length - 1.
+ * - Only one element → return 0.
+ *
+ * 🗓 Time: O(n), Space: O(1)
+ * - Single pass with two pointers.
+ * - Only a few integer variables used.
  */
+
 int LongestSubarray(vector<int>& nums) {
     int left = 0, max_length = 0, zero_count = 0;
     for (size_t right = 0; right < nums.size(); right++) {
@@ -204,16 +456,33 @@ int LongestSubarray(vector<int>& nums) {
 
 /**
  * Problem 9: Maximum Points You Can Obtain from Cards (LC 1423)
- * Description:
- * Given an array cardPoints and an integer k, return the maximum score you can get by picking exactly k cards 
- * from either the start or the end of the array.
- * Approach:
- * Instead of picking from both ends directly, find the minimum sum of the remaining window of size (n - k) 
- * and subtract it from the total sum.
- * Example:
+ * -------------------------------------------------------------
+ * 📿 Description:
+ * Given an array `cardPoints` and an integer `k`, return the maximum score you can obtain by 
+ * picking exactly `k` cards from either the beginning or the end of the array.
+ *
+ * 🔍 Example:
  * Input: cardPoints = [1,2,3,4,5,6,1], k = 3
  * Output: 12
+ * Explanation:
+ * Pick cards: [1, 6, 5] or [6,1,5] → sum = 12
+ *
+ * 💡 Sliding Window + Complement Subarray Strategy:
+ * -------------------------------------------------------------
+ * - Instead of directly picking from both ends, we flip the perspective:
+ *   ➤ The `n - k` middle cards that are not picked should have the **minimum sum**.
+ * - Total max = totalSum - minSum(subarray of length `n - k`)
+ * - Use sliding window to find the minimum sum subarray of length (n - k).
+ *
+ * 🧠 Why this approach?
+ * - Brute force of all pick combinations has exponential complexity.
+ * - This trick reduces it to a single linear scan.
+ *
+ * 🗓 Time: O(n), Space: O(1)
+ * - One pass to compute total sum.
+ * - One pass with a sliding window to find min subarray.
  */
+
 int MaxScore(vector<int>& card_points, int k) {
     int n = card_points.size(), total_sum = accumulate(card_points.begin(), card_points.end(), 0);
     if (k == n) return total_sum;
@@ -229,14 +498,33 @@ int MaxScore(vector<int>& card_points, int k) {
 
 /**
  * Problem 10: Maximum Erasure Value (LC 1695)
- * Description:
- * Given an array of positive integers nums, return the maximum sum of a subarray with all unique elements.
- * Approach:
- * Use a sliding window with a hash set to track the unique numbers and update the maximum sum.
- * Example:
+ * --------------------------------------------
+ * 📿 Description:
+ * Given an array of positive integers `nums`, return the maximum sum of any subarray
+ * with all unique elements (no duplicates allowed).
+ *
+ * 🔍 Example:
  * Input: nums = [4,2,4,5,6]
  * Output: 17
+ * Explanation:
+ * The subarray [2,4,5,6] has no duplicate and maximum sum = 17.
+ *
+ * 💡 Sliding Window + Hash Set Strategy:
+ * --------------------------------------------
+ * - Use two pointers and a hash set to maintain a window with unique elements.
+ * - Expand the window by moving `right`, and shrink from `left` if a duplicate is encountered.
+ *   ➤ On removing from left, also subtract from current sum and erase from the set.
+ * - Keep updating the maximum sum encountered during the scan.
+ *
+ * 🧠 Why this works?
+ * - All elements are positive, so removing earlier elements only reduces sum.
+ * - Maintaining uniqueness ensures the window is valid.
+ *
+ * 🗓 Time: O(n), Space: O(n)
+ * - Each element is inserted and erased at most once.
+ * - Hash set stores at most n elements.
  */
+
 int MaximumUniqueSubarray(vector<int>& nums) {
     unordered_set<int> unique_nums;
     int left = 0, max_sum = 0, current_sum = 0;
