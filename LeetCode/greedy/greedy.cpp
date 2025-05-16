@@ -59,7 +59,12 @@ using namespace std;
  * - Otherwise, try next bigger cookie.
  * - This greedy approach ensures maximum children are satisfied with the least large cookies.
  *
- * 📅 Time: O(n log n), Space: O(1)
+ * 🚨 Edge Cases:
+ * - No children or no cookies → return 0.
+ * - All cookies smaller than every child's greed → return 0.
+ *
+ * 🗓 Time: O(n log n)
+ * 🧠 Space: O(1)
  */
 int FindContentChildren(vector<int>& g, vector<int>& s) {
     sort(g.begin(), g.end());
@@ -91,7 +96,12 @@ int FindContentChildren(vector<int>& g, vector<int>& s) {
  * - If we reach the end or beyond, return true.
  * - This greedy approach ensures we always try to jump as far as possible.
  *
- * 📅 Time: O(n), Space: O(1)
+ * 🚨 Edge Cases:
+ * - First element is 0 → return false unless it's the only element.
+ * - Array of length 1 → always reachable.
+ *
+ * 🗓 Time: O(n)
+ * 🧠 Space: O(1)
  */
 bool CanJump(vector<int>& nums) {
     int max_reach = 0;
@@ -122,7 +132,12 @@ bool CanJump(vector<int>& nums) {
  *         - Set new window end to farthest.
  * - Greedy choice ensures minimum jumps by always jumping to the farthest possible location.
  *
- * 📅 Time: O(n), Space: O(1)
+ * 🚨 Edge Cases:
+ * - nums has only 1 element → return 0.
+ * - First element is large enough to reach the end → return 1.
+ *
+ * 🗓 Time: O(n)
+ * 🧠 Space: O(1)
  */
 int Jump(vector<int>& nums) {
     int jumps = 0, end = 0, farthest = 0;
@@ -156,7 +171,12 @@ int Jump(vector<int>& nums) {
  *     - Shoot it at the end of current balloon, update counter.
  * - This greedy method ensures each arrow covers as many overlapping balloons as possible.
  *
- * 📅 Time: O(n log n), Space: O(1)
+ * 🚨 Edge Cases:
+ * - Empty input → return 0.
+ * - All balloons fully overlap → return 1.
+ *
+ * 🗓 Time: O(n log n)
+ * 🧠 Space: O(1)
  */
 int FindMinArrowShots(vector<vector<int>>& points) {
     if (points.empty()) return 0;
@@ -194,7 +214,12 @@ int FindMinArrowShots(vector<vector<int>>& points) {
  * - Minimum removals = total - number of non-overlapping intervals.
  * - This greedy choice keeps intervals with earliest end time to allow more room for others.
  *
- * 📅 Time: O(n log n), Space: O(1)
+ * 🚨 Edge Cases:
+ * - Empty interval list → return 0.
+ * - Already non-overlapping intervals → return 0.
+ *
+ * 🗓 Time: O(n log n)
+ * 🧠 Space: O(1)
  */
 int EraseOverlapIntervals(vector<vector<int>>& intervals) {
     if (intervals.empty()) return 0;
@@ -230,7 +255,12 @@ int EraseOverlapIntervals(vector<vector<int>>& intervals) {
  * - If gas tank goes negative, reset starting index to next station and reset current tank.
  * - The point after failure is the only possible valid start point (proof by contradiction).
  *
- * 📅 Time: O(n), Space: O(1)
+ * 🚨 Edge Cases:
+ * - Total gas < total cost → return -1.
+ * - Only one station → check if gas[0] >= cost[0].
+ *
+ * 🗓 Time: O(n)
+ * 🧠 Space: O(1)
  */
 int CanCompleteCircuit(vector<int>& gas, vector<int>& cost) {
     int total_tank = 0, curr_tank = 0, start = 0;
@@ -262,7 +292,11 @@ int CanCompleteCircuit(vector<int>& gas, vector<int>& cost) {
  * - Update global maximum after every step.
  * - Greedy choice: discard any prefix that brings sum down.
  *
- * 📅 Time: O(n), Space: O(1)
+ * 🚨 Edge Cases:
+ * - All numbers are negative → return the largest single element.
+ *
+ * 🗓 Time: O(n)
+ * 🧠 Space: O(1)
  */
 int MaxSubArray(vector<int>& nums) {
     int max_sum = nums[0], current_sum = nums[0];
@@ -306,7 +340,12 @@ int MaxSubArray_kadane(vector<int>& nums) {
  *   2. Right to left: if rating[i] > rating[i+1], ensure it gets more than right neighbor.
  * - Combine both passes to satisfy both constraints.
  *
- * 📅 Time: O(n), Space: O(n)
+ * 🚨 Edge Cases:
+ * - All ratings equal → everyone gets 1 candy.
+ * - Ratings strictly increasing or decreasing → linear ramp up/down.
+ *
+ * 🗓 Time: O(n)
+ * 🧠 Space: O(n)
  */
 int Candy(vector<int>& ratings) {
     int n = ratings.size();
@@ -341,7 +380,12 @@ int Candy(vector<int>& ratings) {
  * - Result is max of calculated frame and total tasks.
  * - Greedily fill each interval to minimize idle time.
  *
- * 📅 Time: O(n), Space: O(1)
+ * 🚨 Edge Cases:
+ * - n = 0 → just return tasks.size().
+ * - All tasks are same → maximum idle time inserted.
+ *
+ * 🗓 Time: O(n)
+ * 🧠 Space: O(1)
  */
 int LeastInterval(vector<char>& tasks, int n) {
     vector<int> counts(26, 0);
@@ -368,7 +412,12 @@ int LeastInterval(vector<char>& tasks, int n) {
  * - Taller people are placed first, so shorter ones don’t affect their positions.
  * - This ensures the correct number of taller people is in front.
  *
- * 📅 Time: O(n^2) due to insertions, Space: O(n)
+ * 🚨 Edge Cases:
+ * - All people have same height → insert by k only.
+ * - k = 0 for all → preserve input order after sort.
+ *
+ * 🗓 Time: O(n^2)
+ * 🧠 Space: O(n)
  */
 vector<vector<int>> ReconstructQueue(vector<vector<int>>& people) {
     sort(people.begin(), people.end(), [](vector<int>& a, vector<int>& b) {
@@ -400,7 +449,12 @@ vector<vector<int>> ReconstructQueue(vector<vector<int>>& people) {
  * - Once current index == max position, cut the partition.
  * - Repeat until the end of the string.
  *
- * 📅 Time: O(n), Space: O(1) for alphabet map
+ * 🚨 Edge Cases:
+ * - Each letter appears only once → each partition is size 1.
+ * - All letters same → return one partition of full length.
+ *
+ * 🗓 Time: O(n)
+ * 🧠 Space: O(1)
  */
 vector<int> PartitionLabels(string s) {
     vector<int> last_index(26, 0);
@@ -436,7 +490,12 @@ vector<int> PartitionLabels(string s) {
  * - If k is still odd, flip the smallest number (now positive) once more.
  * - This ensures maximum increase in the total sum.
  *
- * 📅 Time: O(n log n), Space: O(1)
+ * 🚨 Edge Cases:
+ * - All numbers positive → only flip if k is odd.
+ * - Repeated minimum value after flips → flip again if k is odd.
+ *
+ * 🗓 Time: O(n log n)
+ * 🧠 Space: O(1)
  */
 int LargestSumAfterKNegations(vector<int>& nums, int k) {
     sort(nums.begin(), nums.end());
@@ -464,7 +523,11 @@ int LargestSumAfterKNegations(vector<int>& nums, int k) {
  * - Repeat until one stick remains.
  * - This greedy approach ensures smallest combinations occur early, minimizing total cost.
  *
- * 📅 Time: O(n log n), Space: O(n)
+ * 🚨 Edge Cases:
+ * - Only one stick → return 0.
+ *
+ * 🗓 Time: O(n log n)
+ * 🧠 Space: O(n)
  */
 int ConnectSticks(vector<int>& sticks) {
     priority_queue<int, vector<int>, greater<int>> pq(sticks.begin(), sticks.end());
@@ -495,7 +558,12 @@ int ConnectSticks(vector<int>& sticks) {
  * - Always try to give one $10 and one $5 as change for $20, or three $5s otherwise.
  * - This greedy strategy uses larger bills first to keep smaller ones for future use.
  *
- * 📅 Time: O(n), Space: O(1)
+ * 🚨 Edge Cases:
+ * - First customer pays with $10 or $20 → return false.
+ * - Insufficient $5 bills at any point → return false.
+ *
+ * 🗓 Time: O(n)
+ * 🧠 Space: O(1)
  */
 bool LemonadeChange(vector<int>& bills) {
     int five = 0, ten = 0;
@@ -529,7 +597,12 @@ bool LemonadeChange(vector<int>& bills) {
  * - Send first n people (cheaper to go to A) to A, and rest to B.
  * - This minimizes cost by choosing the lowest deltas.
  *
- * 📅 Time: O(n log n), Space: O(1)
+ * 🚨 Edge Cases:
+ * - All people cheaper to go to one city → cost difference handles balance.
+ * - Equal cost for both cities → choose any.
+ *
+ * 🗓 Time: O(n log n)
+ * 🧠 Space: O(1)
  */
 int TwoCitySchedCost(vector<vector<int>>& costs) {
     sort(costs.begin(), costs.end(), [](vector<int>& a, vector<int>& b) {
@@ -558,7 +631,12 @@ int TwoCitySchedCost(vector<vector<int>>& costs) {
  * - Decrease frequency greedily until it’s unique or zero.
  * - This ensures minimal deletions while maintaining uniqueness.
  *
- * 📅 Time: O(n), Space: O(1)
+ * 🚨 Edge Cases:
+ * - All characters appear once → no deletion needed.
+ * - Many characters with same frequency → multiple decrements needed.
+ *
+ * 🗓 Time: O(n)
+ * 🧠 Space: O(1)
  */
 int MinDeletions(string s) {
     vector<int> freq(26, 0);
@@ -593,7 +671,12 @@ int MinDeletions(string s) {
  *   - Decrease their frequencies accordingly.
  * - Greedily form groups from the lowest card possible.
  *
- * 📅 Time: O(n log n), Space: O(n)
+ * 🚨 Edge Cases:
+ * - hand size not divisible by group_size → return false.
+ * - Missing a card in a required sequence → return false.
+ *
+ * 🗓 Time: O(n log n)
+ * 🧠 Space: O(n)
  */
 bool IsNStraightHand(vector<int>& hand, int group_size) {
     if (hand.size() % group_size != 0) return false;
@@ -628,7 +711,11 @@ bool IsNStraightHand(vector<int>& hand, int group_size) {
  * - Move the smaller group to the other’s side (cost per odd-even move is 1).
  * - Greedy choice: pick the cheaper of odd or even.
  *
- * 📅 Time: O(n), Space: O(1)
+ * 🚨 Edge Cases:
+ * - All chips on same parity (all even or all odd) → cost is 0.
+ *
+ * 🗓 Time: O(n)
+ * 🧠 Space: O(1)
  */
 int MinCostToMoveChips(vector<int>& position) {
     int odd = 0, even = 0;
@@ -656,7 +743,12 @@ int MinCostToMoveChips(vector<int>& position) {
  * - For each day, attend the event with the earliest end time.
  * - This strategy ensures earliest-ending events are prioritized, maximizing attendance.
  *
- * 📅 Time: O(n log n), Space: O(n)
+ * 🚨 Edge Cases:
+ * - Events with same start and end → only one can be picked per day.
+ * - Overlapping events → heap ensures correct prioritization.
+ *
+ * 🗓 Time: O(n log n)
+ * 🧠 Space: O(n)
  */
 int MaxEvents(vector<vector<int>>& events) {
     sort(events.begin(), events.end());
@@ -689,7 +781,12 @@ int MaxEvents(vector<vector<int>>& events) {
  * - If both can share a boat, move both; otherwise, move the heavier one alone.
  * - Greedy pairing ensures the fewest boats.
  *
- * 📅 Time: O(n log n), Space: O(1)
+ * 🚨 Edge Cases:
+ * - One person heavier than limit → invalid (not handled in this implementation).
+ * - All people weight exactly limit → one boat per person.
+ *
+ * 🗓 Time: O(n log n)
+ * 🧠 Space: O(1)
  */
 
 int NumRescueBoats(vector<int>& people, int limit) {

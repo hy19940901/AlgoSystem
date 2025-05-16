@@ -4,14 +4,93 @@
 using namespace std;
 
 /**
+ * 📚 Prefix Sum Technique Overview
+ * ================================
+ *
+ * 🧠 When to Use:
+ * ---------------
+ * Prefix sum is ideal for problems involving:
+ * - Range sum queries (1D or 2D)
+ * - Counting subarrays/submatrices with specific sum
+ * - Detecting patterns like fixed sum, modulo divisibility, etc.
+ * - Replacing nested sum loops with efficient lookup
+ *
+ * Typical problem keywords:
+ * - "sum of subarray/submatrix"
+ * - "number of subarrays with sum k"
+ * - "range sum query"
+ *
+ * 💡 Core Idea:
+ * ---------------
+ * Compute cumulative sum `prefix[i] = sum(nums[0..i-1])`, then:
+ * - Range sum [i..j] = prefix[j+1] - prefix[i]
+ * - For exact target sum: if prefix[j+1] - prefix[i] == k,
+ *   → prefix[i] == prefix[j+1] - k ⇒ count prefix values seen so far
+ *
+ * 🔁 Standard Template:
+ * ---------------------
+ * unordered_map<int, int> prefix_count{{0, 1}};
+ * int sum = 0, res = 0;
+ * for (int num : nums) {
+ *     sum += num;
+ *     res += prefix_count[sum - k];
+ *     prefix_count[sum]++;
+ * }
+ *
+ * 🧩 Variants:
+ * ------------
+ * 1. ✅ Fixed sum:
+ *    - LC 560 Subarray Sum Equals K
+ *
+ * 2. ✅ Max/Longest subarray with sum:
+ *    - Use map to track first occurrence of prefix_sum
+ *
+ * 3. ✅ Modulo problems:
+ *    - Use prefix_sum % k and store mod in map
+ *
+ * 4. ✅ 2D prefix matrix:
+ *    - prefix[i+1][j+1] = inclusion-exclusion of rectangle
+ *
+ * 5. ✅ Reduce 2D → 1D (LC 1074):
+ *    - Fix row boundaries, compress to 1D col sums, apply prefix sum on that
+ *
+ * 🚨 Edge Cases:
+ * --------------
+ * - Negative numbers: use map instead of array
+ * - Multiple 0s: initialize prefix_count[0] = 1
+ * - Normalize negative mods: (mod + k) % k
+ *
+ * ⏱️ Complexity:
+ * --------------
+ * - Time: O(n) for 1D, O(m² * n) for 2D reductions
+ * - Space: O(n) map or prefix array
+ */
+
+/**
  * Problem 1: Range Sum Query - Immutable (LC 303)
- * Description:
- * Given an integer array nums, implement a NumArray class that supports the query sumRange(i, j).
- * Approach:
- * Precompute prefix sum array such that sumRange(i, j) = prefix[j+1] - prefix[i].
- * Example:
+ * -----------------------------------------------
+ * 🧠 Description:
+ * Given an integer array `nums`, implement a class `NumArray` that supports:
+ * sumRange(i, j): Return the sum of elements between indices i and j (inclusive).
+ *
+ * 🔍 Example:
  * Input: nums = [-2, 0, 3, -5, 2, -1]
- * Output: sumRange(0, 2) = 1
+ * Query: sumRange(0, 2)
+ * Output: 1
+ *
+ * 💡 Prefix Sum Strategy:
+ * -----------------------------------------------
+ * - Precompute a prefix sum array such that:
+ *   prefix[i] = sum of nums[0..i-1]
+ * - Then, sumRange(i, j) = prefix[j+1] - prefix[i]
+ * - This allows answering any range sum query in O(1) time.
+ *
+ * 🚨 Edge Cases:
+ * - Handle empty array input by initializing prefix_[0] = 0.
+ * - Ensure indices are within bounds in production code.
+ *
+ * 🗓 Time: O(n) preprocessing, O(1) per query
+ * 🧠 Space: O(n) for prefix array
  */
 class NumArray {
 private:
@@ -29,13 +108,35 @@ public:
 
 /**
  * Problem 2: Subarray Sum Equals K (LC 560)
- * Description:
- * Given an array of integers and an integer k, find the total number of continuous subarrays whose sum equals to k.
- * Approach:
- * Use prefix sum + hashmap to count cumulative sum occurrences.
- * Example:
- * Input: nums = [1,1,1], k = 2
+ * -----------------------------------------
+ * 🧠 Description:
+ * Given an integer array `nums` and an integer `k`, return the total number of 
+ * continuous subarrays whose sum equals exactly `k`.
+ *
+ * 🔍 Example:
+ * Input: nums = [1, 1, 1], k = 2
  * Output: 2
+ *
+ * 💡 Prefix Sum + Hash Map Strategy:
+ * -----------------------------------------
+ * - Let `prefix_sum` be the cumulative sum of elements up to current index.
+ * - For each prefix_sum, if (prefix_sum - k) has occurred before,
+ *   then there exists a previous subarray ending before current index that sums to `k`.
+ * - Use a hashmap to store frequency of prefix sums seen so far.
+ *
+ * Algorithm:
+ * - Initialize prefix_count[0] = 1 to handle case where prefix_sum == k.
+ * - Iterate over array, update prefix_sum.
+ * - At each step:
+ *    → result += prefix_count[prefix_sum - k]
+ *    → prefix_count[prefix_sum]++
+ *
+ * 🚨 Edge Cases:
+ * - Handle zeros properly; subarrays with sum 0 may be valid.
+ * - Can have overlapping subarrays.
+ *
+ * 🗓 Time: O(n)
+ * 🧠 Space: O(n) — for prefix_sum count map
  */
 int SubarraySum(vector<int>& nums, int k) {
     unordered_map<int, int> prefix_count{{0, 1}};
@@ -50,14 +151,40 @@ int SubarraySum(vector<int>& nums, int k) {
 
 /**
  * Problem 3: Continuous Subarray Sum (LC 523)
- * Description:
- * Given an integer array and an integer k, return true if the array has a continuous subarray of size at least 2 whose sum is a multiple of k.
- * Approach:
- * Use prefix sum mod k and a hashmap to track earliest mod value occurrence.
- * Example:
- * Input: nums = [23,2,4,6,7], k = 6
+ * -------------------------------------------
+ * 🧠 Description:
+ * Given an integer array `nums` and an integer `k`, return true if there exists a 
+ * continuous subarray of at least length 2 such that the sum of its elements is a multiple of `k`.
+ *
+ * 🔍 Example:
+ * Input: nums = [23, 2, 4, 6, 7], k = 6
  * Output: true
+ * Explanation: [2, 4] and [4, 6] both sum to multiples of 6.
+ *
+ * 💡 Prefix Sum Modulo + Hash Map Strategy:
+ * -------------------------------------------
+ * - Let prefix_sum[i] = sum(nums[0..i])
+ * - A subarray sum nums[i+1..j] is divisible by k if:
+ *   (prefix_sum[j] - prefix_sum[i]) % k == 0  ⇒  prefix_sum[j] % k == prefix_sum[i] % k
+ * - Use a map to store first occurrence of each mod value.
+ * - If the same mod appears again and indices are ≥ 2 apart, return true.
+ *
+ * Algorithm:
+ * - Initialize map[0] = -1 to handle case where the prefix itself is divisible by k.
+ * - Iterate through nums:
+ *     → Compute cumulative sum
+ *     → mod = (k == 0 ? sum : sum % k)
+ *     → If mod seen before and distance ≥ 2 → return true
+ *     → Else store mod → index in map
+ *
+ * 🚨 Edge Cases:
+ * - If k == 0, look for subarray with sum == 0 and length ≥ 2.
+ * - Negative mod: normalize using (mod + k) % k if needed.
+ *
+ * 🗓 Time: O(n)
+ * 🧠 Space: O(k) — at most k mod classes stored in map
  */
+
 bool CheckSubarraySum(vector<int>& nums, int k) {
     unordered_map<int, int> mod_index{{0, -1}};
     int sum = 0;
@@ -75,14 +202,36 @@ bool CheckSubarraySum(vector<int>& nums, int k) {
 
 /**
  * Problem 4: Subarray Sums Divisible by K (LC 974)
- * Description:
- * Return the number of (contiguous, non-empty) subarrays that have a sum divisible by K.
- * Approach:
- * Use prefix mod count hashmap, similar to Problem 3.
- * Example:
+ * ------------------------------------------------
+ * 🧠 Description:
+ * Given an integer array `nums` and an integer `k`, return the number of non-empty 
+ * subarrays whose sum is divisible by `k`.
+ *
+ * 🔍 Example:
  * Input: nums = [4,5,0,-2,-3,1], k = 5
  * Output: 7
+ *
+ * 💡 Prefix Sum Modulo + Frequency Hash Map:
+ * ------------------------------------------------
+ * - Use the prefix sum concept: sum of subarray [i..j] is divisible by k if:
+ *   prefix[j+1] % k == prefix[i] % k
+ * - Maintain a hash map to count how many times each mod class has occurred.
+ * - For every current mod:
+ *     → The number of previous prefix sums with the same mod gives the number of valid subarrays ending here.
+ *
+ * Implementation:
+ * - Initialize mod_count[0] = 1 (empty prefix is divisible by k).
+ * - Normalize mod to avoid negatives: (mod + k) % k.
+ * - Add mod to map after counting (avoid overcounting current prefix).
+ *
+ * 🚨 Edge Cases:
+ * - k can be negative → use absolute value if needed.
+ * - Normalize mod to ensure non-negative key.
+ *
+ * 🗓 Time: O(n)
+ * 🧠 Space: O(k)
  */
+
 int SubarraysDivByK(vector<int>& nums, int k) {
     unordered_map<int, int> mod_count{{0, 1}};
     int sum = 0, count = 0;
@@ -97,14 +246,34 @@ int SubarraysDivByK(vector<int>& nums, int k) {
 
 /**
  * Problem 5: Maximum Size Subarray Sum Equals k (LC 325)
- * Description:
- * Find the maximum length of a subarray that sums to k.
- * Approach:
- * Use prefix sum + hashmap to store first occurrence of prefix sum.
- * Example:
+ * -------------------------------------------------------
+ * 🧠 Description:
+ * Given an integer array `nums` and an integer `k`, find the length of the longest 
+ * subarray that sums to exactly `k`.
+ *
+ * 🔍 Example:
  * Input: nums = [1, -1, 5, -2, 3], k = 3
- * Output: 4
+ * Output: 4  (subarray: [1, -1, 5, -2])
+ *
+ * 💡 Prefix Sum + First Occurrence Map Strategy:
+ * -------------------------------------------------------
+ * - Let prefix_sum be the cumulative sum up to index `i`.
+ * - If `prefix_sum - k` has appeared before at index `j`, then nums[j+1..i] sums to k.
+ * - Track the **first occurrence** of each prefix_sum in a hash map.
+ *   → This ensures the subarray is the longest possible for a given sum.
+ *
+ * Implementation:
+ * - Update max_len = max(max_len, i - prefix_index[sum - k]) if match found.
+ * - Only store first occurrence of a prefix_sum (don't overwrite).
+ *
+ * 🚨 Edge Cases:
+ * - If sum == k from beginning → max_len = i + 1
+ * - Can include negative numbers.
+ *
+ * 🗓 Time: O(n)
+ * 🧠 Space: O(n)
  */
+
 int MaxSubArrayLen(vector<int>& nums, int k) {
     unordered_map<int, int> prefix_index;
     int sum = 0, max_len = 0;
@@ -121,14 +290,34 @@ int MaxSubArrayLen(vector<int>& nums, int k) {
 
 /**
  * Problem 6: Product of Array Except Self (LC 238)
- * Description:
- * Return an array output such that output[i] is equal to the product of all elements of nums except nums[i].
- * Approach:
- * Use prefix product from left and right.
- * Example:
- * Input: nums = [1,2,3,4]
- * Output: [24,12,8,6]
+ * -------------------------------------------------
+ * 🧠 Description:
+ * Given an integer array `nums`, return an array `output` where:
+ * output[i] = product of all elements in `nums` except nums[i].
+ * You must do this without using division and in O(n) time.
+ *
+ * 🔍 Example:
+ * Input: nums = [1, 2, 3, 4]
+ * Output: [24, 12, 8, 6]
+ *
+ * 💡 Prefix + Suffix Product Strategy:
+ * -------------------------------------------------
+ * - Create two passes:
+ *   ➤ Left-to-right: store prefix product of all elements before index `i`.
+ *   ➤ Right-to-left: multiply suffix product after index `i`.
+ * - Use only the output array and two scalars for prefix and suffix.
+ *
+ * Implementation:
+ * - Initialize output[i] = product of nums[0..i-1] (prefix)
+ * - Traverse from right, multiply output[i] *= suffix, then update suffix *= nums[i]
+ *
+ * 🚨 Edge Cases:
+ * - Zeros in array → handled naturally without division.
+ *
+ * 🗓 Time: O(n)
+ * 🧠 Space: O(1) extra space (excluding output)
  */
+
 vector<int> ProductExceptSelf(vector<int>& nums) {
     int n = nums.size();
     vector<int> res(n, 1);
@@ -146,14 +335,36 @@ vector<int> ProductExceptSelf(vector<int>& nums) {
 
 /**
  * Problem 7: Count Number of Nice Subarrays (LC 1248)
- * Description:
- * Count the number of subarrays with exactly k odd numbers.
- * Approach:
- * Use prefix sum of odd counts and hashmap.
- * Example:
+ * ---------------------------------------------------
+ * 🧠 Description:
+ * Given an array `nums` and an integer `k`, return the number of subarrays
+ * that contain exactly `k` odd numbers.
+ *
+ * 🔍 Example:
  * Input: nums = [1,1,2,1,1], k = 3
  * Output: 2
+ * Explanation: Subarrays [1,1,2,1], [1,2,1,1] both have exactly 3 odd numbers.
+ *
+ * 💡 Prefix Sum of Odd Counts + Hash Map:
+ * ---------------------------------------------------
+ * - Treat the problem as prefix sum of number of odds.
+ * - Let `odd_count[i]` = number of odd numbers in nums[0..i].
+ * - We want: odd_count[j] - odd_count[i] == k → odd_count[i] = odd_count[j] - k
+ * - Maintain frequency of previous odd count values in a map.
+ *
+ * Implementation:
+ * - Traverse array and increment count if number is odd.
+ * - For each `odd_count`, add frequency of `odd_count - k` to result.
+ * - Update the frequency of current odd count in map.
+ *
+ * 🚨 Edge Cases:
+ * - Empty subarray not allowed (subarrays must be non-empty).
+ * - All elements are even → count = 0.
+ *
+ * 🗓 Time: O(n)
+ * 🧠 Space: O(n)
  */
+
 int NumberOfSubarrays(vector<int>& nums, int k) {
     unordered_map<int, int> count{{0, 1}};
     int odd = 0, res = 0;
@@ -167,14 +378,34 @@ int NumberOfSubarrays(vector<int>& nums, int k) {
 
 /**
  * Problem 8: Binary Subarrays With Sum (LC 930)
- * Description:
- * Count the number of subarrays that sum to a given target in a binary array.
- * Approach:
- * Same as Problem 2, using hashmap of prefix sums.
- * Example:
+ * ---------------------------------------------
+ * 🧠 Description:
+ * Given a binary array `nums` and an integer `goal`, return the number of 
+ * non-empty subarrays whose sum is exactly equal to `goal`.
+ *
+ * 🔍 Example:
  * Input: nums = [1,0,1,0,1], goal = 2
  * Output: 4
+ * Explanation: Subarrays [1,0,1], [0,1,0,1], [1,0,1], [1,0,1] have sum 2.
+ *
+ * 💡 Prefix Sum + Hash Map Count:
+ * ---------------------------------------------
+ * - Maintain running sum of elements.
+ * - For each `sum`, check how many times `sum - goal` has occurred.
+ * - Use hash map to track count of prefix sums.
+ *
+ * Implementation:
+ * - Initialize prefix_count[0] = 1 for base case (empty prefix).
+ * - Update result += prefix_count[sum - goal] at each index.
+ *
+ * 🚨 Edge Cases:
+ * - Goal == 0: still need to count valid 0-sum subarrays.
+ * - Binary array simplifies the problem (no negative numbers).
+ *
+ * 🗓 Time: O(n)
+ * 🧠 Space: O(n)
  */
+
 int NumSubarraysWithSum(vector<int>& nums, int goal) {
     unordered_map<int, int> prefix_count{{0, 1}};
     int sum = 0, count = 0;
@@ -188,14 +419,37 @@ int NumSubarraysWithSum(vector<int>& nums, int goal) {
 
 /**
  * Problem 9: Range Sum Query 2D - Immutable (LC 304)
- * Description:
- * Implement a 2D matrix range sum query with precomputed prefix sum.
- * Approach:
- * Use prefix[i+1][j+1] for matrix[i][j], sumRegion is computed via inclusion-exclusion.
- * Example:
- * Input: sumRegion(2,1,4,3)
- * Output: 8
+ * --------------------------------------------------
+ * 🧠 Description:
+ * Given a 2D matrix, implement a class `NumMatrix` that supports:
+ * sumRegion(row1, col1, row2, col2): returns the sum of all elements in the rectangle
+ * defined by its upper left corner (row1, col1) and lower right corner (row2, col2).
+ *
+ * 🔍 Example:
+ * Input:
+ * matrix = [
+ *   [3, 0, 1, 4, 2],
+ *   [5, 6, 3, 2, 1],
+ *   [1, 2, 0, 1, 5],
+ *   [4, 1, 0, 1, 7],
+ *   [1, 0, 3, 0, 5]
+ * ]
+ * sumRegion(2, 1, 4, 3) = 8
+ *
+ * 💡 2D Prefix Sum Strategy:
+ * --------------------------------------------------
+ * - Build a (m+1)x(n+1) prefix sum matrix `prefix_` where:
+ *   prefix_[i+1][j+1] = sum of all elements from (0,0) to (i,j)
+ * - Use inclusion-exclusion to compute sumRegion in O(1):
+ *   prefix[row2+1][col2+1] - prefix[row1][col2+1] - prefix[row2+1][col1] + prefix[row1][col1]
+ *
+ * 🚨 Edge Cases:
+ * - Matrix may be empty → handle 0 size in constructor.
+ *
+ * 🗓 Time: O(mn) to build, O(1) per query
+ * 🧠 Space: O(mn)
  */
+
 class NumMatrix {
 private:
     vector<vector<int>> prefix_;
@@ -214,14 +468,39 @@ public:
 
 /**
  * Problem 10: Number of Submatrices That Sum to Target (LC 1074)
- * Description:
- * Given a matrix and target, return the number of non-empty submatrices that sum to target.
- * Approach:
- * Fix row pairs and reduce to 1D subarray sum to target (use hash map).
- * Example:
+ * --------------------------------------------------------------
+ * 🧠 Description:
+ * Given a 2D matrix and an integer `target`, return the number of non-empty 
+ * submatrices that sum to `target`.
+ *
+ * 🔍 Example:
  * Input: matrix = [[0,1,0],[1,1,1],[0,1,0]], target = 0
  * Output: 4
+ * Explanation:
+ * There are 4 submatrices that sum to 0:
+ * - Single-element zeros
+ * - Top-left + bottom-right quadrants where positives/negatives cancel
+ *
+ * 💡 Reduce to 1D Subarray Sum Strategy:
+ * --------------------------------------------------------------
+ * - Fix two row boundaries (top, bottom), compress rows into a 1D array `sums[]`
+ *   where sums[col] = sum of elements between top and bottom rows for each column.
+ * - For this 1D array, use the classic prefix sum + hashmap trick to count subarrays with sum = target.
+ *   ➤ This reduces the 2D matrix problem to multiple 1D problems.
+ *
+ * Implementation:
+ * - Iterate over all pairs of rows (O(m²) combinations).
+ * - For each row pair, compress into column sums and apply prefix sum hash map.
+ * - Use map to count how many times (current_sum - target) has occurred.
+ *
+ * 🚨 Edge Cases:
+ * - Works with negative values.
+ * - Can be optimized with precomputed prefix matrix for rows if needed.
+ *
+ * 🗓 Time: O(m² * n)
+ * 🧠 Space: O(n) — hash map and column buffer
  */
+
 int NumSubmatrixSumTarget(vector<vector<int>>& matrix, int target) {
     int m = matrix.size(), n = matrix[0].size(), res = 0;
     for (int top = 0; top < m; ++top) {

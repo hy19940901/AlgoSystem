@@ -8,63 +8,103 @@
 using namespace std;
 
 /**
- * 📚 Backtracking Overview
- * ------------------------------------------------------------
- * Backtracking is a general algorithmic technique for solving problems incrementally,
- * by trying partial solutions and then abandoning them if they do not lead to a full solution.
- * It is often used when we need to explore all possibilities (search space) and the problem
- * includes constraints that should be respected.
+ * 📚 Backtracking Technique Overview
+ * ===================================
  *
- * 🔧 Common Scenarios:
- * - Combinatorial problems (e.g., permutations, combinations, subsets)
- * - Constraint satisfaction problems (e.g., Sudoku, N-Queens)
- * - Path-finding with constraints (e.g., Word Search, Maze solving)
- * - Decision trees with pruning (e.g., Partitioning, Palindromic partitioning)
+ * 🧠 Description:
+ * Backtracking is a systematic way of trying out different sequences of decisions until finding one
+ * that "works", i.e., satisfies the problem constraints. It is typically used for combinatorial problems
+ * such as generating all subsets, permutations, combinations, or solving constraint satisfaction problems
+ * (e.g., N-Queens, Sudoku).
  *
- * 🧱 Template Pattern:
- * void backtrack(parameters) {
- *     if (goal is reached) {
- *         store result;
+ * 🔍 Example:
+ * For instance, given a set [1, 2, 3], to generate all subsets you would:
+ *   - Start with an empty subset []
+ *   - At each step, decide whether to include the current number.
+ *   - If you include a number, the "state" changes; when a branch (choice) is fully explored, the algorithm
+ *     backtracks (undoes the choice) to try alternative possibilities.
+ *
+ * 💡 Strategy:
+ * -----------
+ * 1. **Define the Recursion:**
+ *    - Use a helper function (e.g., backtrack) that takes the current state (often stored in a vector, e.g., `path`)
+ *      and the decision point (often an index or starting parameter).
+ * 2. **Base Case:**
+ *    - When a valid or complete solution is found (e.g., current path satisfies the target condition),
+ *      record the solution (push to result vector, `res`).
+ * 3. **Recursive Case:**
+ *    - Iterate over the choices available from the current decision point.
+ *    - For each choice:
+ *         a. **Make a Choice:** Update the current state (`path.push_back(choice)`).
+ *         b. **Recurse:** Call the helper function with the updated state and new decision point.
+ *         c. **Undo the Choice (Backtrack):** Remove the last element (`path.pop_back()`) to restore state.
+ *
+ * 4. **Pruning:**
+ *    - Optionally, add conditions to skip certain choices early (e.g., if a choice makes the state invalid)
+ *      to reduce the search space.
+ *
+ * 🚨 Edge Cases:
+ * --------------
+ * - **Duplicate Handling:** When input contains duplicates and unique solutions are required,
+ *   sort the input and skip duplicate choices in the same recursive level.
+ * - **Empty Input:** Ensure handling of edge case when the input set or sequence is empty.
+ * - **Infeasible States:** Incorporate condition checks to prevent unnecessary recursion
+ *   when the current state cannot lead to a valid solution.
+ *
+ * ⏱️ Time & Space Complexity:
+ * ----------------------------
+ * - **Time:** Typically exponential, O(2^n) for generating all subsets or O(n!) for permutations,
+ *   depending on the problem constraints and pruning effectiveness.
+ * - **Space:** O(n) for recursion call stack plus additional space for storing the current path.
+ *
+ * 💡 Template Example:
+ * --------------------
+ * vector<vector<int>> res;
+ * void backtrack(vector<int>& path, int start, vector<int>& choices) {
+ *     if (/* base condition: e.g., valid solution found * /) {
+ *         res.push_back(path);
  *         return;
  *     }
- *     for (choice in choices) {
- *         if (choice is valid) {
- *             make choice;
- *             backtrack(next state);
- *             undo choice;
- *         }
+ *     for (int i = start; i < choices.size(); ++i) {
+ *         // Optionally skip duplicates: if(i > start && choices[i] == choices[i-1]) continue;
+ *         path.push_back(choices[i]);       // Make a choice
+ *         backtrack(path, i + 1, choices);    // Recurse with updated state
+ *         path.pop_back();                    // Undo the choice (backtrack)
  *     }
  * }
  *
- * 📈 Time Complexity:
- * Often exponential, as it explores all paths, but can be optimized with pruning or memoization.
+ * This template can be tailored to problems like generating combinations,
+ * permutations, subsets, or partitioning problems.
  */
 
 /**
  * Problem 1: Generate Parentheses (LeetCode 22)
  * ---------------------------------------------
- * 📟 Description:
- * Given n pairs of parentheses, generate all combinations of well-formed parentheses.
- * A well-formed parentheses string is valid if every opening '(' has a corresponding ')'.
+ * 🧠 Description:
+ * Given an integer `n`, return all combinations of `n` pairs of well-formed parentheses.
+ * Each combination must be valid — meaning every '(' must be closed by a corresponding ')'.
  *
  * 🔍 Example:
  * Input: n = 3
  * Output: ["((()))","(()())","(())()","()(())","()()()"]
  *
- * 💡 Approach: Backtracking
- * ----------------------------------
- * Use a backtracking helper function that builds the string one character at a time:
- *   - Maintain counts of remaining open and close parentheses.
- *   - You can add '(' if open > 0.
- *   - You can add ')' if close > open (to maintain balance).
- *   - When open == 0 and close == 0, we have a complete valid string.
+ * 💡 Strategy: Backtracking with Remaining Count
+ * ---------------------------------------------
+ * - Track how many left '(' and right ')' parentheses remain.
+ * - You may:
+ *   → Add '(' if open > 0
+ *   → Add ')' if close > open (ensures balance)
+ * - When both open and close are zero, a valid combination is complete.
+ * - Use recursion and backtrack after trying each choice.
  *
- * This ensures we only generate valid combinations and prune invalid ones early.
+ * 🚨 Edge Cases:
+ * - n = 0 → should return [""]
+ * - Only balanced and valid strings are allowed
  *
- * 📅 Time and Space Complexity:
- *   - Time: O(4^n / sqrt(n)) — Catalan number complexity for valid parentheses
- *   - Space: O(n) recursion stack depth
+ * ⏱️ Time: O(4^n / sqrt(n)) — Catalan number growth
+ * 🧠 Space: O(n) recursion depth per path
  */
+
 void GenerateParenthesisHelper(int open, int close, string current, vector<string>& result) {
     if (open == 0 && close == 0) {
         result.push_back(current);
@@ -82,29 +122,36 @@ vector<string> GenerateParenthesis(int n) {
 
 /**
  * Problem 2: N-Queens (LeetCode 51)
- * ----------------------------------
- * 📟 Description:
- * Place n queens on an n x n chessboard such that no two queens attack each other.
+ * ---------------------------------
+ * 🧠 Description:
+ * Place `n` queens on an `n x n` chessboard such that no two queens attack each other.
  * Queens attack vertically, and diagonally in both directions.
- * Return all distinct board configurations.
+ * Return all distinct valid board configurations.
  *
  * 🔍 Example:
  * Input: n = 4
- * Output: [[".Q..","...Q","Q...","..Q."], ["..Q.","Q...","...Q",".Q.."]]
+ * Output:
+ * [
+ *   [".Q..","...Q","Q...","..Q."],
+ *   ["..Q.","Q...","...Q",".Q.."]
+ * ]
  *
- * 💡 Approach: Backtracking
- * ----------------------------------
- * - Place a queen row by row.
- * - For each column in the current row, check if placing a queen is safe:
- *     - No queen in the same column above
- *     - No queen in upper-left and upper-right diagonals
- * - If valid, place the queen and continue to next row.
- * - Backtrack when invalid or when solution is recorded.
+ * 💡 Strategy: Backtracking Row by Row
+ * -------------------------------------
+ * - Place a queen in each row.
+ * - For each column in the row, check if it's valid:
+ *     → No other queen in same column
+ *     → No other queen in upper-left or upper-right diagonals
+ * - If valid, place the queen and recurse to the next row.
+ * - Backtrack after each attempt to explore all board states.
  *
- * 📅 Time and Space Complexity:
- *   - Time: O(n!) — Try n positions for each of n rows
- *   - Space: O(n^2) for storing board + recursion stack
+ * 🚨 Edge Cases:
+ * - n = 2 or n = 3 → no solution exists
+ *
+ * ⏱️ Time: O(n!) — try n columns for each row
+ * 🧠 Space: O(n^2) for board + recursion stack
  */
+
 bool IsSafe(vector<string>& board, int row, int col, int n) {
     for (int i = 0; i < row; ++i)
         if (board[i][col] == 'Q') return false; // Check column
@@ -138,24 +185,30 @@ vector<vector<string>> SolveNQueens(int n) {
 
 /**
  * Problem 3: Permutations (LeetCode 46)
- * --------------------------------------
- * 📟 Description:
- * Given an array of distinct integers nums, return all possible permutations.
+ * -------------------------------------
+ * 🧠 Description:
+ * Given a list of distinct integers `nums`, return all possible permutations of the list.
  *
  * 🔍 Example:
- * Input: nums = [1,2,3]
- * Output: [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
+ * Input: nums = [1, 2, 3]
+ * Output:
+ * [
+ *   [1,2,3], [1,3,2], [2,1,3],
+ *   [2,3,1], [3,1,2], [3,2,1]
+ * ]
  *
- * 💡 Approach: Backtracking with Usage Tracking
- * ------------------------------------------------------
- * - Maintain a boolean array `used[]` to track elements already in the current path.
- * - At each level, try adding any unused number to the current permutation.
- * - Once a permutation of size n is built, add it to result.
- * - Backtrack by removing last element and marking it unused.
+ * 💡 Strategy: Backtracking with Used[] Array
+ * ---------------------------------------------
+ * - Maintain a `used[]` array to track which elements are in the current permutation.
+ * - Recurse by choosing any unused element.
+ * - When the path size reaches nums.size(), store the result.
+ * - Backtrack after each choice to explore other possibilities.
  *
- * 📅 Time and Space Complexity:
- *   - Time: O(n!) for n elements
- *   - Space: O(n) for current path + used[]
+ * 🚨 Edge Cases:
+ * - Empty input → returns [[]]
+ *
+ * ⏱️ Time: O(n!) — total permutations for n elements
+ * 🧠 Space: O(n) recursion + used[] + path
  */
 
 void PermuteHelper(vector<int>& nums, vector<bool>& used, vector<int>& path, vector<vector<int>>& result) {
@@ -184,26 +237,30 @@ vector<vector<int>> Permute(vector<int>& nums) {
 
 /**
  * Problem 4: Subsets (LeetCode 78)
- * ---------------------------------
- * 📟 Description:
- * Given an integer array nums, return all possible subsets (the power set).
- * Each element may be either included or excluded.
+ * --------------------------------
+ * 🧠 Description:
+ * Given an integer array `nums`, return all possible subsets (the power set).
+ * Each element may be included or excluded in a subset.
  *
  * 🔍 Example:
- * Input: nums = [1,2,3]
+ * Input: nums = [1, 2, 3]
  * Output: [[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]]
  *
- * 💡 Approach: Backtracking
- * ----------------------------------
- * - Use DFS from index i to explore subsets.
- * - At each index, choose to include or exclude current element.
- * - Push the current subset into result at each recursive level.
- * - Backtrack after exploring each branch.
+ * 💡 Strategy: Backtracking from Index
+ * -------------------------------------
+ * - At each index, you can:
+ *     → Include nums[i] in the subset
+ *     → Skip nums[i] and continue
+ * - Push the current subset into result at every recursive level.
+ * - Use index to avoid duplicates and preserve order.
  *
- * 📅 Time and Space Complexity:
- *   - Time: O(2^n) — number of subsets
- *   - Space: O(n) recursion depth
+ * 🚨 Edge Cases:
+ * - Empty array → returns [[]]
+ *
+ * ⏱️ Time: O(2^n) — each element has 2 choices
+ * 🧠 Space: O(n) recursion stack
  */
+
 void SubsetsHelper(vector<int>& nums, int index, vector<int>& current, vector<vector<int>>& result) {
     result.push_back(current);
     for (size_t i = index; i < nums.size(); ++i) {
@@ -223,27 +280,34 @@ vector<vector<int>> Subsets(vector<int>& nums) {
 /**
  * Problem 5: Word Search (LeetCode 79)
  * -------------------------------------
- * 📟 Description:
- * Given a 2D board and a word, return true if the word exists in the grid.
- * The word can be constructed from adjacent cells (up/down/left/right), and each cell must be used only once.
+ * 🧠 Description:
+ * Given a 2D board of characters and a target word, return true if the word exists in the board.
+ * The word can be constructed from sequentially adjacent cells (up/down/left/right),
+ * and the same cell cannot be used more than once.
  *
  * 🔍 Example:
  * Input:
- * board = [["A","B","C","E"], ["S","F","C","S"], ["A","D","E","E"]], word = "ABCCED"
+ * board = [["A","B","C","E"],
+ *          ["S","F","C","S"],
+ *          ["A","D","E","E"]]
+ * word = "ABCCED"
  * Output: true
  *
- * 💡 Approach: Backtracking DFS
+ * 💡 Strategy: Backtracking DFS on Grid
  * --------------------------------------
- * - Traverse each cell in the board.
- * - Start DFS if board[i][j] == word[0].
- * - Mark visited cells temporarily.
- * - Explore all 4 directions.
- * - Backtrack and restore cell state.
+ * - Start DFS from every cell matching word[0].
+ * - Mark visited cells temporarily to avoid reuse.
+ * - Explore all 4 directions recursively.
+ * - Restore the cell value (backtrack) after exploration.
  *
- * 📅 Time and Space Complexity:
- *   - Time: O(m * n * 4^L), where L is length of the word
- *   - Space: O(L), recursion depth
+ * 🚨 Edge Cases:
+ * - Empty board or word → return false
+ * - Words longer than total board size → return false
+ *
+ * ⏱️ Time: O(m * n * 4^L), where L is word length
+ * 🧠 Space: O(L) recursion depth
  */
+
 bool WordSearchHelper(vector<vector<char>>& board, string& word, int index, int row, int col) {
     if (static_cast<size_t>(index) == word.size()) return true; // Word found
     if (row < 0 || static_cast<size_t>(row) >= board.size() || col < 0 || static_cast<size_t>(col) >= board[0].size() || board[row][col] != word[index])
@@ -271,25 +335,30 @@ bool Exist(vector<vector<char>>& board, string word) {
 /**
  * Problem 6: Combination Sum (LeetCode 39)
  * ----------------------------------------
- * 📟 Description:
- * Given a set of distinct integers candidates and a target, return all unique combinations
- * in candidates where the chosen numbers sum to target. The same number may be chosen multiple times.
+ * 🧠 Description:
+ * Given a set of distinct integers `candidates` and a target number `target`,
+ * return all unique combinations of candidates that sum to target.
+ * Each number may be chosen unlimited times.
  *
  * 🔍 Example:
  * Input: candidates = [2,3,6,7], target = 7
- * Output: [[2,2,3],[7]]
+ * Output: [[2,2,3], [7]]
  *
- * 💡 Approach: Backtracking
- * ----------------------------------
- * - For each index, decide to take the current candidate (can reuse same index).
- * - Subtract it from target and recurse.
- * - Backtrack after each recursion.
- * - Skip candidates that would overshoot the target.
+ * 💡 Strategy: Backtracking with Repeated Choice
+ * ----------------------------------------------
+ * - From each index, try adding the current candidate if it doesn't exceed the target.
+ * - Since we can reuse a number, do not advance index after including it.
+ * - When target reaches 0, store the current path.
+ * - Backtrack after each choice to explore other combinations.
  *
- * 📅 Time and Space Complexity:
- *   - Time: Exponential in worst-case
- *   - Space: O(target) recursion depth
+ * 🚨 Edge Cases:
+ * - No combination sums to target → return empty list
+ * - Candidates must be positive (to guarantee termination)
+ *
+ * ⏱️ Time: Exponential in worst case (unbounded combinations)
+ * 🧠 Space: O(target) recursion depth
  */
+
 void CombinationSumHelper(vector<int>& candidates, int target, int index, vector<int>& current, vector<vector<int>>& result) {
     if (target == 0) {
         result.push_back(current);
@@ -313,25 +382,29 @@ vector<vector<int>> CombinationSum(vector<int>& candidates, int target) {
 /**
  * Problem 7: Palindrome Partitioning (LeetCode 131)
  * --------------------------------------------------
- * 📟 Description:
- * Given a string s, partition it such that every substring of the partition is a palindrome.
- * Return all possible palindrome partitioning.
+ * 🧠 Description:
+ * Given a string `s`, return all possible ways to partition it into substrings
+ * such that every substring is a palindrome.
  *
  * 🔍 Example:
  * Input: s = "aab"
- * Output: [["a","a","b"],["aa","b"]]
+ * Output: [["a","a","b"], ["aa","b"]]
  *
- * 💡 Approach: Backtracking + Palindrome Checking
- * ---------------------------------------------------------
- * - Use DFS to try each possible cut.
- * - At each cut, check if substring is palindrome.
- * - If so, recurse and try further partitioning.
- * - Backtrack after each attempt.
+ * 💡 Strategy: Backtracking with Palindrome Check
+ * --------------------------------------------------
+ * - From index i, try every possible substring s[i..j]
+ * - If s[i..j] is a palindrome:
+ *     → Add it to path and recurse on s[j+1..]
+ * - Backtrack after each partition attempt.
  *
- * 📅 Time and Space Complexity:
- *   - Time: O(2^n * n) — all partitions * substring checks
- *   - Space: O(n) recursion depth
+ * 🚨 Edge Cases:
+ * - Empty string → returns [[]]
+ * - Single character → returns [[char]]
+ *
+ * ⏱️ Time: O(2^n * n) — all partitions * O(n) for palindrome checking
+ * 🧠 Space: O(n) recursion + output
  */
+
 bool IsPalindrome(const string& s, int start, int end) {
     while (start < end) {
         if (s[start++] != s[end--]) return false;
@@ -361,32 +434,35 @@ vector<vector<string>> Partition(string s) {
 }
 
 /**
- * Problem 8: Rat in a Maze (Classic Problem)
- * ------------------------------------------
- * 📟 Description:
- * Given an n x n binary matrix representing a maze, find all paths from top-left (0,0) to bottom-right (n-1,n-1)
- * using only right/down/left/up moves. Cells with value 1 are open; 0 are blocked.
+ * Problem 8: Rat in a Maze (Classic)
+ * ----------------------------------
+ * 🧠 Description:
+ * Given an `n x n` binary matrix where `1` is open and `0` is blocked,
+ * find all paths from (0, 0) to (n-1, n-1) using only D, R, U, L moves.
+ * You cannot visit the same cell more than once in a path.
  *
  * 🔍 Example:
  * Input:
- * maze = [
- *   [1, 0, 0, 0],
- *   [1, 1, 0, 1],
- *   [0, 1, 0, 0],
- *   [1, 1, 1, 1]
- * ]
+ * maze = [[1, 0, 0, 0],
+ *         [1, 1, 0, 1],
+ *         [0, 1, 0, 0],
+ *         [1, 1, 1, 1]]
  * Output: ["DDRDRR", "DRDDRR"]
  *
- * 💡 Approach: Backtracking + Visited Matrix
- * ---------------------------------------------------
- * - From current cell, try all 4 directions.
- * - If valid and not visited, mark and recurse.
- * - Backtrack after trying each path.
+ * 💡 Strategy: DFS + Backtracking with Visited Matrix
+ * ------------------------------------------------------
+ * - At each cell, try all 4 directions if valid (open and unvisited).
+ * - Mark cell as visited before moving, and unmark it after (backtracking).
+ * - If destination is reached, add current path to result.
  *
- * 📅 Time and Space Complexity:
- *   - Time: O(4^(n^2)) worst-case
- *   - Space: O(n^2) for visited
+ * 🚨 Edge Cases:
+ * - maze[0][0] == 0 → no valid path
+ * - All 0s → return empty result
+ *
+ * ⏱️ Time: O(4^(n^2)) in worst-case  
+ * 🧠 Space: O(n^2) for visited matrix and recursion
  */
+
 void RatInMazeHelper(vector<vector<int>>& maze, int x, int y, vector<vector<int>>& visited, string path, vector<string>& result) {
     int n = maze.size();
     if (x == n - 1 && y == n - 1) {
@@ -421,23 +497,27 @@ vector<string> FindPathsInMaze(vector<vector<int>>& maze) {
 /**
  * Problem 9: Path Sum II (LeetCode 113)
  * --------------------------------------
- * 📟 Description:
- * Given a binary tree and targetSum, return all root-to-leaf paths where each path's sum equals targetSum.
+ * 🧠 Description:
+ * Given a binary tree and a target sum, return all root-to-leaf paths
+ * where the sum of node values equals the target.
  *
  * 🔍 Example:
- * Input: Tree with values [5,4,8,11,null,13,4,7,2,null,null,5,1], targetSum = 22
- * Output: [[5,4,11,2],[5,8,4,5]]
+ * Input: root = [5,4,8,11,null,13,4,7,2,null,null,5,1], target = 22
+ * Output: [[5,4,11,2], [5,8,4,5]]
  *
- * 💡 Approach: Backtracking
- * ----------------------------------
- * - Traverse from root to leaves.
- * - At each node, subtract node->val from remaining sum.
- * - If it's a leaf and sum is 0, add current path to result.
- * - Backtrack after traversing children.
+ * 💡 Strategy: Backtracking on Binary Tree
+ * -----------------------------------------
+ * - Start DFS from root.
+ * - Track current path and subtract current node from target.
+ * - If it's a leaf and target becomes 0 → add path to result.
+ * - Backtrack after visiting left and right subtrees.
  *
- * 📅 Time and Space Complexity:
- *   - Time: O(N^2) in worst case (unbalanced tree)
- *   - Space: O(H), height of tree
+ * 🚨 Edge Cases:
+ * - Tree is null → return empty list
+ * - Only root node equals target → return single-node path
+ *
+ * ⏱️ Time: O(N^2) in worst case (skewed tree with copying path)
+ * 🧠 Space: O(H) recursion, H = height of tree
  */
 
 struct TreeNode {
@@ -473,53 +553,50 @@ vector<vector<int>> PathSum(TreeNode* root, int targetSum) {
 }
 
 /**
- * Problem 10: Triangle Minimum Path Sum (LeetCode 120)
- * -----------------------------------------------------
- * 📟 Description:
- * You are given a triangle array where triangle[i] represents the i-th row of the triangle.
- * Your goal is to find the minimum path sum from the top to the bottom.
+ * Problem 10: Unique Paths III (LeetCode 980)
+ * --------------------------------------------
+ * 🧠 Description:
+ * You are given a grid of size m x n, where:
+ *   - `1` represents the starting square,
+ *   - `2` represents the ending square,
+ *   - `0` represents empty squares you can walk over,
+ *   - `-1` represents obstacles that cannot be walked over.
  *
- * At each step, you may move to adjacent numbers on the row below:
- * If you're at triangle[i][j], you may move to triangle[i+1][j] or triangle[i+1][j+1].
+ * You must find all unique paths from the start to the end that visit every non-obstacle square exactly once.
  *
  * 🔍 Example:
  * Input:
- * triangle = [
- *     [2],
- *    [3,4],
- *   [6,5,7],
- *  [4,1,8,3]
+ * grid = [
+ *   [1, 0, 0, 0],
+ *   [0, 0, 0, 0],
+ *   [0, 0, 2, -1]
  * ]
- * The triangle looks like:
- *     2
- *    3 4
- *   6 5 7
- *  4 1 8 3
- * Output: 11
- * Explanation: The minimum path sum is 2 + 3 + 5 + 1 = 11
+ * Output: 2
+ * Explanation: There are two unique paths that go from 1 to 2 and cover all zeros exactly once.
  *
- * 💡 Approach: Bottom-Up Dynamic Programming (Space Optimized)
- * ------------------------------------------------------------
- * We define a 1D DP array:
- *   - dp[j] represents the minimum path sum from row i+1, column j down to the bottom.
+ * 💡 Strategy:
+ * ------------
+ * - First, find the starting point and count the total number of empty squares (including the start).
+ * - Use DFS/backtracking to explore all possible paths from the starting point.
+ * - Mark the cell as visited by setting it to -1 (temporarily).
+ * - When you reach the end cell (`2`) with exactly all empty squares visited (`remaining == 0`), count it as a valid path.
+ * - Backtrack to explore other paths.
  *
- * Step-by-step:
- *   1. Initialize dp[] as the last row of the triangle (since it's the base).
- *   2. Iterate from the second-to-last row upward.
- *   3. For each element triangle[i][j], compute:
- *        dp[j] = min(dp[j], dp[j+1]) + triangle[i][j];
- *      (either go straight down or diagonally down-right)
- *   4. After reaching the top row, dp[0] holds the final result.
+ * 🚨 Edge Cases:
+ * -------------
+ * - Start or end not found (guaranteed valid input by constraints).
+ * - All paths blocked by `-1`: result is 0.
+ * - The only path is a direct 1 → 2 with no 0s in between: result is 1.
  *
- * 👮️‍⚖️ Time and Space Complexity:
- *   - Time: O(n^2), where n is the number of rows in the triangle
- *   - Space: O(n), reusing a single array for DP
+ * ⏱️ Time Complexity:
+ * --------------------
+ * - Worst case: O(4^(m * n)) — since at most each cell tries 4 directions recursively.
  *
- * ✅ Why Bottom-Up is Better:
- *   - Avoids recursion overhead
- *   - Eliminates redundant subproblem computation
- *   - Can be optimized to O(n) space
+ * 🧠 Space Complexity:
+ * ---------------------
+ * - O(m * n) for recursion stack and backtracking path.
  */
+
 void UniquePathsIIIHelper(vector<vector<int>>& grid, int x, int y, int remaining, int& result) {
     if (x < 0 || y < 0 || static_cast<size_t>(x) >= grid.size() || static_cast<size_t>(y) >= grid[0].size() || grid[x][y] == -1) return;
 
@@ -558,27 +635,34 @@ int UniquePathsIII(vector<vector<int>>& grid) {
 
 /**
  * Problem 11: Matchsticks to Square (LeetCode 473)
- * -----------------------------------------------
- * 📟 Description:
- * Given an array of matchsticks, determine if they can form a square.
- * You must use all matchsticks and each matchstick must be used exactly once.
+ * -------------------------------------------------
+ * 🧠 Description:
+ * You are given an integer array `matchsticks` where each element represents the length of a matchstick.
+ * You must determine if you can use **all** the matchsticks to form a square.
+ * You cannot break any matchstick and each matchstick must be used exactly once.
  *
  * 🔍 Example:
- * Input: matchsticks = [1,1,2,2,2]
+ * Input: matchsticks = [1, 1, 2, 2, 2]
  * Output: true
- * Explanation: Can form a square with sides of length 2.
+ * Explanation: You can form a square with sides [2,2,2,2]
  *
- * 💡 Approach: Backtracking + Pruning
- * ------------------------------------------------
- * - First, check if sum of matchsticks is divisible by 4.
- * - Try assigning each matchstick to one of 4 sides.
- * - Prune if side exceeds target length.
- * - Sort in descending order to optimize early pruning.
+ * 💡 Strategy:
+ * - If the sum of all matchsticks is not divisible by 4, it's impossible.
+ * - The target side length = total sum / 4.
+ * - Use backtracking to try placing each stick in one of 4 "buckets" (the 4 sides of the square).
+ * - Prune early:
+ *     → If current bucket exceeds side length, stop.
+ *     → Sort matchsticks in descending order to fill larger sticks earlier and fail faster if impossible.
  *
- * 📅 Time and Space Complexity:
- *   - Time: Exponential in number of matchsticks
- *   - Space: O(n) recursion depth
+ * 🚨 Edge Cases:
+ * - sum % 4 ≠ 0 → immediately return false
+ * - matchsticks has fewer than 4 sticks → impossible
+ * - a single stick > side length → prune early
+ *
+ * ⏱️ Time: O(4^N) worst case (try placing N matchsticks into 4 sides)
+ * 🧠 Space: O(N) recursion depth + 4-element side state
  */
+
 bool CanFormSquare(vector<int>& sides, int index, vector<int>& matchsticks, int target) {
     if (static_cast<size_t>(index) == matchsticks.size()) {
         return sides[0] == target && sides[1] == target && sides[2] == target && sides[3] == target;
@@ -607,25 +691,35 @@ bool Makesquare(vector<int>& matchsticks) {
 
 /**
  * Problem 12: Hamiltonian Path (Classic)
- * --------------------------------------
- * 📟 Description:
- * Given a graph as an adjacency matrix, determine whether a Hamiltonian Path exists.
- * A Hamiltonian Path visits each vertex exactly once.
+ * ---------------------------------------
+ * 🧠 Description:
+ * Given an undirected graph represented as an adjacency matrix,
+ * determine whether a **Hamiltonian Path** exists — a path that visits each vertex **exactly once**.
  *
  * 🔍 Example:
- * Input: graph = [[0,1,0,1], [1,0,1,0], [0,1,0,1], [1,0,1,0]]
+ * Input: graph = [
+ *   [0,1,0,1],
+ *   [1,0,1,0],
+ *   [0,1,0,1],
+ *   [1,0,1,0]
+ * ]
  * Output: true
  *
- * 💡 Approach: Backtracking
- * ----------------------------------
- * - Try starting from each vertex.
- * - For each move, check if the next vertex is connected and unvisited.
- * - Recurse until all vertices are visited.
+ * 💡 Strategy:
+ * - Try starting DFS from each node.
+ * - At each step:
+ *     → For every unvisited neighbor, recurse and mark as visited.
+ *     → Backtrack to try other options.
+ * - If we’ve visited all vertices exactly once, a Hamiltonian Path exists.
  *
- * 📅 Time and Space Complexity:
- *   - Time: O(n!) in worst-case
- *   - Space: O(n) recursion stack
+ * 🚨 Edge Cases:
+ * - Disconnected graph → no valid path
+ * - Fully connected graph → always has Hamiltonian Path
+ *
+ * ⏱️ Time: O(N!) — factorial complexity (visit every permutation)
+ * 🧠 Space: O(N) recursion depth for visited array
  */
+
 bool HamiltonianPathHelper(vector<vector<int>>& graph, vector<bool>& visited, int current, int visited_count) {
     if (static_cast<size_t>(visited_count) == graph.size()) return true;
 
@@ -653,23 +747,28 @@ bool HamiltonianPath(vector<vector<int>>& graph) {
 /**
  * Problem 13: Letter Combinations of a Phone Number (LeetCode 17)
  * ----------------------------------------------------------------
- * 📟 Description:
- * Given a string of digits from 2 to 9, return all possible letter combinations based on the phone keypad.
+ * 🧠 Description:
+ * Given a string `digits` containing numbers from 2 to 9,
+ * return all possible letter combinations the number could represent
+ * based on the telephone keypad mapping.
  *
  * 🔍 Example:
  * Input: digits = "23"
  * Output: ["ad","ae","af","bd","be","bf","cd","ce","cf"]
  *
- * 💡 Approach: Backtracking with Mapping
- * ------------------------------------------------
- * - Map digits to corresponding letters.
- * - For each digit, try every possible character.
- * - Recursively build the string and backtrack.
+ * 💡 Strategy:
+ * - Map digits to corresponding characters using a lookup table.
+ * - Use backtracking to build combinations:
+ *     → For each digit, try all mapped letters and recurse to next digit.
+ *     → Backtrack after each letter to try other possibilities.
  *
- * 📅 Time and Space Complexity:
- *   - Time: O(3^n * 4^m), where n is count of digits mapped to 3 letters, m to 4 letters
- *   - Space: O(n) recursion depth
+ * 🚨 Edge Cases:
+ * - Empty input → return empty list
+ *
+ * ⏱️ Time: O(3^N * 4^M), where N is digits mapped to 3 letters, M to 4 letters
+ * 🧠 Space: O(N) recursion depth
  */
+
 vector<string> LetterCombinationsHelper(const string& digits, int index, const vector<string>& mapping, string& current, vector<string>& result) {
     if (static_cast<size_t>(index) == digits.size()) {
         result.push_back(current);
@@ -694,28 +793,31 @@ vector<string> LetterCombinations(string digits) {
 /**
  * Problem 14: Sudoku Solver (LeetCode 37)
  * ----------------------------------------
- * 📟 Description:
- * Solve a given 9x9 Sudoku puzzle by filling the empty cells.
- * Each digit 1-9 must appear once per row, column, and 3x3 box.
+ * 🧠 Description:
+ * Write a program to solve a Sudoku puzzle by filling the empty cells.
+ * Each cell must contain a digit 1–9 such that:
+ *   - Each row, column, and 3×3 box contains the digits 1–9 exactly once.
  *
  * 🔍 Example:
- * Input: A partially filled board
- * Output: Solved board in-place
+ * Input: A 9×9 grid with some cells filled and others as '.'
+ * Output: A fully solved valid Sudoku board (modified in-place)
  *
- * 💡 Approach: Backtracking with Constraint Checking
- * -----------------------------------------------------------
- * - Try placing digits 1 to 9 in each empty cell.
- * - For each placement, check if it's valid.
- * - If valid, recurse. If not, backtrack.
- * - Backtrack when no valid number can be placed.
+ * 💡 Strategy:
+ * - For each empty cell, try placing numbers 1–9.
+ * - Before placing, validate:
+ *     → Not already in the current row/column/box.
+ * - Recurse to next empty cell; backtrack if invalid.
  *
- * 📅 Time and Space Complexity:
- *   - Time: O(9^(n*n)) in worst-case
- *   - Space: O(n^2) board state
+ * 🚨 Edge Cases:
+ * - Multiple solutions may exist — problem requires **any** valid one.
+ *
+ * ⏱️ Time: O(9^(81)) worst-case brute force
+ * 🧠 Space: O(81) recursion stack (if all cells are empty)
  */
+
 bool IsValid(vector<vector<char>>& board, int row, int col, char num) {
     for (int i = 0; i < 9; i++) {
-        if (board[row][i] == num || board[i][col] == num || 
+        if (board[row][i] == num || board[i][col] == num ||
             board[3 * (row / 3) + i / 3][3 * (col / 3) + i % 3] == num) return false;
     }
     return true;
@@ -745,24 +847,28 @@ void SolveSudoku(vector<vector<char>>& board) {
 
 /**
  * Problem 15: Word Break II (LeetCode 140)
- * ----------------------------------------
- * 📟 Description:
- * Given a string s and a dictionary of words, return all sentences that can be formed by breaking s into valid words.
+ * -----------------------------------------
+ * 🧠 Description:
+ * Given a string `s` and a dictionary of words `wordDict`,
+ * return all possible sentences where `s` can be segmented into valid words from the dictionary.
  *
  * 🔍 Example:
- * Input: s = "catsanddog", wordDict = ["cat","cats","and","sand","dog"]
- * Output: ["cats and dog","cat sand dog"]
+ * Input: s = "catsanddog", wordDict = ["cat", "cats", "and", "sand", "dog"]
+ * Output: ["cats and dog", "cat sand dog"]
  *
- * 💡 Approach: Backtracking + Memoization
- * ------------------------------------------------
- * - For each prefix of the string, check if it's in the dictionary.
- * - If so, recurse on the remaining suffix.
- * - Cache intermediate results to avoid recomputation.
+ * 💡 Strategy:
+ * - At each index, try every prefix that exists in the dictionary.
+ * - Recurse on the remaining suffix.
+ * - Use memoization to store previously computed substrings.
  *
- * 📅 Time and Space Complexity:
- *   - Time: Exponential without memo, reduced with caching
- *   - Space: O(n^2) in memo and recursion
+ * 🚨 Edge Cases:
+ * - s is empty → return []
+ * - No valid segmentation → return []
+ *
+ * ⏱️ Time: O(2^N) without memoization, better with caching
+ * 🧠 Space: O(N^2) for memo + recursion
  */
+
 unordered_map<string, vector<string>> memo;
 
 vector<string> WordBreakHelper(const string& s, unordered_set<string>& word_dict) {
@@ -786,26 +892,30 @@ vector<string> WordBreak(string s, vector<string>& word_dict) {
 
 /**
  * Problem 16: Restore IP Addresses (LeetCode 93)
- * ---------------------------------------------
- * 📟 Description:
- * Given a string of digits, return all possible valid IP address combinations.
- * Each segment must be between 0 and 255, and cannot have leading zeros.
+ * -----------------------------------------------
+ * 🧠 Description:
+ * Given a string `s` containing only digits, return all possible valid IP address combinations.
+ * An IP address must consist of exactly 4 parts separated by dots.
+ * Each part must be a number between 0 and 255, with no leading zeros.
  *
  * 🔍 Example:
  * Input: s = "25525511135"
- * Output: ["255.255.11.135","255.255.111.35"]
+ * Output: ["255.255.11.135", "255.255.111.35"]
  *
- * 💡 Approach: Backtracking
- * ----------------------------------
- * - Try every possible split into 4 parts.
- * - For each part, validate length and value range.
- * - If valid, recurse into next segment.
- * - Stop when 4 parts are found and string is consumed.
+ * 💡 Strategy:
+ * - Try every possible 1-3 digit segment.
+ * - Backtrack after each segment:
+ *     → Validate segment is in [0, 255] and has no leading zeros.
+ * - Stop when 4 segments are built and all digits are used.
  *
- * 📅 Time and Space Complexity:
- *   - Time: O(1), constant bounded by 4 segments and up to 3 digits each
- *   - Space: O(1) call stack (max depth 4)
+ * 🚨 Edge Cases:
+ * - Segment like "00" or "01" is invalid.
+ * - String length too short or too long (e.g., <4 or >12) → return []
+ *
+ * ⏱️ Time: O(1) — bounded by fixed segment combinations (max 12 digits)
+ * 🧠 Space: O(1) call stack (max depth 4)
  */
+
 void RestoreIPHelper(string& s, int start, int part, string current, vector<string>& result) {
     if (part == 4 && static_cast<size_t>(start) == s.size()) {
         result.push_back(current.substr(0, current.size() - 1)); // Remove last dot
@@ -829,25 +939,30 @@ vector<string> RestoreIpAddresses(string s) {
 
 /**
  * Problem 17: Combination Sum II (LeetCode 40)
- * --------------------------------------------
- * 📟 Description:
- * Given a collection of candidates (with duplicates) and a target, return all unique combinations
- * where candidates sum to the target. Each number may be used only once.
+ * ---------------------------------------------
+ * 🧠 Description:
+ * Given a list of candidates (with possible duplicates) and a target,
+ * return all unique combinations where candidates sum to the target.
+ * Each candidate may be used only once.
  *
  * 🔍 Example:
  * Input: candidates = [10,1,2,7,6,1,5], target = 8
  * Output: [[1,1,6],[1,2,5],[1,7],[2,6]]
  *
- * 💡 Approach: Backtracking + Sorting + Skip Duplicates
- * --------------------------------------------------------------
- * - Sort the array to bring duplicates together.
- * - At each level, skip duplicates (i > index && nums[i] == nums[i-1]).
- * - Only use each number once in the current path.
+ * 💡 Strategy:
+ * - Sort the array to group duplicates.
+ * - Use backtracking:
+ *     → At each level, skip duplicates (i > index && nums[i] == nums[i-1]).
+ *     → Prune if current candidate > target.
+ * - Only move to next index after use (to avoid reusing the same element).
  *
- * 📅 Time and Space Complexity:
- *   - Time: O(2^n) worst-case combinations
- *   - Space: O(n) recursion depth
+ * 🚨 Edge Cases:
+ * - Empty input or all numbers > target → return []
+ *
+ * ⏱️ Time: O(2^n) — worst-case combination space
+ * 🧠 Space: O(n) recursion stack
  */
+
 void CombinationSum2Helper(vector<int>& candidates, int target, int index, vector<int>& current, vector<vector<int>>& result) {
     if (target == 0) {
         result.push_back(current);
@@ -873,22 +988,27 @@ vector<vector<int>> CombinationSum2(vector<int>& candidates, int target) {
 /**
  * Problem 18: Generate Abbreviations (LeetCode 320)
  * --------------------------------------------------
- * 📟 Description:
- * Given a word, return all generalized abbreviations of the word.
+ * 🧠 Description:
+ * Given a word, return all possible generalized abbreviations of the word.
+ * You can replace any number of characters with their count (e.g., "word" → "w2d", "3d", etc).
  *
  * 🔍 Example:
  * Input: "word"
  * Output: ["word","1ord","w1rd","wo1d","wor1","2rd",...]
  *
- * 💡 Approach: Backtracking + Count Abbreviated Chars
- * -------------------------------------------------------------
- * - At each character, either keep it or abbreviate (count and skip).
- * - Pass along the abbreviation count and append it when switching to letters.
+ * 💡 Strategy:
+ * - For each character, you have two choices:
+ *     → Abbreviate it (increment count)
+ *     → Keep it (append count if > 0, then append char)
+ * - Use backtracking to explore both branches.
  *
- * 📅 Time and Space Complexity:
- *   - Time: O(2^n), each character has 2 choices
- *   - Space: O(n) call stack
+ * 🚨 Edge Cases:
+ * - Empty string → return [""]
+ *
+ * ⏱️ Time: O(2^n) — binary decision at each character
+ * 🧠 Space: O(n) call stack
  */
+
 void AbbreviationHelper(string& word, int pos, string current, int count, vector<string>& result) {
     if (pos == (int)word.size()) {
         if (count > 0) current += to_string(count);
@@ -908,25 +1028,29 @@ vector<string> GenerateAbbreviations(string word) {
 
 /**
  * Problem 19: Restore The Array (LeetCode 1416)
- * ---------------------------------------------
- * 📟 Description:
- * Given a string s containing digits and an integer k, return the number of ways to split s into a list
- * of integers where each integer is in the range [1, k] and no integer has leading zeros.
+ * ----------------------------------------------
+ * 🧠 Description:
+ * Given a string `s` and an integer `k`, return the number of ways
+ * to split `s` into a sequence of integers (no leading zeros),
+ * where each integer is in the range [1, k].
  *
  * 🔍 Example:
  * Input: s = "1000", k = 10000
  * Output: 1
  *
- * 💡 Approach: Backtracking with Memoization
- * ----------------------------------------------------
- * - Try all possible prefixes starting at index i.
- * - If valid and ≤ k, recurse on suffix.
- * - Use dp[i] to memoize number of ways from i to end.
+ * 💡 Strategy:
+ * - At each index, try extending the number as long as it's <= k.
+ * - Use dynamic programming with memoization (dp[i] = #ways from i to end).
+ * - Skip paths that start with '0'.
  *
- * 📅 Time and Space Complexity:
- *   - Time: O(n * log k)
- *   - Space: O(n) memo
+ * 🚨 Edge Cases:
+ * - Leading zeros (e.g., "01") are invalid.
+ * - Single-digit 0 is invalid.
+ *
+ * ⏱️ Time: O(n * log k)
+ * 🧠 Space: O(n) for memoization
  */
+
 const int MOD = 1e9 + 7;
 
 int RestoreHelper(const string& s, int k, int start, vector<int>& dp) {
@@ -951,25 +1075,31 @@ int NumberOfArrays(string s, int k) {
 
 /**
  * Problem 20: Expression Add Operators (LeetCode 282)
- * ----------------------------------------------------
- * 📟 Description:
- * Given a string num and an integer target, add operators '+', '-', or '*' between digits
- * so that the resulting expression evaluates to the target.
+ * -----------------------------------------------------
+ * 🧠 Description:
+ * Given a string `num` and a target integer, add binary operators (+, -, *) between digits
+ * to form valid expressions that evaluate to the target. Return all such expressions.
  *
  * 🔍 Example:
  * Input: num = "123", target = 6
  * Output: ["1+2+3","1*2*3"]
  *
- * 💡 Approach: Backtracking with Expression Evaluation
- * -------------------------------------------------------------
- * - At each index, try all splits.
- * - Keep track of cumulative value and last multiplied term (for '*').
- * - Use long long to avoid overflow and prevent leading zeros.
+ * 💡 Strategy:
+ * - Try all possible splits of the string into numbers.
+ * - Track:
+ *     → Current value of expression,
+ *     → Last multiplied term (to correctly handle "*"),
+ *     → Expression string.
+ * - Use long long to prevent overflow.
  *
- * 📅 Time and Space Complexity:
- *   - Time: O(4^n), trying +, -, *, or skip at each digit
- *   - Space: O(n) stack + result storage
+ * 🚨 Edge Cases:
+ * - Skip numbers with leading zeros like "05".
+ * - Result can be very large, prune if needed.
+ *
+ * ⏱️ Time: O(4^n) — 3 choices (+, -, *) per digit split
+ * 🧠 Space: O(n) call stack for recursion
  */
+
 void AddOperatorsHelper(string& num, int index, long long value, long long prev, string expr, int target, vector<string>& result) {
     if ((size_t)index == num.size()) {
         if (value == target) result.push_back(expr);
