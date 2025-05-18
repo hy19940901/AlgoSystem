@@ -89,7 +89,7 @@ using namespace std;
  * - Handle empty array input by initializing prefix_[0] = 0.
  * - Ensure indices are within bounds in production code.
  *
- * 🗓 Time: O(n) preprocessing, O(1) per query
+ * ⏱️ Time: O(n) preprocessing, O(1) per query
  * 🧠 Space: O(n) for prefix array
  */
 class NumArray {
@@ -135,7 +135,7 @@ public:
  * - Handle zeros properly; subarrays with sum 0 may be valid.
  * - Can have overlapping subarrays.
  *
- * 🗓 Time: O(n)
+ * ⏱️ Time: O(n)
  * 🧠 Space: O(n) — for prefix_sum count map
  */
 int SubarraySum(vector<int>& nums, int k) {
@@ -181,7 +181,7 @@ int SubarraySum(vector<int>& nums, int k) {
  * - If k == 0, look for subarray with sum == 0 and length ≥ 2.
  * - Negative mod: normalize using (mod + k) % k if needed.
  *
- * 🗓 Time: O(n)
+ * ⏱️ Time: O(n)
  * 🧠 Space: O(k) — at most k mod classes stored in map
  */
 
@@ -228,7 +228,7 @@ bool CheckSubarraySum(vector<int>& nums, int k) {
  * - k can be negative → use absolute value if needed.
  * - Normalize mod to ensure non-negative key.
  *
- * 🗓 Time: O(n)
+ * ⏱️ Time: O(n)
  * 🧠 Space: O(k)
  */
 
@@ -270,7 +270,7 @@ int SubarraysDivByK(vector<int>& nums, int k) {
  * - If sum == k from beginning → max_len = i + 1
  * - Can include negative numbers.
  *
- * 🗓 Time: O(n)
+ * ⏱️ Time: O(n)
  * 🧠 Space: O(n)
  */
 
@@ -314,7 +314,7 @@ int MaxSubArrayLen(vector<int>& nums, int k) {
  * 🚨 Edge Cases:
  * - Zeros in array → handled naturally without division.
  *
- * 🗓 Time: O(n)
+ * ⏱️ Time: O(n)
  * 🧠 Space: O(1) extra space (excluding output)
  */
 
@@ -361,7 +361,7 @@ vector<int> ProductExceptSelf(vector<int>& nums) {
  * - Empty subarray not allowed (subarrays must be non-empty).
  * - All elements are even → count = 0.
  *
- * 🗓 Time: O(n)
+ * ⏱️ Time: O(n)
  * 🧠 Space: O(n)
  */
 
@@ -402,7 +402,7 @@ int NumberOfSubarrays(vector<int>& nums, int k) {
  * - Goal == 0: still need to count valid 0-sum subarrays.
  * - Binary array simplifies the problem (no negative numbers).
  *
- * 🗓 Time: O(n)
+ * ⏱️ Time: O(n)
  * 🧠 Space: O(n)
  */
 
@@ -446,7 +446,7 @@ int NumSubarraysWithSum(vector<int>& nums, int goal) {
  * 🚨 Edge Cases:
  * - Matrix may be empty → handle 0 size in constructor.
  *
- * 🗓 Time: O(mn) to build, O(1) per query
+ * ⏱️ Time: O(mn) to build, O(1) per query
  * 🧠 Space: O(mn)
  */
 
@@ -497,7 +497,7 @@ public:
  * - Works with negative values.
  * - Can be optimized with precomputed prefix matrix for rows if needed.
  *
- * 🗓 Time: O(m² * n)
+ * ⏱️ Time: O(m² * n)
  * 🧠 Space: O(n) — hash map and column buffer
  */
 

@@ -128,7 +128,8 @@ vector<int> NextGreaterElement(vector<int>& nums) {
  * - Use decreasing stack to track next greater elements.
  * - Store answer for each index on first pass.
  *
- * 🗓 Time: O(n), Space: O(n)
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(n)
  */
 vector<int> NextGreaterElements(vector<int>& nums) {
     int n = nums.size();
@@ -163,7 +164,8 @@ vector<int> NextGreaterElements(vector<int>& nums) {
  * - On pop, calculate area with popped bar as smallest.
  * - Update maximum area accordingly.
  *
- * 🗓 Time: O(n), Space: O(n)
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(n)
  */
 int LargestRectangleArea(vector<int>& heights) {
     stack<int> st;
@@ -197,7 +199,8 @@ int LargestRectangleArea(vector<int>& heights) {
  * - Use histogram largest rectangle logic row-by-row.
  * - Track the max area over all rows.
  *
- * 🗓 Time: O(m * n), Space: O(n)
+ * ⏱️ Time: O(m * n)
+ * 🧠 Space: O(n)
  */
 
 int MaximalRectangle(vector<vector<char>>& matrix) {
@@ -230,7 +233,8 @@ int MaximalRectangle(vector<vector<char>>& matrix) {
  * - Remove from back if current value is greater than back.
  * - Front always has max value index for current window.
  *
- * 🗓 Time: O(n), Space: O(k)
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(k)
  */
 vector<int> MaxSlidingWindow(vector<int>& nums, int k) {
     deque<int> dq;
@@ -267,7 +271,8 @@ vector<int> MaxSlidingWindow(vector<int>& nums, int k) {
  * - If current temp > top of stack, compute the wait days.
  * - Push current index onto the stack.
  *
- * 🗓 Time: O(n), Space: O(n)
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(n)
  */
 vector<int> DailyTemperatures(vector<int>& temperatures) {
     vector<int> result(temperatures.size(), 0);
@@ -300,7 +305,8 @@ vector<int> DailyTemperatures(vector<int>& temperatures) {
  * - Use monotonic stack to find left and right boundaries.
  * - Contribution = arr[i] * (# elements to left) * (# elements to right)
  *
- * 🗓 Time: O(n), Space: O(n)
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(n)
  */
 int SumSubarrayMins(vector<int>& arr) {
     const int MOD = 1e9 + 7;
@@ -353,7 +359,8 @@ int SumSubarrayMins(vector<int>& arr) {
  * - Update `third` when popping smaller values.
  * - If current < third, pattern is found.
  *
- * 🗓 Time: O(n), Space: O(n)
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(n)
  */
 bool Find132pattern(vector<int>& nums) {
     stack<int> st;
@@ -385,7 +392,8 @@ bool Find132pattern(vector<int>& nums) {
  * - Remove elements from back if larger than current.
  * - Maintain order, avoid leading zeros.
  *
- * 🗓 Time: O(n), Space: O(n)
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(n)
  */
 string RemoveKdigits(string num, int k) {
     string result;
@@ -419,7 +427,8 @@ string RemoveKdigits(string num, int k) {
  * - Use stack to track times to reach target.
  * - If new car arrives later or same time, they form fleet.
  *
- * 🗓 Time: O(n log n), Space: O(n)
+ * ⏱️ Time: O(n log n)
+ * 🧠 Space: O(n)
  */
 int CarFleet(int target, vector<int>& position, vector<int>& speed) {
     int n = position.size();

@@ -216,7 +216,8 @@ int MinSubArrayLen(int target, vector<int>& nums) {
  * - Deque helps in efficiently maintaining a decreasing order of potential max candidates.
  * - Avoids scanning the entire window at each step.
  *
- * 🗓 Time: O(n), Space: O(k)
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(k)
  * - Each element is pushed and popped from the deque at most once.
  */
 
@@ -258,7 +259,8 @@ vector<int> MaxSlidingWindow(vector<int>& nums, int k) {
  * - If `s.size()` < `p.size()`, return empty result.
  * - Matching is case-sensitive, and only lowercase characters are expected.
  *
- * 🗓 Time: O(n), Space: O(1)
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(1)
  * - The frequency arrays are fixed size 26, regardless of input size.
  * - Each character in `s` is visited once.
  */
@@ -301,7 +303,8 @@ vector<int> FindAnagrams(string s, string p) {
  * 🧠 Why "window size - max_count > k"?
  * - Because only `max_count` characters need no change. The rest must be replaced (at most k).
  *
- * 🗓 Time: O(n), Space: O(1)
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(1)
  * - Fixed alphabet size (26), each character visited once by both left and right pointers.
  */
 
@@ -343,7 +346,8 @@ int CharacterReplacement(string s, int k) {
  * 🧠 Edge Cases:
  * - k > number of unique values in nums → result is 0.
  *
- * 🗓 Time: O(n), Space: O(n)
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(n)
  * - Each element is visited at most twice.
  * - Hash map can grow up to size of distinct numbers in nums.
  */
@@ -392,7 +396,8 @@ int SubarraysWithKDistinct(vector<int>& nums, int k) {
  * - To isolate the exact count of subarrays with sum == goal, subtract all subarrays
  *   with sum < goal from all subarrays with sum ≤ goal.
  *
- * 🗓 Time: O(n), Space: O(1)
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(1)
  * - Each element is visited at most twice by sliding window.
  * - Constant space used for sum and counters.
  */
@@ -437,7 +442,8 @@ int NumSubarraysWithSum(vector<int>& nums, int goal) {
  * - All 1s → we must still delete one → answer is length - 1.
  * - Only one element → return 0.
  *
- * 🗓 Time: O(n), Space: O(1)
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(1)
  * - Single pass with two pointers.
  * - Only a few integer variables used.
  */
@@ -478,7 +484,8 @@ int LongestSubarray(vector<int>& nums) {
  * - Brute force of all pick combinations has exponential complexity.
  * - This trick reduces it to a single linear scan.
  *
- * 🗓 Time: O(n), Space: O(1)
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(1)
  * - One pass to compute total sum.
  * - One pass with a sliding window to find min subarray.
  */
@@ -520,7 +527,8 @@ int MaxScore(vector<int>& card_points, int k) {
  * - All elements are positive, so removing earlier elements only reduces sum.
  * - Maintaining uniqueness ensures the window is valid.
  *
- * 🗓 Time: O(n), Space: O(n)
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(n)
  * - Each element is inserted and erased at most once.
  * - Hash set stores at most n elements.
  */

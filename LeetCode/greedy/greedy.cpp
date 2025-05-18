@@ -63,7 +63,7 @@ using namespace std;
  * - No children or no cookies → return 0.
  * - All cookies smaller than every child's greed → return 0.
  *
- * 🗓 Time: O(n log n)
+ * ⏱️ Time: O(n log n)
  * 🧠 Space: O(1)
  */
 int FindContentChildren(vector<int>& g, vector<int>& s) {
@@ -100,7 +100,7 @@ int FindContentChildren(vector<int>& g, vector<int>& s) {
  * - First element is 0 → return false unless it's the only element.
  * - Array of length 1 → always reachable.
  *
- * 🗓 Time: O(n)
+ * ⏱️ Time: O(n)
  * 🧠 Space: O(1)
  */
 bool CanJump(vector<int>& nums) {
@@ -136,7 +136,7 @@ bool CanJump(vector<int>& nums) {
  * - nums has only 1 element → return 0.
  * - First element is large enough to reach the end → return 1.
  *
- * 🗓 Time: O(n)
+ * ⏱️ Time: O(n)
  * 🧠 Space: O(1)
  */
 int Jump(vector<int>& nums) {
@@ -175,7 +175,7 @@ int Jump(vector<int>& nums) {
  * - Empty input → return 0.
  * - All balloons fully overlap → return 1.
  *
- * 🗓 Time: O(n log n)
+ * ⏱️ Time: O(n log n)
  * 🧠 Space: O(1)
  */
 int FindMinArrowShots(vector<vector<int>>& points) {
@@ -218,7 +218,7 @@ int FindMinArrowShots(vector<vector<int>>& points) {
  * - Empty interval list → return 0.
  * - Already non-overlapping intervals → return 0.
  *
- * 🗓 Time: O(n log n)
+ * ⏱️ Time: O(n log n)
  * 🧠 Space: O(1)
  */
 int EraseOverlapIntervals(vector<vector<int>>& intervals) {
@@ -259,7 +259,7 @@ int EraseOverlapIntervals(vector<vector<int>>& intervals) {
  * - Total gas < total cost → return -1.
  * - Only one station → check if gas[0] >= cost[0].
  *
- * 🗓 Time: O(n)
+ * ⏱️ Time: O(n)
  * 🧠 Space: O(1)
  */
 int CanCompleteCircuit(vector<int>& gas, vector<int>& cost) {
@@ -295,7 +295,7 @@ int CanCompleteCircuit(vector<int>& gas, vector<int>& cost) {
  * 🚨 Edge Cases:
  * - All numbers are negative → return the largest single element.
  *
- * 🗓 Time: O(n)
+ * ⏱️ Time: O(n)
  * 🧠 Space: O(1)
  */
 int MaxSubArray(vector<int>& nums) {
@@ -344,7 +344,7 @@ int MaxSubArray_kadane(vector<int>& nums) {
  * - All ratings equal → everyone gets 1 candy.
  * - Ratings strictly increasing or decreasing → linear ramp up/down.
  *
- * 🗓 Time: O(n)
+ * ⏱️ Time: O(n)
  * 🧠 Space: O(n)
  */
 int Candy(vector<int>& ratings) {
@@ -384,7 +384,7 @@ int Candy(vector<int>& ratings) {
  * - n = 0 → just return tasks.size().
  * - All tasks are same → maximum idle time inserted.
  *
- * 🗓 Time: O(n)
+ * ⏱️ Time: O(n)
  * 🧠 Space: O(1)
  */
 int LeastInterval(vector<char>& tasks, int n) {
@@ -416,7 +416,7 @@ int LeastInterval(vector<char>& tasks, int n) {
  * - All people have same height → insert by k only.
  * - k = 0 for all → preserve input order after sort.
  *
- * 🗓 Time: O(n^2)
+ * ⏱️ Time: O(n^2)
  * 🧠 Space: O(n)
  */
 vector<vector<int>> ReconstructQueue(vector<vector<int>>& people) {
@@ -453,7 +453,7 @@ vector<vector<int>> ReconstructQueue(vector<vector<int>>& people) {
  * - Each letter appears only once → each partition is size 1.
  * - All letters same → return one partition of full length.
  *
- * 🗓 Time: O(n)
+ * ⏱️ Time: O(n)
  * 🧠 Space: O(1)
  */
 vector<int> PartitionLabels(string s) {
@@ -494,7 +494,7 @@ vector<int> PartitionLabels(string s) {
  * - All numbers positive → only flip if k is odd.
  * - Repeated minimum value after flips → flip again if k is odd.
  *
- * 🗓 Time: O(n log n)
+ * ⏱️ Time: O(n log n)
  * 🧠 Space: O(1)
  */
 int LargestSumAfterKNegations(vector<int>& nums, int k) {
@@ -526,7 +526,7 @@ int LargestSumAfterKNegations(vector<int>& nums, int k) {
  * 🚨 Edge Cases:
  * - Only one stick → return 0.
  *
- * 🗓 Time: O(n log n)
+ * ⏱️ Time: O(n log n)
  * 🧠 Space: O(n)
  */
 int ConnectSticks(vector<int>& sticks) {
@@ -562,7 +562,7 @@ int ConnectSticks(vector<int>& sticks) {
  * - First customer pays with $10 or $20 → return false.
  * - Insufficient $5 bills at any point → return false.
  *
- * 🗓 Time: O(n)
+ * ⏱️ Time: O(n)
  * 🧠 Space: O(1)
  */
 bool LemonadeChange(vector<int>& bills) {
@@ -601,7 +601,7 @@ bool LemonadeChange(vector<int>& bills) {
  * - All people cheaper to go to one city → cost difference handles balance.
  * - Equal cost for both cities → choose any.
  *
- * 🗓 Time: O(n log n)
+ * ⏱️ Time: O(n log n)
  * 🧠 Space: O(1)
  */
 int TwoCitySchedCost(vector<vector<int>>& costs) {
@@ -635,7 +635,7 @@ int TwoCitySchedCost(vector<vector<int>>& costs) {
  * - All characters appear once → no deletion needed.
  * - Many characters with same frequency → multiple decrements needed.
  *
- * 🗓 Time: O(n)
+ * ⏱️ Time: O(n)
  * 🧠 Space: O(1)
  */
 int MinDeletions(string s) {
@@ -675,7 +675,7 @@ int MinDeletions(string s) {
  * - hand size not divisible by group_size → return false.
  * - Missing a card in a required sequence → return false.
  *
- * 🗓 Time: O(n log n)
+ * ⏱️ Time: O(n log n)
  * 🧠 Space: O(n)
  */
 bool IsNStraightHand(vector<int>& hand, int group_size) {
@@ -714,7 +714,7 @@ bool IsNStraightHand(vector<int>& hand, int group_size) {
  * 🚨 Edge Cases:
  * - All chips on same parity (all even or all odd) → cost is 0.
  *
- * 🗓 Time: O(n)
+ * ⏱️ Time: O(n)
  * 🧠 Space: O(1)
  */
 int MinCostToMoveChips(vector<int>& position) {
@@ -747,7 +747,7 @@ int MinCostToMoveChips(vector<int>& position) {
  * - Events with same start and end → only one can be picked per day.
  * - Overlapping events → heap ensures correct prioritization.
  *
- * 🗓 Time: O(n log n)
+ * ⏱️ Time: O(n log n)
  * 🧠 Space: O(n)
  */
 int MaxEvents(vector<vector<int>>& events) {
@@ -785,7 +785,7 @@ int MaxEvents(vector<vector<int>>& events) {
  * - One person heavier than limit → invalid (not handled in this implementation).
  * - All people weight exactly limit → one boat per person.
  *
- * 🗓 Time: O(n log n)
+ * ⏱️ Time: O(n log n)
  * 🧠 Space: O(1)
  */
 
