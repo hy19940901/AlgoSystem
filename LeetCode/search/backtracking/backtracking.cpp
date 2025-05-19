@@ -61,7 +61,7 @@ using namespace std;
  * --------------------
  * vector<vector<int>> res;
  * void backtrack(vector<int>& path, int start, vector<int>& choices) {
- *     if (/* base condition: e.g., valid solution found * /) {
+ *     if (// base condition: e.g., valid solution found) {
  *         res.push_back(path);
  *         return;
  *     }
