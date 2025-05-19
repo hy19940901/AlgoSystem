@@ -7,44 +7,41 @@
 #include <mutex>
 using namespace std;
 
- /**
+/**
  * Problem 1: LRU Cache (LeetCode 146)
+ * -----------------------------------
+ * 🧠 Description:
+ * Design a data structure that follows the Least Recently Used (LRU) eviction policy.
+ * Implement an LRUCache class with the following methods:
+ * - get(key): Return the value (will always be positive) of the key if it exists, else return -1.
+ * - put(key, value): Insert or update the value. If over capacity, evict the least recently used key.
  *
- * Design a Least Recently Used (LRU) cache that supports:
- * - `get(int key)`: Return the value of the key if it exists, otherwise return -1.
- * - `put(int key, int value)`: Insert or update the value of the key.
- *   If the cache reaches capacity, remove the least recently used key.
+ * 🔍 Example:
+ * Input:
+ *   LRUCache lru(2);
+ *   lru.put(1, 1);
+ *   lru.put(2, 2);
+ *   cout << lru.get(1) << endl;
+ *   lru.put(3, 3);  // evicts key 2
+ *   cout << lru.get(2) << endl;
+ * Output:
+ *   1
+ *   -1
  *
- * Example:
- * LRUCache lru(5);
- * lru.put(1, 10);
- * lru.put(2, 20);
- * lru.put(3, 30);
- * lru.put(4, 40);
- * lru.put(5, 50);
- * cout << lru.get(1) << endl; // Output: 10
- * lru.put(6, 60); // Removes key 2
- * cout << lru.get(2) << endl; // Output: -1 (not found)
+ * 💡 Strategy:
+ * - Use a doubly linked list to store (key, value) in access order (most recent at front).
+ * - Use a hashmap to map key → list iterator for O(1) access and update.
+ * - Use std::list::splice() to move accessed nodes to the front efficiently.
+ *
+ * ✨ Key Insight:
+ *   Combining hashmap + list achieves O(1) get and put operations.
+ *
+ * 🚨 Edge Cases:
+ * - put() on an existing key must move it to front and update value.
+ * - get() on non-existent key returns -1.
+ *
+ * ⏱ Time: O(1) per get/put, 🧠 Space: O(capacity)
  */
-/*
-LRU Cache – Explanation
------------------------
-We need to support O(1) get and put operations while maintaining LRU eviction policy.
-To achieve this, we combine:
-1. A hashmap (key → node) for O(1) access
-2. A doubly linked list to track usage order, where head is most recently used, tail is least
-
-- On get(key): move node to head.
-- On put(key, val): 
-   - If key exists: update and move to head
-   - If new: insert at head, and evict tail if over capacity
-
-Why doubly linked list?
-→ Allows O(1) insert and delete from both ends (vs singly which is O(n) for tail).
-
-Why not use only hashmap?
-→ Hashmap alone cannot track usage order efficiently.
-*/
 
 /**
  * LRUCacheManual
@@ -432,18 +429,36 @@ public:
 
 /**
  * Problem 2: Implement Trie (LeetCode 208)
+ * -----------------------------------------
+ * 🧠 Description:
+ * A Trie (prefix tree) supports fast insert and lookup for strings. Implement methods:
+ * - insert(word): Insert a word into the trie.
+ * - search(word): Return true if the exact word exists.
+ * - startsWith(prefix): Return true if any word starts with the given prefix.
  *
- * Design a Trie (prefix tree) that supports:
- * - `insert(string word)`: Inserts `word` into the trie.
- * - `search(string word)`: Returns `true` if `word` is in the trie.
- * - `startsWith(string prefix)`: Returns `true` if any word in the trie starts with `prefix`.
+ * 🔍 Example:
+ * Input:
+ *   Trie trie;
+ *   trie.insert("apple");
+ *   trie.search("apple");   // true
+ *   trie.search("app");     // false
+ *   trie.startsWith("app"); // true
+ * Output:
+ *   true
+ *   false
+ *   true
  *
- * Example:
- * Trie trie;
- * trie.insert("hello");
- * cout << trie.search("hello") << endl; // Output: true
- * cout << trie.startsWith("he") << endl; // Output: true
+ * 💡 Strategy:
+ * - Use 26 children nodes for lowercase letters.
+ * - Each node tracks whether it ends a word.
+ *
+ * ✨ Key Insight:
+ * - Time complexity is proportional to word length, not total word count.
+ *
+ * ⏱ Time: O(L), 🧠 Space: O(N * L)
+ *   where L = word length, N = number of words
  */
+
 /*
 Trie (Prefix Tree) – Explanation
 --------------------------------
@@ -515,22 +530,38 @@ public:
 };
 
 /**
- * Problem 3: LFU Cache (Custom Implementation)
+ * Problem 3: LFU Cache
+ * ---------------------
+ * 🧠 Description:
+ * Design a Least Frequently Used (LFU) cache. Each key has a usage frequency, and when the cache
+ * reaches capacity, it removes the least frequently used key. If multiple keys share the same frequency,
+ * the least recently used one is removed.
  *
- * Design a Least Frequently Used (LFU) cache that supports:
- * - `get(int key)`: Return the value of the key if it exists, otherwise return -1.
- * - `put(int key, int value)`: Insert or update the value of the key.
- *   If the cache reaches capacity, remove the least frequently used key.
+ * 🔍 Example:
+ * Input:
+ *   LFUCache lfu(2);
+ *   lfu.put(1, 1);
+ *   lfu.put(2, 2);
+ *   cout << lfu.get(1) << endl;
+ *   lfu.put(3, 3);  // evicts key 2
+ *   cout << lfu.get(2) << endl;
+ *   cout << lfu.get(3) << endl;
+ * Output:
+ *   1
+ *   -1
+ *   3
  *
- * Example:
- * LFUCache lfu(3);
- * lfu.put(1, 10);
- * lfu.put(2, 20);
- * lfu.put(3, 30);
- * cout << lfu.get(1) << endl; // Output: 10
- * lfu.put(4, 40); // Removes key 2 (least frequently used)
- * cout << lfu.get(2) << endl; // Output: -1 (not found)
+ * 💡 Strategy:
+ * - key_map: key → node iterator
+ * - freq_map: freq → list of nodes (LRU within each freq)
+ * - min_freq: track minimum frequency
+ *
+ * ✨ Key Insight:
+ * - LFU = Frequency Bucket + LRU Order
+ *
+ * ⏱ Time: O(1), 🧠 Space: O(capacity)
  */
+
 /*
 LFU Cache – Explanation
 ------------------------
@@ -653,18 +684,33 @@ public:
 
 /**
  * Problem 4: Disjoint Set Union (Union-Find)
+ * -------------------------------------------
+ * 🧠 Description:
+ * Implement a disjoint-set data structure with the following operations:
+ * - find(x): Return representative of x's set
+ * - unite(x, y): Union the sets that contain x and y
  *
- * Implement Disjoint Set Union (Union-Find) with:
- * - `find(int x)`: Returns the representative of `x`'s set.
- * - `unite(int x, int y)`: Merges sets containing `x` and `y`.
+ * 🔍 Example:
+ * Input:
+ *   DisjointSetUnion dsu(5);
+ *   dsu.unite(0, 1);
+ *   dsu.unite(2, 3);
+ *   cout << dsu.find(1) << endl;
+ *   cout << dsu.find(3) << endl;
+ * Output:
+ *   (representatives of sets)
  *
- * Example:
- * DisjointSetUnion dsu(5);
- * dsu.unite(0, 1);
- * dsu.unite(2, 3);
- * cout << dsu.find(1) << endl; // Output: Representative of set containing 1
- * cout << dsu.find(3) << endl; // Output: Representative of set containing 3
+ * 💡 Strategy:
+ * - Use path compression in find().
+ * - Use union by rank to keep tree shallow.
+ *
+ * ✨ Key Insight:
+ * - Critical in Kruskal's MST, connectivity, dynamic components.
+ *
+ * ⏱ Time: O(α(N)) per operation, 🧠 Space: O(N)
+ *   (α(N) is the inverse Ackermann function, nearly constant)
  */
+
 /*
 Disjoint Set Union (Union-Find) – Explanation
 ---------------------------------------------
