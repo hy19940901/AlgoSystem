@@ -164,12 +164,13 @@ int LengthOfLongestSubstring(string s) {
  *   ➤ When the current window sum is ≥ target, try to shrink the window from the left.
  *   ➤ Each time we shrink, update the minimum length if the current window is valid.
  *
- * 🧠 Edge Cases:
+ * 🚨 Edge Cases:
  * - No valid subarray → return 0.
  * - Entire array sum < target → return 0.
  * - Single element ≥ target → return 1.
  *
- * 🗓 Time: O(n), Space: O(1)
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(1)
  * - Each element is visited at most twice (once added, once removed from window).
  */
 
@@ -255,7 +256,7 @@ vector<int> MaxSlidingWindow(vector<int>& nums, int k) {
  *   ➤ Add new character at the right, remove old character at the left.
  * - If the two frequency arrays match, current window is an anagram → store index.
  *
- * 🧠 Edge Cases:
+ * 🚨 Edge Cases:
  * - If `s.size()` < `p.size()`, return empty result.
  * - Matching is case-sensitive, and only lowercase characters are expected.
  *
@@ -343,7 +344,7 @@ int CharacterReplacement(string s, int k) {
  *   ➤ Expand window by moving `right`, and shrink from `left` when count > k.
  *   ➤ For each right-end, the number of valid subarrays is (right - left + 1).
  *
- * 🧠 Edge Cases:
+ * 🚨 Edge Cases:
  * - k > number of unique values in nums → result is 0.
  *
  * ⏱️ Time: O(n)
@@ -438,7 +439,7 @@ int NumSubarraysWithSum(vector<int>& nums, int goal) {
  * - Track the maximum window length observed.
  * - Since one element must be deleted, the final result is (window length - 1) if no 0 was removed.
  *
- * 🧠 Edge Cases:
+ * 🚨 Edge Cases:
  * - All 1s → we must still delete one → answer is length - 1.
  * - Only one element → return 0.
  *

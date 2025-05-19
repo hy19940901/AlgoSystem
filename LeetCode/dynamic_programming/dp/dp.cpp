@@ -53,34 +53,136 @@ using namespace std;
 
 /**
  * Problem 1: Climbing Stairs (LC 70)
- * Description: You are climbing a staircase. It takes n steps to reach the top.
- * Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
- * Example:
+ * ----------------------------------
+ * 🧠 Description:
+ * You are climbing a staircase with `n` steps. Each time you can climb either 1 step or 2 steps.
+ * You start from step 0. Return the total number of distinct ways to reach the top (step n).
+ *
+ * 🔍 Example:
  * Input: n = 5
  * Output: 8
+ * Explanation:
+ * There are 8 distinct ways to climb:
+ *   - [1+1+1+1+1]
+ *   - [1+1+1+2]
+ *   - [1+1+2+1]
+ *   - [1+2+1+1]
+ *   - [2+1+1+1]
+ *   - [2+2+1]
+ *   - [2+1+2]
+ *   - [1+2+2]
+ *
+ * 🎯 Key Insight:
+ * The number of ways to reach step `i` is composed of:
+ *   - All the ways to reach step (i-1), and take 1 more step
+ *   - All the ways to reach step (i-2), and take a 2-step hop
+ * This forms a Fibonacci-like recurrence: dp[i] = dp[i-1] + dp[i-2]
+ *
+ * 💡 DP Strategy:
+ * ------------------------------------------------------------
+ * ✅ State Definition:
+ * Let `dp[i]` denote the total number of distinct ways to reach the i-th step.
+ *
+ * ✅ Base Case Initialization:
+ *   - dp[0] = 1 → There is 1 way to stay at the ground (do nothing)
+ *   - dp[1] = 1 → Only one way to reach the first step: a single 1-step move
+ *
+ * ✅ Transition:
+ * To compute dp[i], we consider:
+ *   - If the last step taken was a 1-step from (i-1), then there are dp[i-1] such ways
+ *   - If the last step taken was a 2-step from (i-2), then there are dp[i-2] such ways
+ *
+ * So:
+ *   dp[i] = dp[i - 1] + dp[i - 2]
+ *
+ * ✅ Iteration Order:
+ * From i = 2 up to i = n, compute dp[i] using the above recurrence.
+ *
+ * 🚨 Edge Cases:
+ * - n = 0 → return 1 (stay still)
+ * - n = 1 → return 1 (single step)
+ *
+ * ⏱️ Time Complexity: O(n)
+ * 🧠 Space Complexity: O(n) — can be optimized to O(1) using two variables
  */
 int ClimbStairs(int n) {
-    vector<int> dp(n + 1, 0); // dp[i] represents the ways to reach step i
-    dp[0] = 1; // 1 way to stay at the ground
-    dp[1] = 1; // 1 way to reach the first step
+    if (n <= 1) return 1;
+    vector<int> dp(n + 1);
+    dp[0] = 1;  // One way to stay at the bottom
+    dp[1] = 1;  // One way to reach the first step
+
     for (int i = 2; i <= n; ++i) {
-        dp[i] = dp[i - 1] + dp[i - 2];
+        dp[i] = dp[i - 1] + dp[i - 2];  // Either take 1-step or 2-steps
     }
+
     return dp[n];
 }
 
 /**
+ * 🔧 Optimized Space Version:
+ * ------------------------------------------------------------
+ * Instead of storing the whole dp array, we only need the last two values:
+ *     prev1 = dp[i-1]
+ *     prev2 = dp[i-2]
+ *
+ * This reduces space to O(1) while maintaining correctness.
+ */
+int ClimbStairsOptimal(int n) {
+    if (n <= 1) return 1;
+    int prev2 = 1, prev1 = 1;
+    for (int i = 2; i <= n; ++i) {
+        int curr = prev1 + prev2;
+        prev2 = prev1;
+        prev1 = curr;
+    }
+    return prev1;
+}
+
+/**
  * Problem 2: Maximum Subarray (LC 53)
- * Description: Given an integer array nums, find the contiguous subarray
- * (containing at least one number) which has the largest sum and return its sum.
- * Example:
+ * -----------------------------------
+ * 📿 Description:
+ * Given an integer array `nums`, find the contiguous subarray (containing at least one number)
+ * which has the largest sum and return its sum.
+ *
+ * 🔍 Example:
  * Input: nums = [-2,1,-3,4,-1,2,1,-5,4]
  * Output: 6
- * Explanation: The subarray [4,-1,2,1] has the largest sum = 6.
+ * Explanation:
+ * The subarray [4,-1,2,1] has the largest sum = 6.
+ *
+ * 🎯 Key Insight:
+ * At every index, you choose:
+ *   - To start a new subarray at this point
+ *   - Or to extend the previous maximum subarray
+ * This decision is captured in:
+ *   dp[i] = max(nums[i], dp[i-1] + nums[i])
+ *
+ * 💡 DP Strategy:
+ * ------------------------------------------------------------
+ * - dp[i] represents the maximum subarray sum ending at index i.
+ * - Transition:
+ *     To compute dp[i], we consider:
+ *     ➤ Either start a new subarray at i: nums[i]
+ *     ➤ Or extend the previous one: dp[i-1] + nums[i]
+ *     So the recurrence is:
+ *         dp[i] = max(nums[i], dp[i - 1] + nums[i])
+ *
+ * - Initialization:
+ *     dp[0] = nums[0]
+ *
+ * - Iteration Order:
+ *     From left to right (i = 1 to n-1)
+ *
+ * 🚨 Edge Cases:
+ * - All elements are negative → choose the largest single number.
+ * - Single-element array → return nums[0]
+ *
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(n), can be optimized to O(1) using a variable for dp[i - 1]
  */
-// greedy is better, but this is the DP solution
 int MaxSubArray(vector<int>& nums) {
-    vector<int> dp(nums.size(), 0); // dp[i] represents the maximum subarray sum ending at index i
+    vector<int> dp(nums.size(), 0); // dp[i] = max subarray sum ending at index i
     dp[0] = nums[0];
     int max_sum = dp[0];
     for (size_t i = 1; i < nums.size(); ++i) {
@@ -89,37 +191,63 @@ int MaxSubArray(vector<int>& nums) {
     }
     return max_sum;
 }
-/*
-Problem: Maximum Subarray (LC 53)
----------------------------------
-Given an integer array `nums`, find the contiguous subarray (containing at least one number)
-which has the largest sum and return its sum.
 
-We use a 1D dp array where:
-- dp[i] represents the maximum subarray sum ending at index i.
-
-Transition:
-- dp[i] = max(nums[i], dp[i-1] + nums[i])
-    --> Either start a new subarray at i, or extend the previous subarray.
-
-We track the global maximum during the loop.
-
-Time: O(n), Space: O(n)
-*/
+/**
+ * 🔧 Optimized Kadane’s Algorithm
+ * ------------------------------------------------------------
+ * - Instead of keeping a full dp[] array, we only need the last state.
+ * - curr tracks dp[i-1], updated in-place.
+ * - This reduces space from O(n) to O(1).
+ */
+int MaxSubArrayOptimal(vector<int>& nums) {
+    int curr = nums[0];
+    int max_sum = nums[0];
+    for (size_t i = 1; i < nums.size(); ++i) {
+        curr = max(nums[i], curr + nums[i]);
+        max_sum = max(max_sum, curr);
+    }
+    return max_sum;
+}
 
 /**
  * Problem 3: Unique Paths (LC 62)
- * Description: A robot is located at the top-left corner of a m x n grid.
- * The robot can only move either down or right at any point in time.
- * The robot is trying to reach the bottom-right corner. How many possible unique paths are there?
- * Example:
+ * -------------------------------
+ * 📿 Description:
+ * A robot is located at the top-left corner of an `m x n` grid.
+ * The robot can only move either down or right. Return the number of unique paths
+ * to reach the bottom-right corner.
+ *
+ * 🔍 Example:
  * Input: m = 3, n = 7
  * Output: 28
+ *
+ * 💡 DP Strategy:
+ * ------------------------------------------------------------
+ * - dp[i][j] represents the number of unique paths to reach cell (i, j).
+ * - Transition:
+ *     You can only move from:
+ *     ➤ the cell above:    dp[i - 1][j]
+ *     ➤ the cell to the left: dp[i][j - 1]
+ *     So the recurrence is:
+ *         dp[i][j] = dp[i - 1][j] + dp[i][j - 1]
+ *
+ * - Initialization:
+ *     dp[0][j] = 1 → first row: only one way (move right)
+ *     dp[i][0] = 1 → first column: only one way (move down)
+ *
+ * - Iteration Order:
+ *     From top-left to bottom-right (row-wise)
+ *
+ * 🚨 Edge Cases:
+ * - m == 1 or n == 1 → only one path straight across/down
+ *
+ * ⏱️ Time: O(m * n)
+ * 🧠 Space: O(m * n), can be optimized to O(n)
  */
 int UniquePaths(int m, int n) {
-    vector<vector<int>> dp(m, vector<int>(n, 0)); // dp[i][j] represents the number of unique paths to cell (i, j)
-    for (int i = 0; i < m; ++i) dp[i][0] = 1; // Initialize the first column
-    for (int j = 0; j < n; ++j) dp[0][j] = 1; // Initialize the first row
+    vector<vector<int>> dp(m, vector<int>(n, 0)); // dp[i][j] = paths to (i,j)
+    for (int i = 0; i < m; ++i) dp[i][0] = 1;      // first column
+    for (int j = 0; j < n; ++j) dp[0][j] = 1;      // first row
     for (int i = 1; i < m; ++i) {
         for (int j = 1; j < n; ++j) {
             dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
@@ -127,38 +255,57 @@ int UniquePaths(int m, int n) {
     }
     return dp[m - 1][n - 1];
 }
-/*
-Problem: Unique Paths (LC 62)
------------------------------
-A robot is located at the top-left corner of an m x n grid.
-It can only move either down or right at any point in time.
-How many unique paths are there to reach the bottom-right corner?
 
-We define:
-- dp[i][j] = number of unique paths to reach cell (i, j)
+/**
+ * 🔧 Optimized Space Solution:
+ * ------------------------------------------------------------
+ * We only need the current and previous row → reduce to 1D array.
+ */
+int UniquePathsOptimal(int m, int n) {
+    vector<int> dp(n, 1); // Only one row needed
+    for (int i = 1; i < m; ++i) {
+        for (int j = 1; j < n; ++j) {
+            dp[j] = dp[j] + dp[j - 1]; // left + top
+        }
+    }
+    return dp[n - 1];
+}
 
-Initialization:
-- dp[0][j] = 1 for all j (only one way to reach the top row: move right)
-- dp[i][0] = 1 for all i (only one way to reach the first column: move down)
-
-Transition:
-- dp[i][j] = dp[i-1][j] + dp[i][j-1]
-    --> From top cell and left cell
-
-Return dp[m-1][n-1] as the final result.
-
-Time: O(m * n), Space: O(m * n)
-*/
 
 /**
  * Problem 4: Coin Change (LC 322)
- * Description: You are given an integer array coins representing coins of different denominations
- * and an integer amount representing a total amount of money. Return the fewest number of coins
- * that you need to make up that amount. If that amount of money cannot be made up, return -1.
- * Example:
- * Input: coins = [1, 2, 5], amount = 11
+ * -------------------------------
+ * 📿 Description:
+ * You are given an integer array `coins` and an integer `amount`.
+ * Return the fewest number of coins needed to make up that amount.
+ * If it's not possible, return -1.
+ *
+ * 🔍 Example:
+ * Input: coins = [1,2,5], amount = 11
  * Output: 3
  * Explanation: 11 = 5 + 5 + 1
+ *
+ * 💡 DP Strategy:
+ * ------------------------------------------------------------
+ * - dp[i] represents the minimum number of coins needed to make amount i.
+ *
+ * - Transition:
+ *     For each coin:
+ *     ➤ dp[i] = min(dp[i], dp[i - coin] + 1) if i - coin >= 0 and dp[i - coin] != INT_MAX
+ *
+ * - Initialization:
+ *     dp[0] = 0 (0 coins needed to make amount 0)
+ *     dp[1...amount] = INT_MAX (initially unreachable)
+ *
+ * - Iteration Order:
+ *     Outer loop on coins, inner loop on amount
+ *
+ * 🚨 Edge Cases:
+ * - amount == 0 → return 0
+ * - amount < min(coins) → return -1
+ *
+ * ⏱️ Time: O(amount × number of coins)
+ * 🧠 Space: O(amount)
  */
 int CoinChange(vector<int>& coins, int amount) {
     vector<int> dp(amount + 1, INT_MAX); // dp[i] represents the fewest coins needed to make up amount i
@@ -172,76 +319,75 @@ int CoinChange(vector<int>& coins, int amount) {
     }
     return dp[amount] == INT_MAX ? -1 : dp[amount];
 }
-/*
-Problem: Coin Change (LC 322)
------------------------------
-You are given an integer array `coins` representing different denominations and
-an integer `amount` representing a total amount of money.
-
-Return the fewest number of coins needed to make up that amount.
-If that amount cannot be made up by any combination of the coins, return -1.
-
-We define:
-- dp[i]: the minimum number of coins needed to make up amount i
-
-Initialization:
-- dp[0] = 0 (0 coins to make amount 0)
-- All other dp[i] initialized as INT_MAX (unreachable)
-
-Transition:
-- For each coin:
-    - For each i from coin to amount:
-        - if dp[i - coin] is reachable, update dp[i] = min(dp[i], dp[i - coin] + 1)
-
-Return:
-- dp[amount] if it's reachable, otherwise -1
-
-Time: O(amount * n), where n is the number of coin denominations
-Space: O(amount)
-*/
 
 /**
  * Problem 5: Longest Increasing Subsequence (LC 300)
- * Description: Given an integer array nums, return the length of the longest strictly increasing subsequence.
- * Example:
+ * ---------------------------------------------------
+ * 📿 Description:
+ * Given an integer array `nums`, return the length of the longest strictly increasing subsequence (LIS).
+ *
+ * 🔍 Example:
  * Input: nums = [10,9,2,5,3,7,101,18]
  * Output: 4
- * Explanation: The LIS is [2,3,7,101], therefore the length is 4.
+ * Explanation: LIS is [2,3,7,101]
+ *
+ * 💡 DP Strategy:
+ * ------------------------------------------------------------
+ * - dp[i] represents the length of the LIS ending at index i.
+ *
+ * - Transition:
+ *     For each j in [0, i):
+ *     ➤ if nums[j] < nums[i], we can extend LIS at j:
+ *         dp[i] = max(dp[i], dp[j] + 1)
+ *
+ * - Initialization:
+ *     All dp[i] = 1 (each element is an LIS of length 1)
+ *
+ * - Iteration Order:
+ *     Outer loop: i from 1 to n-1
+ *     Inner loop: j from 0 to i-1
+ *
+ * 🚨 Edge Cases:
+ * - All elements same → answer is 1
+ * - Strictly increasing → answer is n
+ *
+ * ⏱️ Time: O(n^2)
+ * 🧠 Space: O(n)
  */
 int LengthOfLIS(vector<int>& nums) {
-    vector<int> dp(nums.size(), 1); // dp[i] represents the length of the LIS ending at index i
+    int n = nums.size();
+    vector<int> dp(n, 1);
     int max_len = 1;
-    for (size_t i = 1; i < nums.size(); ++i) {
-        for (size_t j = 0; j < i; ++j) {
-            if (nums[i] > nums[j]) {
+    for (int i = 1; i < n; ++i) {
+        for (int j = 0; j < i; ++j) {
+            if (nums[j] < nums[i])
                 dp[i] = max(dp[i], dp[j] + 1);
-            }
         }
         max_len = max(max_len, dp[i]);
     }
     return max_len;
 }
-/*
-Problem: Longest Increasing Subsequence (LC 300)
------------------------------------------------
-Given an integer array `nums`, return the length of the longest strictly increasing subsequence.
 
-We define:
-- dp[i]: the length of the longest increasing subsequence ending at index i
-
-Initialization:
-- All dp[i] = 1 (Each element is a subsequence of length 1)
-
-Transition:
-- For each i from 1 to n-1:
-    - For each j from 0 to i-1:
-        - If nums[i] > nums[j], dp[i] = max(dp[i], dp[j] + 1)
-
-Track the maximum dp[i] during iteration to get the answer.
-
-Time: O(n^2), Space: O(n)
-*/
-
+/**
+ * 🔧 Optimized Approach using Binary Search:
+ * ------------------------------------------------------------
+ * We use an auxiliary array `res` where:
+ * - res[i] holds the smallest possible tail value of an increasing subsequence of length i + 1
+ *
+ * For each number in `nums`:
+ * - If num > last element in `res`, extend the subsequence and append num
+ * - Otherwise, find the first element in `res` >= num using binary search and replace it
+ *
+ * Binary search ensures that:
+ * - `res` is always sorted
+ * - We maintain the minimum possible values for each length
+ *
+ * Note: The array `res` does **not** represent the actual subsequence,
+ * but its length is equal to the LIS length.
+ *
+ * ⏱️ Time: O(n log n)
+ * 🧠 Space: O(n)
+ */
 // Custom binary search to find the first element >= target
 int BinarySearch(const vector<int>& arr, int target) {
     int left = 0, right = arr.size() - 1;
@@ -256,7 +402,6 @@ int BinarySearch(const vector<int>& arr, int target) {
     return left; // `left` is the position of the first element >= target
 }
 
-// Function to find the length of the LIS using custom binary search
 int LengthOfLISWithBinarySearch(vector<int>& nums) {
     vector<int> res; // Auxiliary array to maintain the LIS
     for (int num : nums) {
@@ -270,92 +415,130 @@ int LengthOfLISWithBinarySearch(vector<int>& nums) {
     }
     return res.size(); // The length of dp is the length of the LIS
 }
-/*
-Problem: Longest Increasing Subsequence (LC 300)
------------------------------------------------
-Given an integer array `nums`, return the length of the longest strictly increasing subsequence.
-
-Optimized Approach using Binary Search:
-We use an auxiliary array `res` where:
-- res[i] holds the smallest possible tail value of an increasing subsequence of length i + 1
-
-For each number in `nums`:
-- If num > last element in `res`, extend the subsequence and append num
-- Otherwise, find the first element in `res` >= num using binary search and replace it
-
-Binary search ensures that:
-- `res` is always sorted
-- We maintain the minimum possible values for each length
-
-Note: The array `res` does **not** represent the actual subsequence,
-but its length is equal to the LIS length.
-
-Time: O(n log n), Space: O(n)
-*/
 
 /**
  * Problem 6: Edit Distance (LC 72)
- * Description: Given two strings word1 and word2, return the minimum number of operations required
- * to convert word1 to word2. You can perform insert, delete, and replace operations.
- * Example:
+ * --------------------------------
+ * 🧠 Description:
+ * Given two strings `word1` and `word2`, return the minimum number of operations required
+ * to convert word1 to word2. You can insert, delete, or replace a character.
+ *
+ * 🔍 Example:
  * Input: word1 = "horse", word2 = "ros"
  * Output: 3
  * Explanation:
- * 1. horse -> rorse (replace 'h' with 'r')
- * 2. rorse -> rose (remove 'r')
- * 3. rose -> ros (remove 'e')
+ * "horse" -> "ros" via 3 operations: replace h→r, remove r, remove e
+ *
+ * 🎯 Key Insight:
+ * For each character position i, j, try all 3 operations:
+ *   - Insert (dp[i][j-1])
+ *   - Delete (dp[i-1][j])
+ *   - Replace (dp[i-1][j-1])
+ *
+ * 💡 DP Strategy:
+ * ------------------------------------------------------------
+ * ✅ State Definition:
+ * dp[i][j] = minimum number of operations to convert word1[0..i-1] to word2[0..j-1]
+ *
+ * ✅ Base Case Initialization:
+ * dp[0][j] = j → convert empty word1 to word2 of length j (all inserts)
+ * dp[i][0] = i → convert word1 of length i to empty word2 (all deletes)
+ *
+ * ✅ Transition:
+ *     To compute dp[i][j], we consider:
+ *     ➤ If word1[i-1] == word2[j-1] → no operation → dp[i][j] = dp[i-1][j-1]
+ *     ➤ Otherwise, try:
+ *         - Insert:  dp[i][j-1] + 1
+ *         - Delete:  dp[i-1][j] + 1
+ *         - Replace: dp[i-1][j-1] + 1
+ *     So the recurrence is:
+ *         dp[i][j] = min({dp[i-1][j], dp[i][j-1], dp[i-1][j-1]}) + 1
+ *
+ * ✅ Iteration Order:
+ * i = 1..m, j = 1..n
+ *
+ * 🚨 Edge Cases:
+ * - One or both strings are empty
+ *
+ * ⏱️ Time: O(m × n)
+ * 🧠 Space: O(m × n)
  */
 int MinDistance(string word1, string word2) {
-    int m = word1.size(), n = word2.size();
-    vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0)); // dp[i][j] represents the edit distance between word1[0..i-1] and word2[0..j-1]
-    for (int i = 0; i <= m; ++i) dp[i][0] = i; // Base case: converting word1[0..i-1] to empty string
-    for (int j = 0; j <= n; ++j) dp[0][j] = j; // Base case: converting empty string to word2[0..j-1]
+    int m = word1.length(), n = word2.length();
+    vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));
+    for (int i = 0; i <= m; ++i) dp[i][0] = i;
+    for (int j = 0; j <= n; ++j) dp[0][j] = j;
     for (int i = 1; i <= m; ++i) {
         for (int j = 1; j <= n; ++j) {
-            if (word1[i - 1] == word2[j - 1]) {
-                dp[i][j] = dp[i - 1][j - 1]; // No operation needed
-            } else {
-                dp[i][j] = min({dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]}) + 1; // Insert, delete, or replace
-            }
+            if (word1[i - 1] == word2[j - 1])
+                dp[i][j] = dp[i - 1][j - 1];
+            else
+                dp[i][j] = min({ dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + 1 });
         }
     }
     return dp[m][n];
 }
-/*
-Problem: Edit Distance (LC 72)
-------------------------------
-Given two strings word1 and word2, return the minimum number of operations required to convert word1 to word2.
-Allowed operations are insert, delete, or replace a character.
 
-We define:
-- dp[i][j]: the edit distance between word1[0..i-1] and word2[0..j-1]
+/**
+ * 🔧 Optimized Version (Rolling DP Row):
+ * ------------------------------------------------------------
+ * Since we only need previous and current rows,
+ * we can reduce space from O(m × n) to O(n).
+ *
+ * ⏱️ Time Complexity: O(m × n)
+ * 🧠 Space Complexity: O(n)
+ */
+int MinDistanceOptimal(string word1, string word2) {
+    int m = word1.size(), n = word2.size();
+    vector<int> prev(n + 1), curr(n + 1);
 
-Base cases:
-- dp[i][0] = i: delete all characters from word1
-- dp[0][j] = j: insert all characters to form word2
+    for (int j = 0; j <= n; ++j) prev[j] = j;
 
-Transition:
-- If word1[i-1] == word2[j-1], then dp[i][j] = dp[i-1][j-1]
-- Else: dp[i][j] = 1 + min(
-    dp[i-1][j]    // delete
-    dp[i][j-1]    // insert
-    dp[i-1][j-1]  // replace
-  )
+    for (int i = 1; i <= m; ++i) {
+        curr[0] = i;
+        for (int j = 1; j <= n; ++j) {
+            if (word1[i - 1] == word2[j - 1]) {
+                curr[j] = prev[j - 1];
+            } else {
+                curr[j] = min({ prev[j - 1], prev[j], curr[j - 1] }) + 1;
+            }
+        }
+        prev = curr;
+    }
 
-Time: O(m * n), Space: O(m * n)
-*/
+    return prev[n];
+}
 
 /**
  * Problem 7: Partition Equal Subset Sum (LC 416)
- * Description: Determine if the array can be partitioned into two subsets with equal sum.
- * Example:
- * Input: nums = [1, 5, 11, 5]
- * Output: true
- * Explanation: The array can be partitioned as [1, 5, 5] and [11].
+ * ----------------------------------------------
+ * 📿 Description:
+ * Determine if a given array can be partitioned into two subsets with equal sum.
  *
- * Approach: Dynamic Programming
- * dp[i] represents whether a subset with sum i is achievable.
- * Transition: dp[j] = dp[j] || dp[j - num]
+ * 🔍 Example:
+ * Input: nums = [1,5,11,5]
+ * Output: true
+ * Explanation: [1,5,5] and [11] both sum to 11
+ *
+ * 💡 DP Strategy (0/1 Knapsack):
+ * ------------------------------------------------------------
+ * - Goal: Can we find a subset with sum = total_sum / 2?
+ * - Let target = sum / 2
+ * - dp[i] = true if sum i is achievable with any subset
+ *
+ * - Transition:
+ *     for each num in nums:
+ *         for i from target to num:
+ *             dp[i] |= dp[i - num]
+ *
+ * - Initialization:
+ *     dp[0] = true (sum 0 is always achievable)
+ *
+ * 🚨 Edge Cases:
+ * - If total sum is odd → cannot split
+ *
+ * ⏱️ Time: O(n * sum/2)
+ * 🧠 Space: O(sum/2)
  */
 bool CanPartition(vector<int>& nums) {
     int sum = accumulate(nums.begin(), nums.end(), 0);
@@ -363,10 +546,9 @@ bool CanPartition(vector<int>& nums) {
     int target = sum / 2;
     vector<bool> dp(target + 1, false);
     dp[0] = true;
-
     for (int num : nums) {
-        for (int j = target; j >= num; --j) {
-            dp[j] = dp[j] || dp[j - num];
+        for (int i = target; i >= num; --i) {
+            dp[i] = dp[i] || dp[i - num];
         }
     }
     return dp[target];
@@ -374,72 +556,121 @@ bool CanPartition(vector<int>& nums) {
 
 /**
  * Problem 8: House Robber (LC 198)
- * Description: You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed.
- * The only constraint stopping you from robbing each of them is that adjacent houses have security systems connected,
- * and it will automatically contact the police if two adjacent houses were broken into on the same night.
+ * --------------------------------
+ * 🧠 Description:
+ * You're a robber planning to steal from a row of houses.
+ * Each house has some amount of money, but you can't rob two adjacent houses.
+ * Return the maximum amount of money you can rob without triggering the alarm.
  *
- * Given an integer array nums representing the amount of money of each house, return the maximum amount
- * of money you can rob tonight without alerting the police.
- * Example:
+ * 🔍 Example:
  * Input: nums = [2,7,9,3,1]
  * Output: 12
+ * Explanation: Rob house 1 (2), house 3 (9), and house 5 (1) → 2 + 9 + 1 = 12
  *
- * Explanation: Rob house 1 (money = 2), rob house 3 (money = 9), and rob house 5 (money = 1).
- * Total amount you can rob = 2 + 9 + 1 = 12.
- * Approach: Dynamic Programming
- * dp[i] represents the maximum money that can be robbed up to house i.
- * Transition: dp[i] = max(dp[i-1], dp[i-2] + nums[i])
+ * 🎯 Key Insight:
+ * At each house, you must decide:
+ *   - Rob this house and skip the previous
+ *   - Or skip this house and take whatever was best before
+ *
+ * 💡 DP Strategy:
+ * ------------------------------------------------------------
+ * ✅ State Definition:
+ * dp[i] = max money that can be robbed from first (i + 1) houses
+ *
+ * ✅ Base Case Initialization:
+ * dp[0] = nums[0]
+ * dp[1] = max(nums[0], nums[1])
+ *
+ * ✅ Transition:
+ *     To compute dp[i], we consider:
+ *     ➤ Rob house i → dp[i-2] + nums[i]
+ *     ➤ Skip house i → dp[i-1]
+ *     So the recurrence is:
+ *         dp[i] = max(dp[i-1], dp[i-2] + nums[i])
+ *
+ * ✅ Iteration Order:
+ * i from 2 to n-1
+ *
+ * 🚨 Edge Cases:
+ * - nums.size() == 0 → return 0
+ * - nums.size() == 1 → return nums[0]
+ *
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(n)
  */
 int Rob(vector<int>& nums) {
-    if (nums.empty()) return 0;
     if (nums.size() == 1) return nums[0];
-    int prev1 = 0, prev2 = 0;
+    vector<int> dp(nums.size());
+    dp[0] = nums[0];
+    dp[1] = max(nums[0], nums[1]);
+    for (size_t i = 2; i < nums.size(); ++i)
+        dp[i] = max(dp[i - 1], dp[i - 2] + nums[i]);
+    return dp.back();
+}
 
-    for (int num : nums) {
-        int temp = prev1;
-        prev1 = max(prev1, prev2 + num);
-        prev2 = temp;
+/**
+ * 🔧 Optimized Version (Space O(1)):
+ * ------------------------------------------------------------
+ * We only need two previous values to calculate the current:
+ *   prev1 = max robbed up to house i-1
+ *   prev2 = max robbed up to house i-2
+ *
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(1)
+ */
+int RobOptimal(vector<int>& nums) {
+    int n = nums.size();
+    if (n == 0) return 0;
+    if (n == 1) return nums[0];
+
+    int prev2 = nums[0], prev1 = max(nums[0], nums[1]);
+    for (int i = 2; i < n; ++i) {
+        int curr = max(prev1, prev2 + nums[i]);
+        prev2 = prev1;
+        prev1 = curr;
     }
     return prev1;
 }
-/*
-Problem: Partition Equal Subset Sum (LC 416)
---------------------------------------------
-Given a non-empty array nums containing only positive integers,
-determine if the array can be partitioned into two subsets such that the sum of elements in both subsets is equal.
-
-Observation:
-- This is equivalent to finding if there's a subset that sums to sum / 2
-
-We define:
-- dp[j]: whether a subset sum of j is possible
-
-Initialization:
-- dp[0] = true (empty subset)
-
-Transition:
-- For each number:
-    - Traverse from target to num (in reverse to avoid reuse)
-    - dp[j] = dp[j] || dp[j - num]
-
-Return dp[target] to indicate whether such subset exists.
-
-Time: O(n * sum), Space: O(sum)
-*/
 
 /**
  * Problem 9: Decode Ways (LC 91)
- * Description: A message containing letters from A-Z can be encoded to numbers using 1-26.
- * Determine the number of ways the message can be decoded.
- * Example:
+ * ------------------------------
+ * 🧠 Description:
+ * Given a string of digits, return how many ways it can be decoded into letters (A-Z = 1–26).
+ *
+ * 🔍 Example:
  * Input: s = "226"
- * Output: 3
- * Explanation: It can be decoded as "BZ" (2 26), "VF" (22 6), or "BBF" (2 2 6).
- * Approach: Dynamic Programming
- * dp[i] represents the number of ways to decode the string up to index i.
- * Transition:
- * - If s[i-1] != '0': dp[i] += dp[i-1]
- * - If s[i-2..i-1] is valid (10 <= x <= 26): dp[i] += dp[i-2]
+ * Output: 3 → "BZ", "VF", "BBF"
+ *
+ * 🎯 Key Insight:
+ * dp[i] = number of ways to decode first i characters
+ * Use 1-digit or 2-digit decoding based on rules:
+ *   - 1-digit if s[i-1] ∈ [1-9]
+ *   - 2-digit if s[i-2..i-1] ∈ [10-26]
+ *
+ * 💡 DP Strategy:
+ * ------------------------------------------------------------
+ * ✅ State Definition:
+ * dp[i] = number of ways to decode the first i characters (s[0..i-1])
+ *
+ * ✅ Base Case Initialization:
+ * dp[0] = 1 → empty string = 1 way
+ * dp[1] = 1 if s[0] != '0' else 0
+ *
+ * ✅ Transition:
+ *     To compute dp[i], we consider:
+ *     ➤ One-digit decode (if s[i-1] != '0') → dp[i] += dp[i-1]
+ *     ➤ Two-digit decode (if 10 ≤ s[i-2..i-1] ≤ 26) → dp[i] += dp[i-2]
+ *
+ * ✅ Iteration Order:
+ * i from 2 to n
+ *
+ * 🚨 Edge Cases:
+ * - s starts with '0' → invalid
+ * - contains invalid "0" not part of "10" or "20"
+ *
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(n), can be optimized to O(1)
  */
 int NumDecodings(string s) {
     if (s.empty() || s[0] == '0') return 0;
@@ -455,43 +686,69 @@ int NumDecodings(string s) {
     }
     return dp[n];
 }
-/*
-Problem: House Robber (LC 198)
-------------------------------
-You are a professional robber planning to rob houses along a street.
-Each house has some amount of money, but adjacent houses cannot be robbed.
 
-We optimize with rolling variables:
-- prev1: maximum profit including house i-1
-- prev2: maximum profit including house i-2
+/**
+ * 🔧 Optimized Version (Space O(1)):
+ * ------------------------------------------------------------
+ * We only need two previous values:
+ *   prev1 = dp[i - 1], prev2 = dp[i - 2]
+ *
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(1)
+ */
+int NumDecodingsOptimal(string s) {
+    if (s.empty() || s[0] == '0') return 0;
+    int n = s.size();
+    int prev2 = 1, prev1 = 1;
 
-For each house:
-- Either rob it (prev2 + num) or skip it (prev1)
-- Update rolling states accordingly
+    for (int i = 1; i < n; ++i) {
+        int curr = 0;
+        if (s[i] != '0') curr += prev1;
+        int two = stoi(s.substr(i - 1, 2));
+        if (two >= 10 && two <= 26) curr += prev2;
 
-Time: O(n), Space: O(1)
-*/
+        prev2 = prev1;
+        prev1 = curr;
+    }
+
+    return prev1;
+}
 
 /**
  * Problem 10: Triangle Minimum Path Sum (LC 120)
- * * Description:
- * Given a triangle array, return the minimum path sum from top to bottom.
- * For each step, you may move to an adjacent number of the row below. More formally,
- * if you are on index i on the current row, you may move to either index i or index i + 1
- * on the next row.
+ * ----------------------------------------------
+ * 🧠 Description:
+ * Given a triangle, find the minimum path sum from top to bottom.
+ * At each step, you may move to adjacent numbers in the row below.
  *
- * Example:
- * Input: triangle = [[2],[3,4],[6,5,7],[4,1,8,3]]
- * Output: 11
- * Explanation: The triangle looks like:
- *    2
- *   3 4
- *  6 5 7
- * 4 1 8 3
- * The minimum path sum from top to bottom is 2 + 3 + 5 + 1 = 11.
- * Approach: Dynamic Programming
- * dp[i][j] represents the minimum path sum to reach triangle[i][j].
- * Transition: dp[i][j] = min(dp[i+1][j], dp[i+1][j+1]) + triangle[i][j]
+ * 🔍 Example:
+ * Input: [[2],[3,4],[6,5,7],[4,1,8,3]]
+ * Output: 11 → 2 + 3 + 5 + 1
+ *
+ * 🎯 Key Insight:
+ * Start from bottom and reduce the triangle row-by-row using min transition.
+ *
+ * 💡 DP Strategy:
+ * ------------------------------------------------------------
+ * ✅ State Definition:
+ * dp[i][j] = min path sum to reach triangle[i][j]
+ *
+ * ✅ Base Case Initialization:
+ * dp = triangle[n - 1] (bottom row)
+ *
+ * ✅ Transition:
+ *     To compute dp[j] at row i:
+ *     ➤ dp[j] = min(dp[j], dp[j + 1]) + triangle[i][j]
+ *
+ * ✅ Iteration Order:
+ * i from n-2 up to 0
+ *
+ * 🚨 Edge Cases:
+ * - Triangle is empty
+ * - Triangle with only one row
+ *
+ * ⏱️ Time: O(n^2)
+ * 🧠 Space: O(n) using 1D dp array
  */
 int MinimumTotal(vector<vector<int>>& triangle) {
     int n = triangle.size();
@@ -504,39 +761,47 @@ int MinimumTotal(vector<vector<int>>& triangle) {
     }
     return dp[0];
 }
-/*
-Problem: Triangle Minimum Path Sum (LC 120)
-------------------------------------------
-Given a triangle array, return the minimum path sum from top to bottom.
-At each step, you may move to adjacent numbers on the row below.
-
-We define:
-- dp[j]: the minimum path sum starting from row i+1 at column j
-
-Bottom-up DP:
-- Start from the second-to-last row and update dp[j] = triangle[i][j] + min(dp[j], dp[j+1])
-
-This uses only O(n) space (1D array), in-place updating
-
-Time: O(n^2), Space: O(n)
-*/
 
 /**
  * Problem 11: Longest Palindromic Subsequence (LC 516)
- * Description:
- * Given a string s, find the longest palindromic subsequence's length in s.
- * A subsequence is a sequence that can be derived from another sequence by deleting
- * some or no elements without changing the order of the remaining elements.
+ * ----------------------------------------------------
+ * 🧠 Description:
+ * Given a string `s`, return the length of its longest palindromic subsequence.
+ * A subsequence is a sequence derived by deleting characters without changing order.
  *
- * Example:
+ * 🔍 Example:
  * Input: s = "bbbab"
  * Output: 4
  * Explanation: One possible longest palindromic subsequence is "bbbb".
- * Approach: Dynamic Programming
- * dp[i][j] represents the length of the longest palindromic subsequence in s[i..j].
- * Transition:
- * - If s[i] == s[j]: dp[i][j] = dp[i+1][j-1] + 2
- * - Else: dp[i][j] = max(dp[i+1][j], dp[i][j-1])
+ *
+ * 🎯 Key Insight:
+ * Use 2D DP: check longest palindromic subsequence between indices i and j.
+ * Characters match → extend palindrome; otherwise take best from left/right.
+ *
+ * 💡 DP Strategy:
+ * ------------------------------------------------------------
+ * ✅ State Definition:
+ * dp[i][j] = length of longest palindromic subsequence in s[i..j]
+ *
+ * ✅ Base Case Initialization:
+ * dp[i][i] = 1 for all i (each character is a palindrome)
+ *
+ * ✅ Transition:
+ *     To compute dp[i][j], we consider:
+ *     ➤ If s[i] == s[j] → extend center: dp[i+1][j-1] + 2
+ *     ➤ Else → max from skipping either end: max(dp[i+1][j], dp[i][j-1])
+ *     So the recurrence is:
+ *         dp[i][j] = (s[i] == s[j]) ? dp[i+1][j-1] + 2 : max(dp[i+1][j], dp[i][j-1])
+ *
+ * ✅ Iteration Order:
+ * Fill from shorter substrings to longer: i from n-1 down to 0, j from i+1 to n-1
+ *
+ * 🚨 Edge Cases:
+ * - Empty string → return 0
+ * - Single character → return 1
+ *
+ * ⏱️ Time: O(n^2)
+ * 🧠 Space: O(n^2)
  */
 int LongestPalindromeSubseq(string s) {
     int n = s.size();
@@ -554,44 +819,46 @@ int LongestPalindromeSubseq(string s) {
     }
     return dp[0][n - 1];
 }
-/*
-Problem: Longest Palindromic Subsequence (LC 516)
-------------------------------------------------
-Given a string `s`, return the length of the longest palindromic subsequence in `s`.
-
-We define:
-- dp[i][j]: the length of the longest palindromic subsequence in s[i..j]
-
-Base case:
-- dp[i][i] = 1 (single character is a palindrome)
-
-Transition:
-- if s[i] == s[j], dp[i][j] = dp[i+1][j-1] + 2
-- else dp[i][j] = max(dp[i+1][j], dp[i][j-1])
-
-Process in reverse i (from n-1 to 0), and j > i
-
-Time: O(n^2), Space: O(n^2)
-*/
 
 /**
  * Problem 12: Burst Balloons (LC 312)
- * Description:
- * You are given n balloons, indexed from 0 to n - 1. Each balloon is painted with a number on it
- * represented by an array nums. You are asked to burst all the balloons.
- * If you burst the i-th balloon, you will get nums[i - 1] * nums[i] * nums[i + 1] coins.
- * If i - 1 or i + 1 goes out of bounds of the array, then treat it as if there is a balloon with a 1 painted on it.
- * Return the maximum coins you can collect by bursting the balloons wisely.
+ * -----------------------------------
+ * 🧠 Description:
+ * You are given balloons with numbers. When you burst balloon i, coins = nums[i-1] * nums[i] * nums[i+1].
+ * You want to maximize the total coins by choosing the best burst order.
  *
- * Example:
- * Input: nums = [3, 1, 5, 8]
+ * 🔍 Example:
+ * Input: nums = [3,1,5,8]
  * Output: 167
- * Explanation:
- * nums = [3,1,5,8] -> [3,5,8] -> [3,8] -> [8] -> []
- * Coins = 3*1*5 + 3*5*8 + 1*3*8 + 1*8*1 = 167
- * Approach: Dynamic Programming
- * dp[i][j] represents the maximum coins you can collect by bursting all balloons in range [i, j].
- * Transition: dp[i][j] = max(dp[i][k-1] + dp[k+1][j] + nums[i-1]*nums[k]*nums[j+1]) for i <= k <= j
+ * Explanation: Best order leads to max coins: [3,5,8] → [3,8] → [8] → []
+ *
+ * 🎯 Key Insight:
+ * Treat problem as range DP: define which balloon is last to burst in a subrange.
+ *
+ * 💡 DP Strategy:
+ * ------------------------------------------------------------
+ * ✅ State Definition:
+ * dp[i][j] = max coins for bursting all balloons in range (i, j), exclusive
+ *
+ * ✅ Base Case Initialization:
+ * dp[i][i+1] = 0 (no balloon to burst between adjacent walls)
+ *
+ * ✅ Transition:
+ *     To compute dp[i][j], we consider:
+ *     ➤ Try bursting balloon k last in (i, j)
+ *     ➤ Add coins: nums[i] * nums[k] * nums[j] + dp[i][k] + dp[k][j]
+ *     So:
+ *         dp[i][j] = max(dp[i][j], nums[i] * nums[k] * nums[j] + dp[i][k] + dp[k][j])
+ *
+ * ✅ Iteration Order:
+ * Length from 2 to n, then all subintervals (i, j)
+ *
+ * 🚨 Edge Cases:
+ * - nums is empty → return 0
+ * - Pad with 1 on both sides to simplify logic
+ *
+ * ⏱️ Time: O(n^3)
+ * 🧠 Space: O(n^2)
  */
 int MaxCoins(vector<int>& nums) {
     int n = nums.size();
@@ -612,44 +879,39 @@ int MaxCoins(vector<int>& nums) {
     }
     return dp[1][n];
 }
-/*
-Problem: Burst Balloons (LC 312)
--------------------------------
-You are given `n` balloons, each balloon has a number.
-Each time you burst a balloon `i`, you gain coins = nums[left] * nums[i] * nums[right]
-You can burst balloons in any order.
-
-We define:
-- dp[left][right]: the max coins we can get by bursting balloons in (left, right) (exclusive)
-
-Padding:
-- Add 1 at both ends: balloons = [1] + nums + [1] for easier handling of boundaries
-
-Transition:
-- For each length of interval, for each [left, right], try all `k` in (left, right):
-    dp[left][right] = max(dp[left][right],
-                          dp[left][k - 1] + dp[k + 1][right] +
-                          balloons[left - 1] * balloons[k] * balloons[right + 1])
-
-Return dp[1][n] (excluding the padded edges)
-
-Time: O(n^3), Space: O(n^2)
-*/
 
 /**
  * Problem 13: Longest Continuous Increasing Subsequence (LC 674)
- * Description:
- * Given an unsorted array of integers nums, return the length of the longest continuous strictly increasing subsequence (LCIS).
- * A continuous increasing subsequence is a subsequence that can be derived from the array by deleting some or no elements
- * without changing the order of the remaining elements and whose elements are strictly increasing.
+ * ---------------------------------------------------------------
+ * 🧠 Description:
+ * Given an integer array `nums`, return the length of the longest **contiguous** (not necessarily strictly global) 
+ * increasing subarray.
  *
- * Example:
+ * 🔍 Example:
  * Input: nums = [1,3,5,4,7]
- * Output: 3
- * Explanation: The longest continuous increasing subsequence is [1,3,5] with length 3.
-
- * Approach: Iterate through the array and track the current length of increasing subsequence.
- * Transition: Reset length when nums[i] <= nums[i-1].
+ * Output: 3 → [1,3,5]
+ *
+ * 🎯 Key Insight:
+ * This is not longest increasing **subsequence**, but longest **subarray**.
+ * We can solve it either by greedy counting, or by DP where dp[i] means LCIS ending at i.
+ *
+ * 💡 Greedy Strategy (Best in Practice):
+ * ------------------------------------------------------------
+ * ✅ Greedy Insight:
+ * - Traverse the array from left to right
+ * - If current element > previous, extend the current streak
+ * - Else, reset current streak to 1
+ *
+ * ✅ Variables:
+ * - current_len = length of current increasing streak
+ * - max_len = max seen so far
+ *
+ * 🚨 Edge Cases:
+ * - Empty array → return 0
+ * - All equal or descending → return 1
+ *
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(1)
  */
 // Greedy is better
 int FindLengthOfLCIS(vector<int>& nums) {
@@ -669,6 +931,26 @@ int FindLengthOfLCIS(vector<int>& nums) {
 
     return max_len;
 }
+
+/**
+ * 🔁 Dynamic Programming Version:
+ * ------------------------------------------------------------
+ * ✅ State Definition:
+ * dp[i] = length of the LCIS that ends at index i
+ *
+ * ✅ Base Case:
+ * dp[0] = 1 (any element alone is length 1)
+ *
+ * ✅ Transition:
+ * - If nums[i] > nums[i-1] → dp[i] = dp[i-1] + 1
+ * - Else → dp[i] = 1 (restart from here)
+ *
+ * ✅ Iteration Order:
+ * i = 1 to n-1
+ *
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(n)
+ */
 // dp is easy understanding
 int FindLengthOfLCIS_DP(vector<int>& nums) {
     if (nums.empty()) return 0;
@@ -681,39 +963,45 @@ int FindLengthOfLCIS_DP(vector<int>& nums) {
     }
     return max_len;
 }
-/*
-Problem: Longest Continuous Increasing Subsequence (LC 674)
------------------------------------------------------------
-Given an unsorted array of integers, return the length of the longest 
-continuous increasing subsequence (i.e., strictly increasing and contiguous).
-
-We define:
-- dp[i]: the length of the LCIS ending at index i
-
-Transition:
-- If nums[i] > nums[i-1], dp[i] = dp[i-1] + 1
-- Else dp[i] = 1 (start new sequence)
-
-Track the maximum dp[i] during iteration.
-
-Time: O(n), Space: O(n)
-*/
 
 /**
  * Problem 14: Maximum Length of Repeated Subarray (LC 718)
- * Description:
- * - Given two integer arrays nums1 and nums2, return the length of their longest common subarray.
- * - A subarray is a contiguous part of an array.
- * Example:
- * Input: nums1 = [1, 2, 3, 2, 1], nums2 = [3, 2, 1, 4, 7]
- * Output: 3
- * Explanation: The longest common subarray is [3, 2, 1] with length 3.
- * Constraints:
- * 1. 1 <= nums1.length, nums2.length <= 1000
- * 2. 0 <= nums1[i], nums2[i] <= 100
+ * ---------------------------------------------------------
+ * 🧠 Description:
+ * Given two integer arrays nums1 and nums2, return the length of their longest common subarray.
+ * A subarray is a contiguous segment of an array.
+ *
+ * 🔍 Example:
+ * Input: nums1 = [1,2,3,2,1], nums2 = [3,2,1,4,7]
+ * Output: 3 → The common subarray [3,2,1]
+ *
+ * 🎯 Key Insight:
+ * This is similar to Longest Common Substring (not subsequence).
+ * Use 2D DP: track length of ending-at-i-and-j matching subarrays.
+ *
+ * 💡 DP Strategy:
+ * ------------------------------------------------------------
+ * ✅ State Definition:
+ * dp[i][j] = length of longest common subarray ending at nums1[i-1] and nums2[j-1]
+ *
+ * ✅ Base Case:
+ * dp[0][*] = 0 and dp[*][0] = 0 (empty subarrays)
+ *
+ * ✅ Transition:
+ *     To compute dp[i][j], we consider:
+ *     ➤ If nums1[i-1] == nums2[j-1] → extend previous match: dp[i][j] = dp[i-1][j-1] + 1
+ *     ➤ Else → dp[i][j] = 0 (no match ends here)
+ *
+ * ✅ Iteration Order:
+ * i from 1..m, j from 1..n
+ *
+ * 🚨 Edge Cases:
+ * - One array empty → return 0
+ * - No common subarray → return 0
+ *
+ * ⏱️ Time: O(m × n)
+ * 🧠 Space: O(m × n) → Can be optimized to O(n)
  */
-
-/* Dynamic Programming Solution */
 int FindLengthDP(vector<int>& nums1, vector<int>& nums2) {
     int m = nums1.size(), n = nums2.size();
     vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0)); // DP table
@@ -729,40 +1017,48 @@ int FindLengthDP(vector<int>& nums1, vector<int>& nums2) {
     }
     return max_len;
 }
-/*
-Problem: Maximum Length of Repeated Subarray (LC 718)
------------------------------------------------------
-Given two integer arrays `nums1` and `nums2`, return the length of the maximum 
-length of a subarray that appears in both arrays.
-
-We define:
-- dp[i][j]: the length of the common subarray ending at nums1[i-1] and nums2[j-1]
-
-Transition:
-- If nums1[i-1] == nums2[j-1], dp[i][j] = dp[i-1][j-1] + 1
-- Else dp[i][j] = 0 (discontinuity)
-
-Track max(dp[i][j]) during iteration.
-
-Time: O(m * n), Space: O(m * n)
-*/
 
 /**
- * Problem 15: Distinct Subsequences(lc115)
- * Description:
- * - Given two strings s and t, return the number of distinct subsequences of s which equals t.
- * - A subsequence of a string is a new string generated from the original string with some characters
- *   (can be none) deleted without changing the relative order of the remaining characters.
- * Example:
+ * Problem 15: Distinct Subsequences (LC 115)
+ * ------------------------------------------
+ * 🧠 Description:
+ * Given strings `s` and `t`, return how many distinct subsequences of `s` equal `t`.
+ * A subsequence deletes some characters from `s` (without reordering).
+ *
+ * 🔍 Example:
  * Input: s = "rabbbit", t = "rabbit"
  * Output: 3
- * Explanation: There are 3 ways to form "rabbit" from "rabbbit":
- * 1. rabbb(it)
- * 2. rab(b)bit
- * 3. rabb(b)it
- * Constraints:
- * 1. 1 <= s.length, t.length <= 1000
- * 2. s and t consist of English letters.
+ *
+ * 🎯 Key Insight:
+ * Use 2D DP: count number of subsequences from s[0..i] matching t[0..j].
+ *
+ * 💡 DP Strategy:
+ * ------------------------------------------------------------
+ * ✅ State Definition:
+ * dp[i][j] = number of subsequences of s[0..i-1] matching t[0..j-1]
+ *
+ * ✅ Base Case:
+ * dp[i][0] = 1 (empty t is a subsequence of any prefix of s)
+ * dp[0][j>0] = 0 (non-empty t can’t match empty s)
+ *
+ * ✅ Transition:
+ *     To compute dp[i][j], we consider:
+ *     ➤ If s[i-1] == t[j-1] → we can:
+ *         - match both (dp[i-1][j-1])
+ *         - skip s[i-1] (dp[i-1][j])
+ *     ➤ Else → skip s[i-1] (dp[i-1][j])
+ *
+ *         dp[i][j] = dp[i-1][j] + (s[i-1]==t[j-1] ? dp[i-1][j-1] : 0)
+ *
+ * ✅ Iteration Order:
+ * i = 1..s.size(), j = 1..t.size()
+ *
+ * 🚨 Edge Cases:
+ * - t longer than s → return 0
+ * - s == t → return 1
+ *
+ * ⏱️ Time: O(m × n)
+ * 🧠 Space: O(m × n)
  */
 
 /* Dynamic Programming Solution */
@@ -783,27 +1079,6 @@ int NumDistinctDP(string s, string t) {
     }
     return dp[s.size()][t.size()];
 }
-/*
-Problem: Distinct Subsequences (LC 115)
----------------------------------------
-Given strings `s` and `t`, return the number of distinct subsequences of `s` 
-which equals `t`.
-
-We define:
-- dp[i][j]: number of distinct subsequences of s[0..i-1] which equals t[0..j-1]
-
-Initialization:
-- dp[i][0] = 1 (empty t is subsequence of any s prefix)
-- dp[0][j>0] = 0 (non-empty t can't be matched from empty s)
-
-Transition:
-- if s[i-1] == t[j-1]:
-    dp[i][j] = dp[i-1][j-1] + dp[i-1][j]
-- else:
-    dp[i][j] = dp[i-1][j]
-
-Time: O(m * n), Space: O(m * n)
-*/
 
 /* Optimized Dynamic Programming Solution (1D Array) */
 int NumDistinctOptimized(string s, string t) {
@@ -821,44 +1096,43 @@ int NumDistinctOptimized(string s, string t) {
     }
     return dp[n];
 }
-/*
-Problem: Distinct Subsequences (LC 115)
----------------------------------------
-This is a space optimized version of the 2D DP.
-
-We define:
-- dp[j]: number of distinct subsequences of s[0..i-1] that match t[0..j-1]
-
-Because dp[i][j] only depends on dp[i-1][j] and dp[i-1][j-1], 
-we can safely update from right to left in 1D array.
-
-Initialization:
-- dp[0] = 1 (empty t is subsequence of any s)
-
-Update from right to left for correctness.
-
-Time: O(m * n), Space: O(n)
-*/
 
 /**
- * Problem 16: Longest Common Subsequence(lc1143)
- * Description:
- * - Given two strings text1 and text2, return the length of their longest common subsequence.
- * - If there is no common subsequence, return 0.
- * A subsequence of a string is a new string generated from the original string
- * with some characters (can be none) deleted without changing the relative order
- * of the remaining characters.
+ * Problem 16: Longest Common Subsequence (LC 1143)
+ * ------------------------------------------------
+ * 🧠 Description:
+ * Given two strings text1 and text2, return the length of their longest common subsequence.
+ * A subsequence allows deletion, but keeps character order.
  *
- * Example:
+ * 🔍 Example:
  * Input: text1 = "abcde", text2 = "ace"
- * Output: 3
- * Explanation: The longest common subsequence is "ace" and its length is 3.
+ * Output: 3 → "ace"
  *
- * Constraints:
- * 1. 1 <= text1.length, text2.length <= 1000
- * 2. text1 and text2 consist of only lowercase English characters.
+ * 🎯 Key Insight:
+ * Use classic 2D DP to build LCS length matrix.
+ *
+ * 💡 DP Strategy:
+ * ------------------------------------------------------------
+ * ✅ State Definition:
+ * dp[i][j] = length of LCS between text1[0..i-1] and text2[0..j-1]
+ *
+ * ✅ Base Case:
+ * dp[0][*] = 0, dp[*][0] = 0 (empty string)
+ *
+ * ✅ Transition:
+ *     To compute dp[i][j], we consider:
+ *     ➤ If text1[i-1] == text2[j-1] → extend match: dp[i-1][j-1] + 1
+ *     ➤ Else → take max from excluding one: max(dp[i-1][j], dp[i][j-1])
+ *
+ * ✅ Iteration Order:
+ * i = 1..m, j = 1..n
+ *
+ * 🚨 Edge Cases:
+ * - One string empty → return 0
+ *
+ * ⏱️ Time: O(m × n)
+ * 🧠 Space: O(m × n)
  */
-
 /* Dynamic Programming Solution */
 int LongestCommonSubsequenceDP(string text1, string text2) {
     int m = text1.size(), n = text2.size();
@@ -876,20 +1150,6 @@ int LongestCommonSubsequenceDP(string text1, string text2) {
 
     return dp[m][n];
 }
-/*
-Problem: Longest Common Subsequence (LC 1143)
---------------------------------------------
-Given two strings `text1` and `text2`, return the length of their longest common subsequence.
-
-We define:
-- dp[i][j]: length of LCS between text1[0..i-1] and text2[0..j-1]
-
-Transition:
-- If text1[i-1] == text2[j-1]: dp[i][j] = dp[i-1][j-1] + 1
-- Else: dp[i][j] = max(dp[i-1][j], dp[i][j-1])
-
-Time: O(m * n), Space: O(m * n)
-*/
 
 /* Optimized Dynamic Programming Solution (1D Rolling Array) */
 int LongestCommonSubsequenceOptimized(string text1, string text2) {
@@ -909,31 +1169,44 @@ int LongestCommonSubsequenceOptimized(string text1, string text2) {
 
     return dp[n];
 }
-/*
-Problem: Longest Common Subsequence (LC 1143)
---------------------------------------------
-This is a space-optimized version of the standard 2D LCS.
-
-Rolling optimization:
-- Use 1D array + `prev` to simulate row transition
-
-Time: O(m * n), Space: O(n)
-*/
 
 /**
  * Problem 17: Longest Palindromic Substring (LC 5)
- * Description:
+ * ------------------------------------------------
+ * 🧠 Description:
  * Given a string s, return the longest palindromic substring in s.
  * A string is a palindrome when it reads the same backward as forward.
  *
- * Example:
+ * 🔍 Example:
  * Input: s = "babad"
- * Output: "bab"
- * Explanation: "aba" is also a valid answer.
+ * Output: "bab" or "aba"
  *
- * Constraints:
- * 1. 1 <= s.length <= 1000
- * 2. s consist of only digits and English letters.
+ * 🎯 Key Insight:
+ * A substring is a palindrome if:
+ *   - The outer characters match
+ *   - The inner substring is also a palindrome
+ *
+ * 💡 DP Strategy:
+ * ------------------------------------------------------------
+ * ✅ State Definition:
+ * dp[i][j] = whether s[i..j] is a palindrome
+ *
+ * ✅ Base Case Initialization:
+ * dp[i][i] = true (every single character is a palindrome)
+ *
+ * ✅ Transition:
+ * dp[i][j] = (s[i] == s[j]) && (j - i <= 2 || dp[i+1][j-1])
+ *
+ * ✅ Iteration Order:
+ * j from 0 to n-1
+ *   i from 0 to j
+ *
+ * 🚨 Edge Cases:
+ * - Single character string → return s
+ * - Entire string is palindrome → return s
+ *
+ * ⏱️ Time: O(n^2)
+ * 🧠 Space: O(n^2)
  */
 string LongestPalindrome(string s) {
     if (s.length() <= 1) {
@@ -961,37 +1234,41 @@ string LongestPalindrome(string s) {
 
     return s.substr(start, end - start + 1);
 }
-/*
-Problem: Longest Palindromic Substring (LC 5)
---------------------------------------------
-Find the longest palindromic substring in a given string `s`.
-
-We define:
-- dp[i][j]: whether s[i..j] is a palindrome
-
-Transition:
-- s[i] == s[j] and (j - i <= 2 or dp[i+1][j-1]) → then dp[i][j] = true
-
-Track the longest (j - i + 1) and update (start, end)
-
-Time: O(n^2), Space: O(n^2)
-*/
 
 /**
  * Problem 18: Palindromic Substrings (LC 647)
- * Description:
- * Given a string s, return the number of palindromic substrings in it.
- * A string is a palindrome when it reads the same backward as forward.
- * A substring is a contiguous sequence of characters within the string.
+ * -------------------------------------------
+ * 🧠 Description:
+ * Return the total number of palindromic substrings in a given string.
  *
- * Example:
+ * 🔍 Example:
  * Input: s = "aaa"
  * Output: 6
- * Explanation: The 6 palindromic substrings are "a", "a", "a", "aa", "aa", "aaa".
+ * Explanation: "a", "a", "a", "aa", "aa", "aaa"
  *
- * Constraints:
- * 1. 1 <= s.length <= 1000
- * 2. s consists of lowercase English letters.
+ * 🎯 Key Insight:
+ * A substring is palindromic if the ends match and the middle is also a palindrome.
+ *
+ * 💡 DP Strategy:
+ * ------------------------------------------------------------
+ * ✅ State Definition:
+ * dp[i][j] = whether s[i..j] is a palindrome
+ *
+ * ✅ Base Case:
+ * dp[i][i] = true (single character)
+ *
+ * ✅ Transition:
+ * If s[i] == s[j] and (j - i < 2 || dp[i+1][j-1]) then dp[i][j] = true
+ *
+ * ✅ Iteration Order:
+ * i from n-1 down to 0
+ * j from i to n-1
+ *
+ * 🚨 Edge Cases:
+ * - Empty string → return 0
+ *
+ * ⏱️ Time: O(n^2)
+ * 🧠 Space: O(n^2)
  */
 int CountSubstrings(string s) {
     int n = s.size(), count = 0;
@@ -1007,39 +1284,41 @@ int CountSubstrings(string s) {
     }
     return count;
 }
-/*
-Problem: Palindromic Substrings (LC 647)
-----------------------------------------
-Count the number of palindromic substrings in the string `s`.
-
-We define:
-- dp[i][j]: whether s[i..j] is a palindrome
-
-Transition:
-- s[i] == s[j] and (j - i < 2 || dp[i+1][j-1]) → dp[i][j] = true
-
-Count every valid palindrome during iteration.
-
-Time: O(n^2), Space: O(n^2)
-*/
 
 /**
  * Problem 19: Minimum Falling Path Sum (LC 931)
- * Description:
- * Given an n x n array of integers matrix, return the minimum sum of any falling path
- * through the matrix. A falling path starts at any element in the first row and chooses
- * one element from each row. The next row's choice must be in the column directly below,
- * or diagonally left/right.
+ * ---------------------------------------------
+ * 🧠 Description:
+ * Find the minimum sum of a falling path in a matrix where a path starts at any element
+ * in the first row and moves down to one of the three positions in the next row.
  *
- * Example:
+ * 🔍 Example:
  * Input: matrix = [[2,1,3],[6,5,4],[7,8,9]]
  * Output: 13
- * Explanation: The falling path with the smallest sum is 1 → 5 → 7.
+ * Explanation: 1 → 5 → 7
  *
- * Constraints:
- * 1. n == matrix.length == matrix[i].length
- * 2. 1 <= n <= 100
- * 3. -100 <= matrix[i][j] <= 100
+ * 🎯 Key Insight:
+ * At each cell in row i, you can only come from j-1, j, or j+1 in row i-1
+ *
+ * 💡 DP Strategy:
+ * ------------------------------------------------------------
+ * ✅ State Definition:
+ * dp[j] = min falling path sum ending at column j of current row
+ *
+ * ✅ Base Case Initialization:
+ * dp = matrix[0]
+ *
+ * ✅ Transition:
+ * dp[j] = matrix[i][j] + min(dp[j], dp[j-1], dp[j+1])
+ *
+ * ✅ Iteration Order:
+ * From top to bottom, row by row
+ *
+ * 🚨 Edge Cases:
+ * - Only one row → return min of that row
+ *
+ * ⏱️ Time: O(n^2)
+ * 🧠 Space: O(n)
  */
 int MinFallingPathSum(vector<vector<int>>& matrix) {
     int n = matrix.size();
@@ -1055,38 +1334,43 @@ int MinFallingPathSum(vector<vector<int>>& matrix) {
     }
     return *min_element(dp.begin(), dp.end());
 }
-/*
-Problem: Minimum Falling Path Sum (LC 931)
-------------------------------------------
-Given an n x n integer matrix, return the minimum sum of a falling path.
-
-A falling path moves from top to bottom choosing one element from each row,
-and next row's column must be the same or adjacent (j, j-1, j+1)
-
-We define:
-- dp[j]: min falling path sum to reach column j of current row
-
-Transition:
-- curr[j] = matrix[i][j] + min(dp[j], dp[j-1], dp[j+1])
-
-Use 1D space by rolling update of rows.
-
-Time: O(n^2), Space: O(n)
-*/
 
 /**
  * Problem 20: Ugly Number II (LC 264)
- * Description:
+ * -----------------------------------
+ * 🧠 Description:
  * An ugly number is a positive integer whose prime factors are limited to 2, 3, and 5.
- * Given an integer n, return the nth ugly number.
+ * Return the n-th ugly number in the sequence.
  *
- * Example:
+ * 🔍 Example:
  * Input: n = 10
  * Output: 12
- * Explanation: The sequence of ugly numbers is [1, 2, 3, 4, 5, 6, 8, 9, 10, 12, ...].
+ * Explanation: The sequence is [1, 2, 3, 4, 5, 6, 8, 9, 10, 12, ...]
  *
- * Constraints:
- * 1. 1 <= n <= 1690
+ * 🎯 Key Insight:
+ * Each ugly number is formed by multiplying a smaller ugly number by 2, 3, or 5.
+ * Use three pointers to track the next index of multiples for 2, 3, and 5.
+ *
+ * 💡 DP Strategy:
+ * ------------------------------------------------------------
+ * ✅ State Definition:
+ * dp[i] = i-th ugly number in increasing order
+ *
+ * ✅ Base Case Initialization:
+ * dp[0] = 1
+ *
+ * ✅ Transition:
+ * dp[i] = min(dp[i2] * 2, dp[i3] * 3, dp[i5] * 5)
+ * Update i2/i3/i5 if they were used
+ *
+ * ✅ Iteration Order:
+ * i from 1 to n-1
+ *
+ * 🚨 Edge Cases:
+ * - n = 1 → return 1
+ *
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(n)
  */
 int NthUglyNumber(int n) {
     vector<int> dp(n, 0);
@@ -1102,35 +1386,43 @@ int NthUglyNumber(int n) {
     }
     return dp[n - 1];
 }
-/*
-Problem: Ugly Number II (LC 264)
---------------------------------
-Find the n-th ugly number. Ugly numbers are positive integers whose prime factors only include 2, 3, or 5.
-
-Approach:
-- Use a dynamic programming array `dp` to store the first n ugly numbers.
-- Maintain three indices i2, i3, i5 to track the position of the last multiple of 2, 3, and 5.
-- At each step, compute next candidates and select the smallest one as the next ugly number.
-- Move the corresponding pointer(s) forward if used.
-
-Time Complexity: O(n)
-Space Complexity: O(n)
-*/
 
 /**
  * Problem 21: Maximum Product Subarray (LC 152)
- * Description:
- * Given an integer array nums, find the contiguous subarray within an array (containing at least one number)
- * which has the largest product.
+ * ---------------------------------------------
+ * 🧠 Description:
+ * Given an integer array nums, find the contiguous subarray with the largest product.
  *
- * Example:
+ * 🔍 Example:
  * Input: nums = [2,3,-2,4]
- * Output: 6
- * Explanation: The subarray [2,3] has the largest product = 6.
+ * Output: 6 → subarray = [2,3]
  *
- * Constraints:
- * 1. 1 <= nums.length <= 2 * 10^4
- * 2. -10 <= nums[i] <= 10
+ * 🎯 Key Insight:
+ * A negative number can flip the min/max. Need to track both.
+ *
+ * 💡 DP Strategy:
+ * ------------------------------------------------------------
+ * ✅ State Definition:
+ * - max_prod = max product ending at index i
+ * - min_prod = min product ending at index i
+ *
+ * ✅ Transition:
+ * If nums[i] < 0 → swap max and min
+ * Then:
+ *   max_prod = max(nums[i], max_prod * nums[i])
+ *   min_prod = min(nums[i], min_prod * nums[i])
+ *
+ * ✅ Base Initialization:
+ * Both set to nums[0]
+ *
+ * ✅ Iteration Order:
+ * i = 1 to n-1
+ *
+ * 🚨 Edge Cases:
+ * - Contains 0 → reset max/min to 0 or nums[i]
+ *
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(1)
  */
 int MaxProduct(vector<int>& nums) {
     int n = nums.size(), max_prod = nums[0], min_prod = nums[0], result = nums[0];
@@ -1142,38 +1434,36 @@ int MaxProduct(vector<int>& nums) {
     }
     return result;
 }
-/*
-Problem: Maximum Product Subarray (LC 152)
-------------------------------------------
-Find the contiguous subarray within an integer array that has the largest product.
-
-Approach:
-- Use dynamic programming to track both maximum and minimum product at each index,
-  because a negative number could become the maximum when multiplied by another negative.
-- Swap max and min when current number is negative.
-
-State:
-- max_prod: max product ending at current index
-- min_prod: min product ending at current index
-
-Transition:
-- max_prod = max(nums[i], max_prod * nums[i])
-- min_prod = min(nums[i], min_prod * nums[i])
-
-Time Complexity: O(n)
-Space Complexity: O(1)
-*/
 
 /**
  * Problem 22: Best Time to Buy and Sell Stock (LC 121)
- * Description:
- * Given an array `prices` where prices[i] is the price of a stock on day `i`,
- * return the maximum profit you can achieve from a single transaction.
+ * -----------------------------------------------------
+ * 🧠 Description:
+ * Given an array of prices, where prices[i] is the price of a stock on day i,
+ * return the maximum profit you can achieve from one transaction.
  *
- * Example:
+ * 🔍 Example:
  * Input: prices = [7,1,5,3,6,4]
- * Output: 5
- * Explanation: Buy on day 2 (price = 1) and sell on day 5 (price = 6), profit = 6 - 1 = 5.
+ * Output: 5 → Buy on day 2, sell on day 5 (6 - 1 = 5)
+ *
+ * 🎯 Key Insight:
+ * At each day, find the lowest price before and compute current potential profit.
+ *
+ * 💡 Strategy:
+ * ------------------------------------------------------------
+ * ✅ State Tracking:
+ * - min_price = smallest price seen so far
+ * - max_profit = best profit so far
+ *
+ * ✅ Transition:
+ * - Update min_price = min(min_price, prices[i])
+ * - Update max_profit = max(max_profit, prices[i] - min_price)
+ *
+ * 🚨 Edge Cases:
+ * - prices.size() < 2 → return 0
+ *
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(1)
  */
 int MaxProfit(vector<int>& prices) {
     int min_price = INT_MAX, max_profit = 0;
@@ -1183,29 +1473,38 @@ int MaxProfit(vector<int>& prices) {
     }
     return max_profit;
 }
-/*
-Problem: Best Time to Buy and Sell Stock I (LC 121)
----------------------------------------------------
-You are given an array of prices, where prices[i] is the price of a stock on day i.
-Return the maximum profit you can achieve from a single buy and sell.
-
-Approach:
-- Track the minimum price seen so far.
-- At each step, update the maximum profit as the difference between current price and min_price.
-
-Time Complexity: O(n)
-Space Complexity: O(1)
-*/
 
 /**
  * Problem 23: Best Time to Buy and Sell Stock II (LC 122)
- * Description:
+ * --------------------------------------------------------
+ * 🧠 Description:
  * You may complete as many transactions as you like (buy one and sell one share of the stock multiple times).
+ * You cannot hold multiple stocks simultaneously (must sell before buying again).
  *
- * Example:
+ * 🔍 Example:
  * Input: prices = [7,1,5,3,6,4]
  * Output: 7
- * Explanation: Buy on day 2 (1), sell on day 3 (5), buy on day 4 (3), sell on day 5 (6).
+ * Explanation: Buy on day 2 (1), sell on day 3 (5), buy on day 4 (3), sell on day 5 (6)
+ *
+ * 🎯 Key Insight:
+ * Accumulate all local upward price gaps — it's always beneficial to buy before a rise.
+ *
+ * 💡 Greedy Strategy:
+ * ------------------------------------------------------------
+ * ✅ State Tracking:
+ * - profit accumulates whenever today's price > yesterday's
+ *
+ * ✅ Transition:
+ * if prices[i] > prices[i-1], then profit += prices[i] - prices[i-1]
+ *
+ * ✅ Iteration Order:
+ * From left to right (i = 1 to n - 1)
+ *
+ * 🚨 Edge Cases:
+ * - Empty or single-day array → return 0
+ *
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(1)
  */
 int MaxProfitMultiple(vector<int>& prices) {
     int profit = 0;
@@ -1216,27 +1515,46 @@ int MaxProfitMultiple(vector<int>& prices) {
     }
     return profit;
 }
-/*
-Problem: Best Time to Buy and Sell Stock II (LC 122)
-----------------------------------------------------
-You may complete as many transactions as you like (buy-sell), but cannot hold multiple stocks.
-
-Approach:
-- Greedy strategy: accumulate profit whenever there is an increase in price.
-
-Time Complexity: O(n)
-Space Complexity: O(1)
-*/
 
 /**
  * Problem 24: House Robber II (LC 213)
- * Description:
- * You are a professional robber planning to rob houses along a **circular street**. Each house has a certain amount of money stashed.
+ * -------------------------------------
+ * 🧠 Description:
+ * You are a professional robber planning to rob houses along a **circular street**.
+ * You cannot rob two adjacent houses (first and last houses are adjacent).
  *
- * Example:
+ * 🔍 Example:
  * Input: nums = [2,3,2]
  * Output: 3
- * Explanation: You cannot rob both house 1 and house 3 because they are adjacent.
+ * Explanation: Rob house 2 (3) instead of houses 1 and 3
+ *
+ * 🎯 Key Insight:
+ * Since the first and last houses are neighbors, robbing both is invalid.
+ * Split the array into two cases:
+ *   1. Rob houses 0 to n-2
+ *   2. Rob houses 1 to n-1
+ * Take the max result of both.
+ *
+ * 💡 DP Strategy:
+ * ------------------------------------------------------------
+ * ✅ State Definition:
+ * Use classic linear House Robber logic within subarray [start, end]
+ *
+ * ✅ Base Initialization:
+ * prev1 = max robbed up to house i-1
+ * prev2 = max robbed up to house i-2
+ *
+ * ✅ Transition:
+ * curr = max(prev1, prev2 + nums[i])
+ *
+ * ✅ Iteration Order:
+ * i from start to end
+ *
+ * 🚨 Edge Cases:
+ * - Only one house → return nums[0]
+ *
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(1)
  */
 int RobHelper(vector<int>& nums, int left, int right) {
     int prev1 = 0, prev2 = 0;
@@ -1247,33 +1565,50 @@ int RobHelper(vector<int>& nums, int left, int right) {
     }
     return prev1;
 }
+
 int RobCircular(vector<int>& nums) {
     if (nums.size() == 1) return nums[0];
     return max(RobHelper(nums, 0, nums.size() - 2), RobHelper(nums, 1, nums.size() - 1));
 }
-/*
-Problem: House Robber II (LC 213)
----------------------------------
-You cannot rob adjacent houses, and houses are arranged in a circle (first and last are adjacent).
-
-Approach:
-- Convert into two linear robbing problems:
-  1. Rob from house 0 to n-2
-  2. Rob from house 1 to n-1
-- Return the maximum of the two results.
-
-Time Complexity: O(n)
-Space Complexity: O(1)
-*/
 
 /**
  * Problem 25: Wildcard Matching (LC 44)
- * Description:
- * Implement wildcard pattern matching with `?` (matches any single character) and `*` (matches any sequence).
+ * -------------------------------------
+ * 🧠 Description:
+ * Implement wildcard pattern matching with support for:
+ *   - '?' matches any single character
+ *   - '*' matches any sequence (including empty)
+ * Return true if the pattern matches the string.
  *
- * Example:
+ * 🔍 Example:
  * Input: s = "adceb", p = "*a*b"
  * Output: true
+ *
+ * 🎯 Key Insight:
+ * Use dynamic programming to match prefixes of s and p.
+ * '*' has flexible matching power.
+ *
+ * 💡 DP Strategy:
+ * ------------------------------------------------------------
+ * ✅ State Definition:
+ * dp[i][j] = whether s[0..i-1] matches p[0..j-1]
+ *
+ * ✅ Base Case Initialization:
+ * dp[0][0] = true (empty matches empty)
+ * dp[0][j] = true only if p[0..j-1] is all '*'
+ *
+ * ✅ Transition:
+ * - If p[j-1] == '*': dp[i][j] = dp[i][j-1] || dp[i-1][j]
+ * - If p[j-1] == '?' or s[i-1] == p[j-1]: dp[i][j] = dp[i-1][j-1]
+ *
+ * ✅ Iteration Order:
+ * i from 1 to m, j from 1 to n
+ *
+ * 🚨 Edge Cases:
+ * - Consecutive '*' in pattern → compress if needed (optional optimization)
+ *
+ * ⏱️ Time: O(m × n)
+ * 🧠 Space: O(m × n)
  */
 bool IsMatch(string s, string p) {
     int m = s.size(), n = p.size();
@@ -1295,34 +1630,43 @@ bool IsMatch(string s, string p) {
     }
     return dp[m][n];
 }
-/*
-Problem: Wildcard Matching (LC 44)
-----------------------------------
-Implement wildcard pattern matching with support for '?' and '*'.
-
-Definitions:
-- '?' matches any single character
-- '*' matches any sequence (including empty)
-
-DP Definition:
-- dp[i][j]: whether s[0..i-1] matches p[0..j-1]
-
-Transition:
-- If p[j-1] == '*': dp[i][j] = dp[i][j-1] || dp[i-1][j]
-- If p[j-1] == '?' or s[i-1] == p[j-1]: dp[i][j] = dp[i-1][j-1]
-
-Time Complexity: O(m * n)
-Space Complexity: O(m * n)
-*/
 
 /**
  * Problem 26: Interleaving String (LC 97)
- * Description:
+ * ---------------------------------------
+ * 🧠 Description:
  * Given three strings `s1`, `s2`, and `s3`, return true if `s3` is formed by interleaving `s1` and `s2`.
+ * Interleaving means characters of s1 and s2 are merged in order.
  *
- * Example:
+ * 🔍 Example:
  * Input: s1 = "aab", s2 = "axy", s3 = "aaxaby"
  * Output: true
+ *
+ * 🎯 Key Insight:
+ * At each step, choose either one character from s1 or s2 to form s3.
+ *
+ * 💡 DP Strategy:
+ * ------------------------------------------------------------
+ * ✅ State Definition:
+ * dp[i][j] = whether s1[0..i-1] and s2[0..j-1] can form s3[0..i+j-1]
+ *
+ * ✅ Base Case Initialization:
+ * dp[0][0] = true
+ * dp[i][0] = s1[0..i-1] == s3[0..i-1]
+ * dp[0][j] = s2[0..j-1] == s3[0..j-1]
+ *
+ * ✅ Transition:
+ * - If s1[i-1] == s3[i+j-1] and dp[i-1][j] is true → dp[i][j] = true
+ * - If s2[j-1] == s3[i+j-1] and dp[i][j-1] is true → dp[i][j] = true
+ *
+ * ✅ Iteration Order:
+ * i = 1 to m, j = 1 to n
+ *
+ * 🚨 Edge Cases:
+ * - s1 + s2 length != s3.length → return false
+ *
+ * ⏱️ Time: O(m × n)
+ * 🧠 Space: O(m × n)
  */
 bool IsInterleave(string s1, string s2, string s3) {
     size_t m = s1.size(), n = s2.size();
@@ -1341,32 +1685,42 @@ bool IsInterleave(string s1, string s2, string s3) {
     }
     return dp[m][n];
 }
-/*
-Problem: Interleaving String (LC 97)
-------------------------------------
-Given s1, s2, and s3, check if s3 is formed by an interleaving of s1 and s2.
-
-DP Definition:
-- dp[i][j]: whether s1[0..i-1] and s2[0..j-1] can form s3[0..i+j-1]
-
-Transition:
-- dp[i][j] = (dp[i-1][j] && s1[i-1] == s3[i+j-1]) ||
-             (dp[i][j-1] && s2[j-1] == s3[i+j-1])
-
-Time Complexity: O(m * n)
-Space Complexity: O(m * n)
-*/
 
 /**
  * Problem 27: Best Time to Buy and Sell Stock with Cooldown (LC 309)
- * Description:
- * You are given an array `stock_prices3` where `stock_prices3[i]` is the price of a stock on day `i`.
- * You may complete as many transactions as you like, but you must wait **one day cooldown** after selling.
- * 
- * Example:
- * Input: stock_prices3 = [1,2,3,0,2]
- * Output: 3
- * Explanation: Buy on day 1 (price = 1), sell on day 3 (price = 3), cooldown on day 4, buy on day 5 (price = 0), sell on day 6 (price = 2).
+ * -------------------------------------------------------------------
+ * 🧠 Description:
+ * After you sell a stock, you cannot buy stock on the next day (cooldown).
+ * Return the maximum profit.
+ *
+ * 🔍 Example:
+ * Input: prices = [1,2,3,0,2]
+ * Output: 3 → Transactions: buy(1), sell(3), cooldown, buy(0), sell(2)
+ *
+ * 🎯 Key Insight:
+ * Use three states:
+ *   - buy[i]: max profit on day i if you bought stock
+ *   - sell[i]: max profit on day i if you sold stock
+ *   - cooldown[i]: max profit on day i if you did nothing
+ *
+ * 💡 DP Strategy:
+ * ------------------------------------------------------------
+ * ✅ State Definition:
+ * buy[i] = max(buy[i-1], cooldown[i-1] - price)
+ * sell[i] = max(sell[i-1], buy[i-1] + price)
+ * cooldown[i] = max(cooldown[i-1], sell[i-1])
+ *
+ * ✅ Base Initialization:
+ * buy[0] = -prices[0], sell[0] = 0, cooldown[0] = 0
+ *
+ * ✅ Iteration Order:
+ * i from 1 to n-1
+ *
+ * 🚨 Edge Cases:
+ * - prices.empty() → return 0
+ *
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(n)
  */
 int MaxProfitCooldown(vector<int>& stock_prices3) {
     if (stock_prices3.empty()) return 0;
@@ -1381,36 +1735,43 @@ int MaxProfitCooldown(vector<int>& stock_prices3) {
     }
     return sell[n - 1];
 }
-/*
-Problem: Best Time to Buy and Sell Stock with Cooldown (LC 309)
-----------------------------------------------------------------
-After selling a stock, you cannot buy on the next day (cooldown of 1 day).
-
-States:
-- buy[i]: max profit if we buy on day i
-- sell[i]: max profit if we sell on day i
-- cooldown[i]: max profit if we rest on day i
-
-Transitions:
-- buy[i] = max(buy[i-1], cooldown[i-1] - prices[i])
-- sell[i] = max(sell[i-1], buy[i-1] + prices[i])
-- cooldown[i] = max(cooldown[i-1], sell[i-1])
-
-Time Complexity: O(n)
-Space Complexity: O(n)
-*/
 
 /**
  * Problem 28: Paint House (LC 256)
- * Description:
- * There are `houses` in a row, and each house can be painted with one of `three colors`: red, blue, or green.
- * The cost of painting each house with a certain color is different.
- * You have to **paint all houses** such that **no two adjacent houses have the same color**.
- * 
- * Example:
- * Input: cost_matrix = [[17,2,17],[16,16,5],[14,3,19]]
- * Output: 10
- * Explanation: Paint house 0 as blue, house 1 as green, house 2 as blue.
+ * --------------------------------
+ * 🧠 Description:
+ * There are `n` houses. Each house can be painted red, blue, or green.
+ * No two adjacent houses can have the same color.
+ * Return the minimum cost to paint all houses.
+ *
+ * 🔍 Example:
+ * Input: cost = [[17,2,17],[16,16,5],[14,3,19]]
+ * Output: 10 → Paint house 0 blue, 1 green, 2 blue
+ *
+ * 🎯 Key Insight:
+ * Typical 3-state DP per house. Track min cost by avoiding same color as previous.
+ *
+ * 💡 DP Strategy:
+ * ------------------------------------------------------------
+ * ✅ State Definition:
+ * dp[i][c] = min cost to paint house i with color c
+ *
+ * ✅ Base Initialization:
+ * dp[0] = cost[0]
+ *
+ * ✅ Transition:
+ * dp[i][0] = cost[i][0] + min(dp[i-1][1], dp[i-1][2])
+ * dp[i][1] = cost[i][1] + min(dp[i-1][0], dp[i-1][2])
+ * dp[i][2] = cost[i][2] + min(dp[i-1][0], dp[i-1][1])
+ *
+ * ✅ Iteration Order:
+ * i from 1 to n-1
+ *
+ * 🚨 Edge Cases:
+ * - cost.size() == 0 → return 0
+ *
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(n)
  */
 int MinCost(vector<vector<int>>& cost_matrix) {
     int n = cost_matrix.size();
@@ -1424,33 +1785,41 @@ int MinCost(vector<vector<int>>& cost_matrix) {
     }
     return min({dp[n - 1][0], dp[n - 1][1], dp[n - 1][2]});
 }
-/*
-Problem: Paint House (LC 256)
------------------------------
-Each house can be painted in red, blue, or green.
-No two adjacent houses can have the same color.
-
-DP Definition:
-- dp[i][c]: min cost to paint up to house i, with color c
-
-Transition:
-- dp[i][0] = cost[i][0] + min(dp[i-1][1], dp[i-1][2]) // red
-- dp[i][1] = cost[i][1] + min(dp[i-1][0], dp[i-1][2]) // blue
-- dp[i][2] = cost[i][2] + min(dp[i-1][0], dp[i-1][1]) // green
-
-Time Complexity: O(n)
-Space Complexity: O(n)
-*/
 
 /**
  * Problem 29: Jump Game (LC 55)
- * Description:
+ * -----------------------------
+ * 🧠 Description:
  * Given an array `jump_nums` where `jump_nums[i]` represents the **maximum** jump length at that position,
  * return **true** if you can reach the last index.
- * 
- * Example:
+ *
+ * 🔍 Example:
  * Input: jump_nums = [2,3,1,1,4]
  * Output: true
+ *
+ * 🎯 Key Insight:
+ * At each index, check if it's reachable from previous jumps.
+ * Track the farthest index you can reach.
+ *
+ * 💡 Greedy Strategy:
+ * ------------------------------------------------------------
+ * ✅ Variable Definition:
+ * farthest = farthest position reachable so far
+ *
+ * ✅ Iteration:
+ * At each index i:
+ * - If i > farthest → cannot reach → return false
+ * - Update farthest = max(farthest, i + jump_nums[i])
+ *
+ * ✅ Early Return:
+ * If we reach end of array within iteration → true
+ *
+ * 🚨 Edge Cases:
+ * - jump_nums.size() == 0 → return false
+ * - jump_nums[0] == 0 and size > 1 → stuck
+ *
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(1)
  */
 bool CanJump(vector<int>& jump_nums) {
     int farthest = 0;
@@ -1460,31 +1829,87 @@ bool CanJump(vector<int>& jump_nums) {
     }
     return true;
 }
-/*
-Problem: Jump Game (LC 55)
---------------------------
-Given an array where each element represents your max jump length,
-determine if you can reach the last index.
 
-Approach:
-- Greedily track the farthest reachable index.
+/**
+ * 🔁 Dynamic Programming Approach:
+ * ------------------------------------------------------------
+ * 🧠 Description:
+ * dp[i] = whether index i is reachable from the start.
+ *
+ * 💡 DP Strategy:
+ * ------------------------------------------------------------
+ * ✅ State Definition:
+ * dp[i] = true if index `i` can be reached from index 0
+ *
+ * ✅ Base Case Initialization:
+ * dp[0] = true (we start at index 0)
+ *
+ * ✅ Transition:
+ * For each i from 1 to n-1:
+ *   - Check if there exists a j < i such that:
+ *     dp[j] == true AND j + nums[j] >= i → then dp[i] = true
+ *
+ * ✅ Iteration Order:
+ * Outer loop i from 1 to n-1, inner loop j from 0 to i-1
+ *
+ * 🚨 Edge Cases:
+ * - jump_nums is empty → return false
+ *
+ * ⏱️ Time: O(n^2)
+ * 🧠 Space: O(n)
+ */
+bool CanJumpDP(vector<int>& nums) {
+    int n = nums.size();
+    if (n == 0) return false;
+    vector<bool> dp(n, false);
+    dp[0] = true;
 
-Condition:
-- If at any index i > farthest, return false.
+    for (int i = 1; i < n; ++i) {
+        for (int j = 0; j < i; ++j) {
+            if (dp[j] && j + nums[j] >= i) {
+                dp[i] = true;
+                break;
+            }
+        }
+    }
 
-Time Complexity: O(n)
-Space Complexity: O(1)
-*/
+    return dp[n - 1];
+}
 
 /**
  * Problem 30: Jump Game II (LC 45)
- * Description:
+ * --------------------------------
+ * 🧠 Description:
  * Given an array `jump_nums2`, return the **minimum number of jumps** required to reach the last index.
- * 
- * Example:
+ *
+ * 🔍 Example:
  * Input: jump_nums2 = [2,3,1,1,4]
- * Output: 2
- * Explanation: Jump from index 0 to 1, then from 1 to 4.
+ * Output: 2 → Jump from 0 → 1 → 4
+ *
+ * 🎯 Key Insight:
+ * Track current range and farthest reachable point from it.
+ * Every time you exit the range → increment jump.
+ *
+ * 💡 Greedy Layered Strategy:
+ * ------------------------------------------------------------
+ * ✅ Variable Definition:
+ * jumps = number of jumps made
+ * end = boundary of current jump range
+ * farthest = max index reachable in current range
+ *
+ * ✅ Iteration:
+ * From index 0 to n-2:
+ * - Update farthest = max(farthest, i + nums[i])
+ * - If i == end → need new jump → end = farthest
+ *
+ * ✅ Stop Condition:
+ * Reaching end or just before last index
+ *
+ * 🚨 Edge Cases:
+ * - jump_nums2.size() == 1 → already at goal → 0 jumps
+ *
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(1)
  */
 int JumpMinSteps(vector<int>& jump_nums2) {
     int jumps = 0, end = 0, farthest = 0;
@@ -1497,31 +1922,22 @@ int JumpMinSteps(vector<int>& jump_nums2) {
     }
     return jumps;
 }
-/*
-Problem: Jump Game II (LC 45)
------------------------------
-Find the minimum number of jumps to reach the last index.
-
-Approach:
-- Track current jump range [start, end]
-- When i == end, we increase jump count and move to the next range
-
-Time Complexity: O(n)
-Space Complexity: O(1)
-*/
 
 int main() {
     // Test Problem 1: Climbing Stairs (LC 70)
     int n = 5;
     cout << "Climbing Stairs (n=" << n << "): " << ClimbStairs(n) << endl;
+    cout << "Climbing Stairs Optimal: " << ClimbStairsOptimal(n) << endl;
 
     // Test Problem 2: Maximum Subarray (LC 53)
     vector<int> max_sub_array_input = {-2, 1, -3, 4, -1, 2, 1, -5, 4};
     cout << "Maximum Subarray: " << MaxSubArray(max_sub_array_input) << endl;
+    cout << "Maximum Subarray Optimal: " << MaxSubArrayOptimal(max_sub_array_input) << endl;
 
     // Test Problem 3: Unique Paths (LC 62)
     int m = 3, grid_n = 7;
     cout << "Unique Paths (" << m << "x" << grid_n << " grid): " << UniquePaths(m, grid_n) << endl;
+    cout << "Unique Paths Optimal: " << UniquePathsOptimal(m, grid_n) << endl;
 
     // Test Problem 4: Coin Change (LC 322)
     vector<int> coin_denominations = {1, 2, 5};
@@ -1536,6 +1952,7 @@ int main() {
     // Test Problem 6: Edit Distance (LC 72)
     string edit_word1 = "horse", edit_word2 = "ros";
     cout << "Edit Distance (" << edit_word1 << " -> " << edit_word2 << "): " << MinDistance(edit_word1, edit_word2) << endl;
+    cout << "Edit Distance Optimal: " << MinDistanceOptimal(edit_word1, edit_word2) << endl;
 
     // Test Problem 7: Partition Equal Subset Sum (LC 416)
     vector<int> partition_input = {1, 5, 11, 5};
@@ -1544,10 +1961,12 @@ int main() {
     // Test Problem 8: House Robber (LC 198)
     vector<int> house_robber_input = {2, 7, 9, 3, 1};
     cout << "House Robber: " << Rob(house_robber_input) << endl;
+    cout << "House Robber Optimal: " << RobOptimal(house_robber_input) << endl;
 
     // Test Problem 9: Decode Ways (LC 91)
     string decode_input = "226";
     cout << "Decode Ways (" << decode_input << "): " << NumDecodings(decode_input) << endl;
+    cout << "Decode Ways Optimal: " << NumDecodingsOptimal(decode_input) << endl;
 
     // Test Problem 10: Triangle Minimum Path Sum (LC 120)
     vector<vector<int>> triangle_input = {{2}, {3, 4}, {6, 5, 7}, {4, 1, 8, 3}};
@@ -1633,7 +2052,8 @@ int main() {
 
     // Test Problem 29: Jump Game
     vector<int> jump_nums = {2,3,1,1,4};
-    cout << "Can Jump to Last Index: " << (CanJump(jump_nums) ? "true" : "false") << endl;
+    cout << "Can Jump (Greedy): " << (CanJump(jump_nums) ? "true" : "false") << endl;
+    cout << "Can Jump (DP): " << (CanJumpDP(jump_nums) ? "true" : "false") << endl;
 
     // Test Problem 30: Jump Game II
     vector<int> jump_nums2 = {2,3,1,1,4};

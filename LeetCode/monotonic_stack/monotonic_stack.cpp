@@ -94,7 +94,8 @@ using namespace std;
  * - If the stack is not empty, the top is the next greater.
  * - Push current element to the stack.
  *
- * 🗓 Time: O(n), Space: O(n)
+ * ⏱️ Time: O(n)
+ * 🧠 Space: O(n)
  */
 vector<int> NextGreaterElement(vector<int>& nums) {
     vector<int> result(nums.size(), -1);
