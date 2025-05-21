@@ -8,8 +8,10 @@
 #include <set>
 #include <queue>
 #include <map>
+#include <stack>
 #include <climits>
 #include <cstdint>
+#include <cmath>
 #include <sstream>
 #include <functional>
 #include <memory>
@@ -791,6 +793,16 @@ public:
         return result;
     }
 };
+/*
+    vector<int> vec1 = {1, 0, 0, 2, 3};
+    vector<int> vec2 = {0, 3, 0, 4, 0};
+
+    SparseVector sv1(vec1);
+    SparseVector sv2(vec2);
+
+    int result = sv1.DotProduct(sv2);
+    cout << "Dot Product: " << result << endl; // Expected: 2*4 = 8
+*/
 
 /**
  * Problem 10: Kth Largest Element in an Array (LC 215)
@@ -958,6 +970,13 @@ int FindKthLargestPq(vector<int>& nums, int k) {
  * Input: root = [3,5,1,6,2,0,8], p = 5, q = 1
  * Output: 3
  *
+ * 📐 Example Tree Structure:
+ *         3
+ *        / \
+ *       5   1
+ *      / \ / \
+ *     6  2 0  8
+ *
  * 🎯 Key Insight:
  * Use post-order traversal. Return the node itself if found. The first node where both p and q appear is the LCA.
  *
@@ -979,12 +998,16 @@ int FindKthLargestPq(vector<int>& nums, int k) {
  */
 TreeNode* LowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
     if (!root || root == p || root == q) return root;
+    // if (!root) return nullptr;
+    // if (root == p || root == q) return root;
 
     TreeNode* left = LowestCommonAncestor(root->left, p, q);
     TreeNode* right = LowestCommonAncestor(root->right, p, q);
 
     if (left && right) return root;
     return left ? left : right;
+    //if (left) return left;
+    //else return right;
 }
 
 /**
@@ -998,6 +1021,22 @@ TreeNode* LowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
  * 🔍 Example:
  * Input: p = 5, q = 1
  * Output: 3
+ *
+ * 📐 Example Tree Structure:
+ * Each node has a `parent` pointer (not shown in diagram).
+ *
+ *         3
+ *        / \
+ *       5   1
+ *      / \ / \
+ *     6  2 0  8
+ *       / \
+ *      7   4
+ *
+ * For example:
+ * - Node 5's parent is 3
+ * - Node 7's parent is 2
+ * - Node 0's parent is 1
  *
  * 🎯 Key Insight:
  * This is equivalent to finding the intersection of two parent-linked paths (like linked list intersection).
@@ -1064,11 +1103,24 @@ Node1650* LowestCommonAncestor(Node1650* p, Node1650* q) {
  *   9   8
  *  / \ / \
  * 4  0 1  7
+ *
  * Output: [[4], [9], [3,0,1], [8], [7]]
+ *
+ * 📐 Column Assignment:
+ * - Root node 3 is at column 0.
+ * - Going left decreases column index by 1.
+ * - Going right increases column index by 1.
+ *
+ * ✅ So:
+ * - Node 0 is left child of 9 → col = -1 + 1 = 0
+ * - Node 1 is right child of 8 → col = +1 - 1 = 0
+ * → Both node 0 and node 1 end up at column 0 with node 3.
  *
  * 🎯 Key Insight:
  * BFS with a column index assigned to each node. Use a map from column to nodes.
- *
+ * Use BFS because vertical traversal requires top-to-bottom order within each column.
+ * BFS naturally provides level-wise traversal, which ensures nodes are processed in top-down order.
+ * 
  * 💡 Strategy:
  * ------------------------------------------------------------
  * ✅ State Definition:
@@ -1088,11 +1140,14 @@ Node1650* LowestCommonAncestor(Node1650* p, Node1650* q) {
  * ⏱️ Time Complexity: O(n)
  * 🧠 Space Complexity: O(n)
  */
+
 vector<vector<int>> VerticalOrder(TreeNode* root) {
     if (!root) return {};
 
+    // `col_map` maps column index → list of node values in that column
+    // Use map to keep column keys sorted from left to right
     map<int, vector<int>> col_map;
-    queue<pair<TreeNode*, int>> q;
+    queue<pair<TreeNode*, int>> q; // Queue stores pair: (node pointer, column index)
     q.push({root, 0});
 
     while (!q.empty()) {
@@ -1106,6 +1161,32 @@ vector<vector<int>> VerticalOrder(TreeNode* root) {
     vector<vector<int>> result;
     for (auto& [col, vals] : col_map)
         result.push_back(vals);
+
+    return result;
+}
+
+// standard level order(BFS)
+vector<vector<int>> levelOrder(TreeNode* root) {
+    if (!root) return {};
+    
+    vector<vector<int>> result;
+    queue<TreeNode*> q;
+    q.push(root);
+
+    while (!q.empty()) {
+        int level_size = q.size();
+        vector<int> level;
+
+        for (int i = 0; i < level_size; ++i) {
+            TreeNode* node = q.front(); q.pop();
+            level.push_back(node->val);
+
+            if (node->left) q.push(node->left);
+            if (node->right) q.push(node->right);
+        }
+
+        result.push_back(level);
+    }
 
     return result;
 }
@@ -1289,20 +1370,14 @@ bool ValidWordAbbreviation(string word, string abbr) {
  * 🧠 Space Complexity: O(h), h = height of tree (stack space)
  */
 
-struct TreeNode938 {
-    int val;
-    TreeNode938* left;
-    TreeNode938* right;
-    TreeNode938(int x) : val(x), left(nullptr), right(nullptr) {}
-};
-
-int RangeSumBST(TreeNode938* root, int low, int high) {
+int RangeSumBST(TreeNode* root, int low, int high) {
     if (!root) return 0;
 
+    // Pruning
     if (root->val < low) {
         return RangeSumBST(root->right, low, high);
     }
-
+    // Pruning
     if (root->val > high) {
         return RangeSumBST(root->left, low, high);
     }
@@ -1385,6 +1460,11 @@ vector<vector<int>> KClosest(vector<vector<int>>& points, int k) {
  * 🎯 Key Insight:
  * If (prefix sum at i) % k == (prefix sum at j) % k, then subarray [j+1, i] is divisible by k.
  *
+ * prefix_sum[i] = nums[0] + nums[1] + ... + nums[i]
+ * sum(i..j) = prefix_sum[j] - prefix_sum[i - 1]
+ * (prefix_sum[j] - prefix_sum[i-1]) % k == 0
+ * prefix_sum[j] % k == prefix_sum[i-1] % k
+ * 
  * 💡 Strategy:
  * ------------------------------------------------------------
  * ✅ State Definition:
@@ -1410,21 +1490,63 @@ vector<vector<int>> KClosest(vector<vector<int>>& points, int k) {
  * 🧠 Space Complexity: O(k) or O(n)
  */
 bool CheckSubarraySum(vector<int>& nums, int k) {
-    unordered_map<int, int> mod_index = {{0, -1}};
+    // Hash map to store the earliest index of each remainder
+    unordered_map<int, int> mod_map;
+    mod_map[0] = -1;  // Handle the case where the subarray starts from index 0
+
     int sum = 0;
 
     for (int i = 0; i < nums.size(); ++i) {
         sum += nums[i];
-        int rem = k ? sum % k : sum;
 
-        if (mod_index.count(rem)) {
-            if (i - mod_index[rem] > 1) return true;
+        // Compute remainder only if k != 0
+        int rem = (k != 0) ? sum % k : sum;
+
+        // If the same remainder was seen before
+        if (mod_map.count(rem)) {
+            int prev_index = mod_map[rem];
+            if (i - prev_index >= 2)  // Subarray length must be at least 2
+                return true;
         } else {
-            mod_index[rem] = i;
+            // Only record the first occurrence of this remainder
+            mod_map[rem] = i;
         }
     }
 
     return false;
+}
+
+// follow up return all subarrays
+vector<vector<int>> AllSubarrayValuesDivByK(vector<int>& nums, int k) {
+    unordered_map<int, vector<int>> mod_map;
+    mod_map[0].push_back(-1);  // allow subarray starting from index 0
+
+    vector<vector<int>> result;
+    int sum = 0;
+
+    for (int i = 0; i < nums.size(); ++i) {
+        sum += nums[i];
+
+        int rem = (k != 0) ? sum % k : sum;
+        if (rem < 0) rem += k;  // handle negative remainder
+
+        if (mod_map.count(rem)) {
+            for (int prev_index : mod_map[rem]) {
+                if (i - prev_index >= 2) {
+                    // Extract subarray nums[prev_index+1..i]
+                    vector<int> subarray;
+                    for (int j = prev_index + 1; j <= i; ++j) {
+                        subarray.push_back(nums[j]);
+                    }
+                    result.push_back(subarray);
+                }
+            }
+        }
+
+        mod_map[rem].push_back(i);
+    }
+
+    return result;
 }
 
 /**
@@ -1446,11 +1568,18 @@ bool CheckSubarraySum(vector<int>& nums, int k) {
  * pow(x, n) = pow(x*x, n/2) if n is even
  *           = x * pow(x*x, n/2) if n is odd
  *
+ * 10 = (1010), 2^10 = 2^2 * 2^8
+ * 
+ * N = 10 (1010) → skip, x = 2 → 4
+ * N = 5  (0101) → result *= 4, x = 4 → 16
+ * N = 2  (0010) → skip, x = 16 → 256
+ * N = 1  (0001) → result *= 256
+ * 
  * ✅ Base Case Initialization:
  * n == 0 → return 1
  *
  * ✅ Iteration Order:
- * Recursive divide & conquer
+ * Recursive divide & conquer (Binary Exponentiation)
  *
  * 🚨 Edge Cases:
  * - Negative exponent → invert base: 1 / pow(x, -n)
@@ -1459,18 +1588,20 @@ bool CheckSubarraySum(vector<int>& nums, int k) {
  * ⏱️ Time Complexity: O(log n)
  * 🧠 Space Complexity: O(log n)
  */
+
 double MyPow(double x, int n) {
-    long long N = n;
+    long long N = n;  // prevent overflow for INT_MIN. if n = INT_MIN(-2,147,483,648), then -n(INT_MAX is 2,147,483,647) will overflow, so long long
+
     if (N < 0) {
         x = 1 / x;
         N = -N;
     }
 
     double result = 1;
-    while (N) {
-        if (N % 2 == 1) result *= x;
+    while (N > 0) {
+        if (N & 1) result *= x;  // if last bit is 1, equal to (N % 2 == 1)
         x *= x;
-        N /= 2;
+        N >>= 1;  // shift right (equivalent to divide by 2)
     }
 
     return result;
