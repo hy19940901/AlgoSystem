@@ -12,6 +12,8 @@
 #include <cstdint>
 #include <sstream>
 #include <functional>
+#include <memory>
+#include <mutex>
 
 using namespace std;
 
@@ -176,7 +178,15 @@ void Merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
 
     // Fill from the end
     while (i >= 0 && j >= 0) {
-        nums1[k--] = (nums1[i] > nums2[j]) ? nums1[i--] : nums2[j--];
+        //nums1[k--] = (nums1[i] > nums2[j]) ? nums1[i--] : nums2[j--];
+        if (nums1[i] > nums2[j]) {
+            nums1[k] = nums1[i];
+            i--;
+        } else {
+            nums1[k] = nums2[j];
+            j--;
+        }
+        k--;
     }
 
     // Copy leftover from nums2
@@ -286,38 +296,229 @@ using namespace std;
 
 class LRUCache {
 private:
-    int cap_;
-    list<pair<int, int>> lru_list_; // stores {key, value}
-    unordered_map<int, list<pair<int, int>>::iterator> map_; // key -> list iterator
+    struct Node {
+        int key;
+        int value;
+        Node(int k, int v) : key(k), value(v) {}
+    };
+
+    int capacity_;
+    std::list<Node> cache_list_; // front = most recently used
+    std::unordered_map<int, std::list<Node>::iterator> cache_map_;
+    std::mutex mtx_;
 
 public:
-    LRUCache(int capacity) : cap_(capacity) {}
+    // Prevents implicit conversion from int to LRUCache.
+    // Ensures that objects must be constructed explicitly, e.g., LRUCache cache(10);
+    explicit LRUCache(int cap) : capacity_(cap) {}
 
-    int get(int key) {
-        if (map_.find(key) == map_.end()) return -1;
+    /**
+     * Retrieve value by key.
+     * If key exists, move to front and return value.
+     * Else, return -1.
+     */
+    int Get(int key) {
+        std::lock_guard<std::mutex> lock(mtx_);
+        if (!cache_map_.count(key)) return -1;
 
-        // Move the accessed node to the front (most recently used)
-        lru_list_.splice(lru_list_.begin(), lru_list_, map_[key]);
-        return map_[key]->second;
+        auto it = cache_map_[key];
+        cache_list_.splice(cache_list_.begin(), cache_list_, it); // move to front
+
+        // ✅ Efficiently moves the node `it` to the front of the list (O(1) time).
+        // No memory is allocated or deallocated.
+        // Internally, it only adjusts pointers — this is the key benefit of std::list.
+
+        // 🟰 Functionally equivalent to:
+        /*
+            cache_list_.push_front(*it);   // Create a new copy at the front
+            cache_list_.erase(it);         // Delete the original node
+        */
+
+        // ❗ BUT:
+        // - push_front + erase = 1 copy + 1 destruction → more expensive
+        // - splice = pointer manipulation only → faster, no copy or destructor call
+
+        // 🚀 Summary:
+        // - splice() is the most efficient way to reorder nodes inside std::list
+        // - It keeps iterator validity and avoids memory churn
+        // - Ideal for LRU cache, MRU cache, or reordering operations
+
+        return it->value;
     }
 
-    void put(int key, int value) {
-        if (map_.find(key) != map_.end()) {
-            // Key exists: update value and move to front
-            map_[key]->second = value;
-            lru_list_.splice(lru_list_.begin(), lru_list_, map_[key]);
-        } else {
-            // Insert new node at front
-            lru_list_.emplace_front(key, value);
-            map_[key] = lru_list_.begin();
+    /**
+     * Insert or update key-value pair.
+     * If key exists, update value and move to front.
+     * If not, insert to front and evict LRU if needed.
+     */
+    void Put(int key, int value) {
+        std::lock_guard<std::mutex> lock(mtx_);
 
-            // Evict least recently used if over capacity
-            if (map_.size() > cap_) {
-                int delKey = lru_list_.back().first;
-                map_.erase(delKey);
-                lru_list_.pop_back();
-            }
+        if (cache_map_.count(key)) {
+            cache_list_.erase(cache_map_[key]); // Erase old node
+        } else if (cache_list_.size() >= static_cast<size_t>(capacity_)) {
+            // Evict least recently used (tail)
+            auto& old = cache_list_.back();
+            cache_map_.erase(old.key);
+            cache_list_.pop_back();
         }
+
+        // Insert new node at front
+        cache_list_.emplace_front(key, value);
+        cache_map_[key] = cache_list_.begin();
+    }
+};
+
+/**
+ * LFU Cache
+ * ---------------------
+ * 🧠 Description:
+ * Design a Least Frequently Used (LFU) cache. Each key has a usage frequency, and when the cache
+ * reaches capacity, it removes the least frequently used key. If multiple keys share the same frequency,
+ * the least recently used one is removed.
+ *
+ * 🔍 Example:
+ * Input:
+ *   LFUCache lfu(2);
+ *   lfu.put(1, 1);
+ *   lfu.put(2, 2);
+ *   cout << lfu.get(1) << endl;
+ *   lfu.put(3, 3);  // evicts key 2
+ *   cout << lfu.get(2) << endl;
+ *   cout << lfu.get(3) << endl;
+ * Output:
+ *   1
+ *   -1
+ *   3
+ *
+ * 💡 Strategy:
+ * - key_map: key → node iterator
+ * - freq_map: freq → list of nodes (LRU within each freq)
+ * - min_freq: track minimum frequency
+ *
+ * ✨ Key Insight:
+ * - LFU = Frequency Bucket + LRU Order
+ *
+ * ⏱ Time: O(1), 🧠 Space: O(capacity)
+ */
+
+/*
+LFU Cache – Explanation
+------------------------
+We need to evict the least frequently used key when full.
+If multiple keys have same frequency, remove the least recently used among them.
+
+Idea:
+- keyMap: key → node (value, freq)
+- freqMap: freq → doubly linked list of keys (LRU order)
+- minFreq: track lowest frequency currently present
+
+On get:
+- Increase node frequency
+- Move it to new freq list's front
+
+On put:
+- If key exists: update + bump freq
+- If not: evict from minFreq list tail if full, insert with freq=1
+
+Why this structure?
+→ Separates frequency management (LFU) and recency within frequency (LRU),
+   while preserving O(1) time via hashmap + linked list.
+*/
+/**
+ * LFUCache
+ * --------
+ * A Least Frequently Used (LFU) cache implementation that supports:
+ * - O(1) get(key): return value if key exists, otherwise -1.
+ * - O(1) put(key, value): insert or update value; evict least frequently used key if needed.
+ *
+ * Design Overview:
+ * - keyMap: maps key → iterator to the node in freqMap
+ * - freqMap: maps frequency → list of nodes with that frequency
+ * - minFreq: tracks the current minimum frequency in the cache
+ *
+ * Invariant:
+ * - freqMap[freq] is a list to support recency within the same frequency (LRU within LFU).
+ * - When cache is full, remove the last node from freqMap[minFreq] (least recent among LFU).
+ *
+ * Time Complexity:
+ * - All operations: O(1) average
+ */
+class LFUCache {
+private:
+    struct Node {
+        int key, value, freq;
+        Node(int k, int v, int f) : key(k), value(v), freq(f) {}
+    };
+
+    int capacity_;                         // Maximum number of entries in the cache
+    int min_freq_;                          // Minimum frequency of any key currently in the cache
+    unordered_map<int, list<Node>> freq_map_;              // freq → list of nodes (LRU within freq)
+    unordered_map<int, list<Node>::iterator> key_map_;     // key → iterator in freqMap
+
+public:
+    // Constructor: initialize with fixed capacity
+    explicit LFUCache(int capacity) : capacity_(capacity), min_freq_(0) {}
+
+    /**
+     * Retrieve a value from the cache.
+     * If key exists:
+     *   - Update its frequency
+     *   - Move it to the new frequency bucket (at front to keep LRU order)
+     *   - Update minFreq if needed
+     * If not, return -1
+     */
+    int Get(int key) {
+        if (!key_map_.count(key)) return -1;
+
+        auto it = key_map_[key];
+        int val = it->value;
+        int freq = it->freq;
+
+        // Remove node from current freq list
+        freq_map_[freq].erase(it);
+
+        // If this freq list becomes empty and it's the minFreq, update minFreq
+        if (freq_map_[freq].empty() && freq == min_freq_) {
+            min_freq_++;
+        }
+
+        // Insert node into new freq list (freq + 1), at front (most recent)
+        freq_map_[freq + 1].push_front(Node(key, val, freq + 1));
+        key_map_[key] = freq_map_[freq + 1].begin();
+
+        return val;
+    }
+
+    /**
+     * Insert or update a key-value pair.
+     * If key exists:
+     *   - Update value and promote its frequency via get()
+     * If key is new:
+     *   - If at capacity, evict LFU item (from freqMap[minFreq].back())
+     *   - Insert with freq = 1 and reset minFreq to 1
+     */
+    void Put(int key, int value) {
+        if (capacity_ == 0) return;
+
+        // Case 1: key already exists → update and increase frequency
+        if (key_map_.count(key)) {
+            key_map_[key]->value = value; // update value
+            Get(key);                   // promote frequency
+            return;
+        }
+
+        // Case 2: cache full → evict LRU entry in the lowest frequency bucket
+        if (key_map_.size() == static_cast<size_t>(capacity_)) {
+            auto node = freq_map_[min_freq_].back(); // least recently used in LFU
+            key_map_.erase(node.key);
+            freq_map_[min_freq_].pop_back();
+        }
+
+        // Case 3: insert new key with frequency 1
+        freq_map_[1].push_front(Node(key, value, 1));
+        key_map_[key] = freq_map_[1].begin();
+        min_freq_ = 1; // reset min_freq_ to 1 for new insert
     }
 };
 

@@ -270,12 +270,20 @@ public:
  */
 class LRUCacheList {
 private:
+    struct Node {
+        int key;
+        int value;
+        Node(int k, int v) : key(k), value(v) {}
+    };
+
     int capacity_;
-    list<pair<int, int>> cache_list_; // front = most recently used
-    unordered_map<int, list<pair<int, int>>::iterator> cache_map_;
-    mutex mtx_;
+    std::list<Node> cache_list_; // front = most recently used
+    std::unordered_map<int, std::list<Node>::iterator> cache_map_;
+    std::mutex mtx_;
 
 public:
+    // Prevents implicit conversion from int to LRUCacheList.
+    // Ensures that objects must be constructed explicitly, e.g., LRUCacheList cache(10);
     explicit LRUCacheList(int cap) : capacity_(cap) {}
 
     /**
@@ -284,11 +292,12 @@ public:
      * Else, return -1.
      */
     int Get(int key) {
-        lock_guard<mutex> lock(mtx_);
+        std::lock_guard<std::mutex> lock(mtx_);
         if (!cache_map_.count(key)) return -1;
 
         auto it = cache_map_[key];
         cache_list_.splice(cache_list_.begin(), cache_list_, it); // move to front
+
         // ✅ Efficiently moves the node `it` to the front of the list (O(1) time).
         // No memory is allocated or deallocated.
         // Internally, it only adjusts pointers — this is the key benefit of std::list.
@@ -307,7 +316,8 @@ public:
         // - splice() is the most efficient way to reorder nodes inside std::list
         // - It keeps iterator validity and avoids memory churn
         // - Ideal for LRU cache, MRU cache, or reordering operations
-        return it->second;
+
+        return it->value;
     }
 
     /**
@@ -316,18 +326,20 @@ public:
      * If not, insert to front and evict LRU if needed.
      */
     void Put(int key, int value) {
-        lock_guard<mutex> lock(mtx_);
+        std::lock_guard<std::mutex> lock(mtx_);
 
         if (cache_map_.count(key)) {
-            cache_list_.erase(cache_map_[key]); // erase old
+            cache_list_.erase(cache_map_[key]); // Erase old node
         } else if (cache_list_.size() >= static_cast<size_t>(capacity_)) {
-            auto old = cache_list_.back();
-            cache_map_.erase(old.first);
-            cache_list_.pop_back(); // remove LRU
+            // Evict least recently used (tail)
+            auto& old = cache_list_.back();
+            cache_map_.erase(old.key);
+            cache_list_.pop_back();
         }
 
-        cache_list_.emplace_front(key, value); // insert new
-        cache_map_[key] = cache_list_.begin();   // update map
+        // Insert new node at front
+        cache_list_.emplace_front(key, value);
+        cache_map_[key] = cache_list_.begin();
     }
 };
 
