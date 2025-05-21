@@ -540,7 +540,7 @@ public:
  * Find the first digit from left that is smaller than a digit further right that is larger.
  * Swap it with the largest such digit as rightmost as possible.
  *
- * 💡 Strategy:
+ * 💡 Greedy Strategy:
  * ------------------------------------------------------------
  * ✅ State Definition:
  * - Convert number to string to access individual digits.
@@ -564,24 +564,33 @@ public:
  */
 
 int MaximumSwap(int num) {
+    // Convert the number to a string for digit manipulation
     string num_str = to_string(num);
     int n = num_str.length();
-    vector<int> last_index(10, -1); // last position of each digit 0–9
 
+    // last_index[d] stores the last occurrence index of digit d (0 to 9)
+    vector<int> last_index(10, -1);
     for (int i = 0; i < n; ++i) {
         last_index[num_str[i] - '0'] = i;
     }
 
+    // Iterate through each digit from left to right (most significant to least)
     for (int i = 0; i < n; ++i) {
         int current_digit = num_str[i] - '0';
+
+        // Try to find a larger digit (from 9 to current_digit + 1)
+        // that appears later in the string
         for (int d = 9; d > current_digit; --d) {
             if (last_index[d] > i) {
+                // Found a larger digit that appears after the current digit
+                // Swap them to maximize the number
                 swap(num_str[i], num_str[last_index[d]]);
-                return stoi(num_str);
+                return stoi(num_str);  // Convert back to int and return
             }
         }
     }
 
+    // No swap needed; number is already the maximum
     return num;
 }
 
@@ -632,6 +641,27 @@ int FindPeakElement(vector<int>& nums) {
     return left;
 }
 
+//Follow up, find all peaks, time complexity o(n) brute force
+vector<int> FindAllPeaks(const vector<int>& nums) {
+    vector<int> peaks;
+    int n = nums.size();
+
+    if (n == 0) return peaks;
+
+    for (int i = 0; i < n; ++i) {
+        if (i == 0) {
+            if (n > 1 && nums[i] > nums[i + 1]) peaks.push_back(i);
+        } else if (i == n - 1) {
+            if (nums[i] > nums[i - 1]) peaks.push_back(i);
+        } else {
+            if (nums[i] > nums[i - 1] && nums[i] > nums[i + 1])
+                peaks.push_back(i);
+        }
+    }
+
+    return peaks;
+}
+
 /**
  * Problem 8: Valid Palindrome II (LC 680)
  * -----------------------------------------
@@ -667,6 +697,21 @@ bool IsPalindromeInRange(const string& s, int left, int right) {
     while (left < right) {
         if (s[left++] != s[right--]) return false;
     }
+    return true;
+}
+
+bool ValidPalindrome(string s) {
+    int left = 0, right = s.size() - 1;
+
+    while (left < right) {
+        if (s[left] != s[right]) {
+            return IsPalindromeInRange(s, left + 1, right) ||
+                   IsPalindromeInRange(s, left, right - 1);
+        }
+        left++;
+        right--;
+    }
+
     return true;
 }
 
