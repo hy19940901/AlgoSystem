@@ -1491,21 +1491,26 @@ vector<vector<int>> KClosest(vector<vector<int>>& points, int k) {
  */
 bool CheckSubarraySum(vector<int>& nums, int k) {
     // Hash map to store the earliest index of each remainder
+    // Key: prefix_sum % k, Value: index
     unordered_map<int, int> mod_map;
     mod_map[0] = -1;  // Handle the case where the subarray starts from index 0
 
-    int sum = 0;
+    int prefix_sum = 0;
 
     for (int i = 0; i < nums.size(); ++i) {
-        sum += nums[i];
+        prefix_sum += nums[i];
 
         // Compute remainder only if k != 0
-        int rem = (k != 0) ? sum % k : sum;
+        // (prefix_sum[j] - prefix_sum[i - 1]) % k == 0
+        int rem = (k != 0) ? prefix_sum % k : prefix_sum;
 
         // If the same remainder was seen before
+        // Check if the same remainder has been seen before
+        // This means: prefix_sum[j] % k == prefix_sum[i - 1] % k
+        // → sum(i..j) % k == 0 ⇒ subarray nums[i..j] is a multiple of k
         if (mod_map.count(rem)) {
             int prev_index = mod_map[rem];
-            if (i - prev_index >= 2)  // Subarray length must be at least 2
+            if (i - prev_index >= 2)  // // Ensure subarray length is at least 2: j - (i - 1) ≥ 2 ⇒ j - i ≥ 1 ⇒ j - prev_index ≥ 2
                 return true;
         } else {
             // Only record the first occurrence of this remainder
@@ -1522,12 +1527,12 @@ vector<vector<int>> AllSubarrayValuesDivByK(vector<int>& nums, int k) {
     mod_map[0].push_back(-1);  // allow subarray starting from index 0
 
     vector<vector<int>> result;
-    int sum = 0;
+    int prefix_sum = 0;
 
     for (int i = 0; i < nums.size(); ++i) {
-        sum += nums[i];
+        prefix_sum += nums[i];
 
-        int rem = (k != 0) ? sum % k : sum;
+        int rem = (k != 0) ? prefix_sum % k : prefix_sum;
         if (rem < 0) rem += k;  // handle negative remainder
 
         if (mod_map.count(rem)) {
@@ -1608,7 +1613,7 @@ double MyPow(double x, int n) {
 }
 
 /**
- * Problem 20: Merge Intervals (LC 56)
+ * Problem 20: Merge Intervals (LC 56) (Follow up LC 435)
  * -------------------------------------
  * 🧠 Description:
  * Given a list of intervals, merge all overlapping intervals.
@@ -1620,7 +1625,7 @@ double MyPow(double x, int n) {
  * 🎯 Key Insight:
  * Sort intervals by start time, then merge overlapping ones in one pass.
  *
- * 💡 Strategy:
+ * 💡 Greedy Strategy:
  * ------------------------------------------------------------
  * ✅ State Definition:
  * merged = result list
@@ -1645,14 +1650,19 @@ double MyPow(double x, int n) {
 vector<vector<int>> Merge(vector<vector<int>>& intervals) {
     if (intervals.empty()) return {};
 
-    sort(intervals.begin(), intervals.end());
+    sort(intervals.begin(), intervals.end(), [](const vector<int>& a, const vector<int>& b) {
+        return a[0] < b[0];
+    });
     vector<vector<int>> merged;
 
-    for (auto& interval : intervals) {
-        if (merged.empty() || merged.back()[1] < interval[0]) {
-            merged.push_back(interval);
+    for (int i = 0; i < intervals.size(); ++i) {
+        int curr_start = intervals[i][0];
+        int curr_end = intervals[i][1];
+
+        if (merged.empty() || merged.back()[1] < curr_start) {
+            merged.push_back({curr_start, curr_end});
         } else {
-            merged.back()[1] = max(merged.back()[1], interval[1]);
+            merged.back()[1] = max(merged.back()[1], curr_end);
         }
     }
 
@@ -1691,26 +1701,36 @@ vector<vector<int>> Merge(vector<vector<int>>& intervals) {
  * ⏱️ Time Complexity: O(log n)
  * 🧠 Space Complexity: O(1)
  */
-int FindBound(vector<int>& nums, int target, bool left) {
-    int low = 0, high = nums.size() - 1, bound = -1;
+vector<int> SearchRange(vector<int>& nums, int target) {
+    int left = -1, right = -1;
+
+    // left bound
+    int low = 0, high = nums.size() - 1;
     while (low <= high) {
         int mid = (low + high) / 2;
-        if (nums[mid] == target) {
-            bound = mid;
-            if (left) high = mid - 1;
-            else low = mid + 1;
-        } else if (nums[mid] < target) {
+        if (nums[mid] < target) {
             low = mid + 1;
         } else {
+            if (nums[mid] == target) left = mid;
             high = mid - 1;
         }
     }
-    return bound;
+
+    // right bount
+    low = 0, high = nums.size() - 1;
+    while (low <= high) {
+        int mid = (low + high) / 2;
+        if (nums[mid] > target) {
+            high = mid - 1;
+        } else {
+            if (nums[mid] == target) right = mid;
+            low = mid + 1;
+        }
+    }
+
+    return {left, right};
 }
 
-vector<int> SearchRange(vector<int>& nums, int target) {
-    return {FindBound(nums, target, true), FindBound(nums, target, false)};
-}
 
 /**
  * Problem 22: Binary Tree Right Side View (LC 199)
