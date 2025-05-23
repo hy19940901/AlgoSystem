@@ -1995,17 +1995,17 @@ vector<int> RightSideView(TreeNode* root) {
 
     while (!q.empty()) {
         int size = q.size();
-        TreeNode* rightmost = nullptr;
+        TreeNode* right_most = nullptr;
 
         for (int i = 0; i < size; ++i) {
             TreeNode* node = q.front(); q.pop();
-            rightmost = node;
+            right_most = node;
 
             if (node->left) q.push(node->left);
             if (node->right) q.push(node->right);
         }
 
-        if (rightmost) result.push_back(rightmost->val);
+        if (right_most) result.push_back(right_most->val);
     }
 
     return result;
@@ -2052,42 +2052,55 @@ vector<int> RightSideView(TreeNode* root) {
 
 int ShortestPathBinaryMatrix(vector<vector<int>>& grid) {
     int n = grid.size();
+
+    // ❌ Start or end blocked
     if (grid[0][0] != 0 || grid[n - 1][n - 1] != 0) return -1;
+
+    // ✅ Special case: single cell grid
     if (n == 1) return 1;
 
-    queue<tuple<int, int, int>> bfs_queue; // x, y, step
+    // ⏳ BFS Queue: (x, y, step_count)
+    queue<tuple<int, int, int>> bfs_queue;
     bfs_queue.emplace(0, 0, 1);
+
+    // 🧭 Visited matrix to avoid cycles
     vector<vector<bool>> visited(n, vector<bool>(n, false));
     visited[0][0] = true;
 
+    // ↕↔↘↗↙↖ Directions: 8 directions (including diagonals)
     vector<pair<int, int>> directions = {
-        {0, 1}, {1, 0}, {-1, 0}, {0, -1},
-        {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
+        {0, 1}, {1, 0}, {-1, 0}, {0, -1},   // right, down, up, left
+        {1, 1}, {1, -1}, {-1, 1}, {-1, -1}  // 4 diagonals
     };
 
     while (!bfs_queue.empty()) {
         auto [curr_x, curr_y, steps] = bfs_queue.front();
         bfs_queue.pop();
 
+        // Try all 8 directions
         for (auto [dx, dy] : directions) {
             int next_x = curr_x + dx;
             int next_y = curr_y + dy;
 
+            // ✅ Check bounds and if cell is 0 and not visited
             if (next_x >= 0 && next_x < n &&
                 next_y >= 0 && next_y < n &&
                 !visited[next_x][next_y] &&
                 grid[next_x][next_y] == 0) {
 
+                // 🎯 If destination reached, return step count
                 if (next_x == n - 1 && next_y == n - 1) {
                     return steps + 1;
                 }
 
+                // ✅ Add next cell to BFS queue
                 visited[next_x][next_y] = true;
                 bfs_queue.emplace(next_x, next_y, steps + 1);
             }
         }
     }
 
+    // ❌ No path found
     return -1;
 }
 
@@ -2138,36 +2151,42 @@ int ShortestPathBinaryMatrix(vector<vector<int>>& grid) {
  */
 
 int Calculate(string s) {
-    int curr_num = 0;
-    char curr_op = '+';
-    stack<int> num_stack;
+    int curr_num = 0;          // Current number being parsed
+    char curr_op = '+';        // Last operator seen (initially '+')
+    stack<int> num_stack;      // Stack to store numbers after evaluating * and /
 
     for (int i = 0; i < s.size(); ++i) {
         char c = s[i];
 
+        // Skip spaces early
+        if (c == ' ') continue;
+
+        // Build the number if the character is a digit
         if (isdigit(c)) {
             curr_num = curr_num * 10 + (c - '0');
         }
 
-        // If current char is operator or at end of string
-        if ((!isdigit(c) && c != ' ') || i == s.size() - 1) {
+        // If current character is an operator or at end of expression
+        if (!isdigit(c) || i == s.size() - 1) {
             if (curr_op == '+') {
                 num_stack.push(curr_num);
             } else if (curr_op == '-') {
                 num_stack.push(-curr_num);
             } else if (curr_op == '*') {
-                int prev_num = num_stack.top(); num_stack.pop();
-                num_stack.push(prev_num * curr_num);
+                int prev = num_stack.top(); num_stack.pop();
+                num_stack.push(prev * curr_num);
             } else if (curr_op == '/') {
-                int prev_num = num_stack.top(); num_stack.pop();
-                num_stack.push(prev_num / curr_num);
+                int prev = num_stack.top(); num_stack.pop();
+                num_stack.push(prev / curr_num);
             }
 
+            // Update for next iteration
             curr_op = c;
             curr_num = 0;
         }
     }
 
+    // Sum up all results in the stack
     int result = 0;
     while (!num_stack.empty()) {
         result += num_stack.top();
@@ -2175,6 +2194,46 @@ int Calculate(string s) {
     }
 
     return result;
+}
+
+int CalculateNoStack(string s) {
+    int total = 0;       // Final result of the expression
+    int last_num = 0;    // Last evaluated number (used for * and /)
+    int curr_num = 0;    // Current number being built from digits
+    char op = '+';       // Current operator (initially '+')
+
+    for (int i = 0; i < s.size(); ++i) {
+        char c = s[i];
+
+        // If the current character is a digit, build the full number
+        if (isdigit(c)) {
+            curr_num = curr_num * 10 + (c - '0');
+        }
+
+        // If we encounter an operator or reach the end of the string
+        if ((!isdigit(c) && c != ' ') || i == s.size() - 1) {
+            if (op == '+') {
+                // Commit the previous number to total, and store current number as new "last"
+                total += last_num;
+                last_num = curr_num;
+            } else if (op == '-') {
+                total += last_num;
+                last_num = -curr_num;
+            } else if (op == '*') {
+                last_num *= curr_num;  // Apply multiplication to last number
+            } else if (op == '/') {
+                last_num /= curr_num;  // Apply integer division to last number
+            }
+
+            // Update the operator and reset current number
+            op = c;
+            curr_num = 0;
+        }
+    }
+
+    // Add the final "last number" to total
+    total += last_num;
+    return total;
 }
 
 /**
@@ -2217,20 +2276,34 @@ int Calculate(string s) {
  * ⏱️ Time Complexity: O(n)
  * 🧠 Space Complexity: O(n)
  */
+
 int SubarraySum(vector<int>& nums, int k) {
+    // Hash map to store prefix_sum -> number of times it has occurred
     unordered_map<int, int> prefix_count;
+    
+    // Initialize with prefix_sum = 0 occurring once
+    // This handles the case where a subarray starting from index 0 sums to k
     prefix_count[0] = 1;
 
-    int sum_so_far = 0, count = 0;
+    int prefix_sum = 0;  // Running total of elements from start to current index
+    int count = 0;       // Number of valid subarrays found
 
+    // Iterate through the array
     for (int num : nums) {
-        sum_so_far += num;
-        if (prefix_count.count(sum_so_far - k)) {
-            count += prefix_count[sum_so_far - k];
+        // Update the running prefix sum
+        prefix_sum += num;
+
+        // Check if there is a prefix_sum that ends before the current index
+        // such that the subarray sum between that point and now equals k
+        if (prefix_count.count(prefix_sum - k)) {
+            count += prefix_count[prefix_sum - k];
         }
-        prefix_count[sum_so_far]++;
+
+        // Record the current prefix_sum into the map
+        prefix_count[prefix_sum]++;
     }
 
+    // Return the total count of subarrays whose sum equals k
     return count;
 }
 
@@ -2334,27 +2407,34 @@ int DepthSum(const vector<NestedInteger339>& nested_list) {
  */
 
 vector<int> TopKFrequent(vector<int>& nums, int k) {
+    // Step 1: Count the frequency of each number using a hash map
     unordered_map<int, int> frequency_map;
     for (int num : nums) {
-        frequency_map[num]++;
+        frequency_map[num]++;  // Increment count for num
     }
 
-    using freq_pair = pair<int, int>; // {frequency, number}
+    // Step 2: Use a min-heap (priority_queue with greater) to keep track of top k frequent elements
+    using freq_pair = pair<int, int>; // Pair structure: {frequency, number}
     priority_queue<freq_pair, vector<freq_pair>, greater<freq_pair>> min_heap;
 
+    // Step 3: Iterate through the frequency map and maintain a heap of size <= k
     for (const auto& [num, freq] : frequency_map) {
-        min_heap.emplace(freq, num);
+        min_heap.emplace(freq, num);  // Insert current (frequency, number) pair
+
+        // If heap size exceeds k, remove the least frequent element (top of the min-heap)
         if (min_heap.size() > k) {
             min_heap.pop();
         }
     }
 
+    // Step 4: Extract the k most frequent elements from the min-heap
     vector<int> result;
     while (!min_heap.empty()) {
-        result.push_back(min_heap.top().second);
-        min_heap.pop();
+        result.push_back(min_heap.top().second);  // Push number to result
+        min_heap.pop();  // Remove from heap
     }
 
+    // Step 5: Return the result (order doesn't matter as per problem description)
     return result;
 }
 
