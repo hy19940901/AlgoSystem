@@ -1574,12 +1574,12 @@ vector<vector<int>> AllSubarrayValuesDivByK(vector<int>& nums, int k) {
  *           = x * pow(x*x, n/2) if n is odd
  *
  * 10 = (1010), 2^10 = 2^2 * 2^8
- * 
+ *
  * N = 10 (1010) → skip, x = 2 → 4
  * N = 5  (0101) → result *= 4, x = 4 → 16
  * N = 2  (0010) → skip, x = 16 → 256
  * N = 1  (0001) → result *= 256
- * 
+ *
  * ✅ Base Case Initialization:
  * n == 0 → return 1
  *
@@ -1613,7 +1613,7 @@ double MyPow(double x, int n) {
 }
 
 /**
- * Problem 20: Merge Intervals (LC 56) (Follow up LC 435)
+ * Problem 20: Merge Intervals (LC 56) (Follow up LC 57, LC 435)
  * -------------------------------------
  * 🧠 Description:
  * Given a list of intervals, merge all overlapping intervals.
@@ -1651,7 +1651,7 @@ vector<vector<int>> Merge(vector<vector<int>>& intervals) {
     if (intervals.empty()) return {};
 
     sort(intervals.begin(), intervals.end(), [](const vector<int>& a, const vector<int>& b) {
-        return a[0] < b[0];
+        return (a[0] != b[0]) ? a[0] < b[0] : a[1] < b[1];
     });
     vector<vector<int>> merged;
 
@@ -1667,6 +1667,221 @@ vector<vector<int>> Merge(vector<vector<int>>& intervals) {
     }
 
     return merged;
+}
+
+/**
+ * Follow up Insert Interval (LC 57)
+ * -------------------------------------
+ * 🧠 Description:
+ * You are given an array of non-overlapping intervals sorted by start time,
+ * and a new interval to insert. Merge the new interval such that the result remains
+ * a list of non-overlapping intervals sorted by start time.
+ *
+ * 🔍 Example:
+ * Input: intervals = [[1,3],[6,9]], newInterval = [2,5]
+ * Output: [[1,5],[6,9]]
+ *
+ * 🎯 Key Insight:
+ * Traverse and collect three parts:
+ *   1. Intervals completely before newInterval (no overlap)
+ *   2. All overlapping intervals (merge into one)
+ *   3. Intervals completely after newInterval (no overlap)
+ *
+ * 💡 Greedy Strategy:
+ * ------------------------------------------------------------
+ * ✅ State Definition:
+ * - result = merged output list
+ * - newInterval = updated merged interval
+ *
+ * ✅ Base Case Initialization:
+ * - Add all intervals ending before newInterval.start to result
+ *
+ * ✅ Transition:
+ * - While intervals overlap with newInterval: merge them
+ * - Push the merged newInterval
+ * - Add all remaining intervals
+ *
+ * ✅ Iteration Order:
+ * Left to right, one pass
+ *
+ * 🚨 Edge Cases:
+ * - Empty intervals list
+ * - newInterval doesn't overlap with any
+ * - newInterval before/after all intervals
+ *
+ * ⏱️ Time Complexity: O(n)
+ * 🧠 Space Complexity: O(n) — result array
+ */
+vector<vector<int>> Insert(vector<vector<int>>& intervals, vector<int>& newInterval) {
+    vector<vector<int>> result;
+    int i = 0;
+    int n = intervals.size();
+
+    // 1️⃣ Add all intervals before newInterval
+    while (i < n && intervals[i][1] < newInterval[0]) {
+        result.push_back(intervals[i++]);
+    }
+
+    // 2️⃣ Merge overlapping intervals with newInterval
+    while (i < n && intervals[i][0] <= newInterval[1]) {
+        newInterval[0] = min(newInterval[0], intervals[i][0]);
+        newInterval[1] = max(newInterval[1], intervals[i][1]);
+        ++i;
+    }
+    result.push_back(newInterval);
+
+    // 3️⃣ Add the rest
+    while (i < n) {
+        result.push_back(intervals[i++]);
+    }
+
+    return result;
+}
+
+
+/**
+ * Follow: Non-overlapping Intervals (LC 435)
+ * ----------------------------------------------------------
+ * 🧠 Description:
+ * Given a collection of intervals, find the minimum number of intervals to remove
+ * so that the rest of the intervals are non-overlapping.
+ *
+ * 🔍 Example:
+ * Input: [[1,2],[2,3],[3,4],[1,3]]
+ * Output: 1
+ *
+ * 🎯 Key Insight:
+ * This is a greedy problem. An alternative to sorting by end time is:
+ * Sort by start time and eliminate overlaps by always removing the interval
+ * with the **larger end time**, since it's more likely to cause future overlap.
+ *
+ * 💡 Greedy Strategy (Start Time Sort + Remove Later Ending):
+ * -------------------------------------------------------------
+ * ✅ State Definition:
+ * - prev_end = end of the last selected non-overlapping interval
+ * - count = number of overlapping intervals removed
+ *
+ * ✅ Base Case Initialization:
+ * - Sort intervals by start time
+ * - Start with first interval's end as prev_end
+ *
+ * ✅ Transition:
+ * - If curr.start < prev_end → overlap → remove interval with larger end
+ * - Else → no overlap → update prev_end = curr.end
+ *
+ * ✅ Iteration Order:
+ * Left to right, after sorting by start
+ *
+ * 🚨 Edge Cases:
+ * - Empty input → return 0
+ * - Fully non-overlapping input → return 0
+ *
+ * ⏱️ Time Complexity: O(n log n) (sorting)
+ * 🧠 Space Complexity: O(1)
+ */
+int EraseOverlapIntervals(vector<vector<int>>& intervals) {
+    if (intervals.empty()) return 0;
+
+    // 🔁 Sort by start time (ascending)
+    sort(intervals.begin(), intervals.end(), [](const vector<int>& a, const vector<int>& b) {
+        return (a[0] != b[0]) ? a[0] < b[0] : a[1] < b[1];
+    });
+
+    int count = 0;
+    int prev_end = intervals[0][1];
+
+    for (int i = 1; i < intervals.size(); ++i) {
+        int curr_start = intervals[i][0];
+        int curr_end = intervals[i][1];
+
+        if (curr_start < prev_end) {
+            // ⚠️ Overlapping interval — remove the one with larger end
+            count++;
+            prev_end = min(prev_end, curr_end);  // keep the tighter ending one
+        } else {
+            // ✅ No overlap — safe to include
+            prev_end = curr_end;
+        }
+    }
+
+    return count;
+}
+
+/**
+ * Follow up: Find Overlapping Intervals (Based on LC 435 Greedy)
+ * -------------------------------------------------------------------
+ * 🧠 Description:
+ * Given a list of intervals, return all the intervals that would be removed
+ * to make the list non-overlapping. Use greedy strategy based on sorting
+ * by start time, and always remove the one with the larger end time in case of overlap.
+ *
+ * 🔍 Example:
+ * Input: [[1,2],[2,3],[3,4],[1,3]]
+ * Output: [[1,3]]
+ *
+ * 🎯 Key Insight:
+ * When two intervals overlap, remove the one with the later end time,
+ * since it's more likely to overlap with future intervals.
+ *
+ * 💡 Greedy Strategy (Start Time Sort + Remove Later Ending):
+ * ------------------------------------------------------------
+ * ✅ State Definition:
+ * - prev_end = end of the last included interval
+ * - overlapped = list of removed intervals due to overlap
+ *
+ * ✅ Base Case Initialization:
+ * - Sort intervals by start time
+ * - Start from the first interval as reference
+ *
+ * ✅ Transition:
+ * - If current.start < prev_end → overlap
+ *     → Remove the one with larger end
+ * - Else → update prev_end with current.end
+ *
+ * ✅ Iteration Order:
+ * Left to right
+ *
+ * 🚨 Edge Cases:
+ * - Empty input → return empty
+ * - Fully non-overlapping input → return empty
+ *
+ * ⏱️ Time Complexity: O(n log n)
+ * 🧠 Space Complexity: O(n) to store removed intervals
+ */
+vector<vector<int>> FindOverlappingIntervals(vector<vector<int>>& intervals) {
+    if (intervals.empty()) return {};
+
+    // Sort intervals by start time
+    sort(intervals.begin(), intervals.end(), [](const vector<int>& a, const vector<int>& b) {
+        return (a[0] != b[0]) ? a[0] < b[0] : a[1] < b[1];
+    });
+
+    vector<vector<int>> overlapped;
+    int prev_end = intervals[0][1];
+    int prev_idx = 0;
+
+    for (int i = 1; i < intervals.size(); ++i) {
+        int curr_start = intervals[i][0];
+        int curr_end = intervals[i][1];
+
+        if (curr_start < prev_end) {
+            // ⚠️ Overlap: remove one with larger end
+            if (curr_end < prev_end) {
+                overlapped.push_back(intervals[prev_idx]);  // remove previous
+                prev_end = curr_end;
+                prev_idx = i;
+            } else {
+                overlapped.push_back(intervals[i]);  // remove current
+                // prev_end stays the same
+            }
+        } else {
+            // ✅ No overlap — safe to keep
+            prev_end = curr_end;
+            prev_idx = i;
+        }
+    }
+
+    return overlapped;
 }
 
 /**
@@ -1704,33 +1919,40 @@ vector<vector<int>> Merge(vector<vector<int>>& intervals) {
 vector<int> SearchRange(vector<int>& nums, int target) {
     int left = -1, right = -1;
 
-    // left bound
+    // 🔍 Search for left bound
     int low = 0, high = nums.size() - 1;
     while (low <= high) {
-        int mid = (low + high) / 2;
+        int mid = low + (high - low) / 2;
+
         if (nums[mid] < target) {
             low = mid + 1;
         } else {
-            if (nums[mid] == target) left = mid;
             high = mid - 1;
+        }
+
+        if (nums[mid] == target) {
+            left = mid; // keep updating for leftmost
         }
     }
 
-    // right bount
+    // 🔍 Search for right bound
     low = 0, high = nums.size() - 1;
     while (low <= high) {
-        int mid = (low + high) / 2;
+        int mid = low + (high - low) / 2;
+
         if (nums[mid] > target) {
             high = mid - 1;
         } else {
-            if (nums[mid] == target) right = mid;
             low = mid + 1;
+        }
+
+        if (nums[mid] == target) {
+            right = mid; // keep updating for rightmost
         }
     }
 
     return {left, right};
 }
-
 
 /**
  * Problem 22: Binary Tree Right Side View (LC 199)
